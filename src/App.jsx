@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Landing from "./Landing";
+import Home from "./Home";
 import "./index.css"; // Tailwind
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   return (
     <>
    <Landing />
+   <Home />
     </>
   );
 }

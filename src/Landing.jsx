@@ -23,22 +23,54 @@ export default function Landing() {
             AUTOPARTES
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
-            Mejorá y repará tu auto con nuestra exclusiva selección de repuestos de alta calidad.
+            Mejorá y repará tu auto con nuestra exclusiva selección de repuestos
+            de alta calidad.
           </p>
-          <button className="mt-8 rounded-lg bg-gray-400 px-12 py-4 font-bold text-white shadow-lg transition-all duration-300 hover:bg-red-600 hover:shadow-2xl">
+          <button
+            className="mt-8 rounded-lg bg-red-600 px-12 py-4 font-bold text-white shadow-lg transition-all filter grayscale hover:grayscale-0 duration-300 hover:shadow-2xl"
+            onClick={() => {
+              document
+                .getElementById("catalogo")
+                .scrollIntoView({ behavior: "smooth" });
+            }}
+          >
             Explorar Catálogo
           </button>
         </div>
 
         <div className="flex justify-center items-center gap-12 pb-8">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Fiat_logo.svg" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
-          <img src="https://cdn.freebiesupply.com/logos/thumbs/2x/renault-logo.png" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
-          <img src="https://pngimg.com/uploads/chevrolet/%D1%81hevrolet_PNG108.png" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
-          <img src="https://logos-world.net/wp-content/uploads/2021/04/Volkswagen-Logo.png" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
-          <img src="https://logos-world.net/wp-content/uploads/2021/05/Ford-Logo.png" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
-          <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b2/Peugeot-logo.svg/250px-Peugeot-logo.svg.png" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Honda.svg" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Toyota_logo_%28Red%29.svg" className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300" />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Fiat_logo.svg"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
+          <img
+            src="https://cdn.freebiesupply.com/logos/thumbs/2x/renault-logo.png"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
+          <img
+            src="https://pngimg.com/uploads/chevrolet/%D1%81hevrolet_PNG108.png"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
+          <img
+            src="https://logos-world.net/wp-content/uploads/2021/04/Volkswagen-Logo.png"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
+          <img
+            src="https://logos-world.net/wp-content/uploads/2021/05/Ford-Logo.png"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b2/Peugeot-logo.svg/250px-Peugeot-logo.svg.png"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/3/38/Honda.svg"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Toyota_logo_%28Red%29.svg"
+            className="w-20 h-20 object-contain hover:scale-105 filter grayscale hover:grayscale-0 duration-300"
+          />
         </div>
       </div>
     </section>
