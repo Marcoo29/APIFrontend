@@ -30,7 +30,7 @@ export default function Landing() {
             className="mt-8 rounded-lg bg-red-600 px-12 py-4 font-bold text-white shadow-lg transition-all filter grayscale hover:grayscale-0 duration-300 hover:shadow-2xl"
             onClick={() => {
               document
-                .getElementById("catalogo")
+                .getElementById("home")
                 .scrollIntoView({ behavior: "smooth" });
             }}
           >
