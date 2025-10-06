@@ -1,7 +1,6 @@
 export default function Landing() {
   return (
     <section className="relative w-full h-screen">
-      {/* Fondo */}
       <div className="absolute inset-0">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA4uwZ4PybLPI8W9YDE5B99sqVkteQTkrag-JuLm_P84uzMZ2eWT1xLG1yP6aTyWXW-M8p4TrHlFLSh8-rYjCU4HEMsVl0T31Q7O3yTZutaKLlX7D7X2vWpfa9pGyLtv-p1_aGtgDSzlELXh8KTb1v-PIO49rFpj1es0-sFHyS19cAa7Qek6wKx8uQ13VI0H4yxVBCyMDHFLNGAtLWUTiybRRj3avG0EVnn4EdeXzebqY4sSzw17cuRXdJzTFKOp1xqRhRlMGZGiA"
@@ -12,9 +11,7 @@ export default function Landing() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
       </div>
 
-      {/* Contenido */}
       <div className="relative z-20 flex flex-col justify-between h-full p-8">
-        {/* Hero */}
         <div className="text-center mt-20">
           <h1
             className="text-6xl md:text-8xl font-extrabold uppercase text-white"

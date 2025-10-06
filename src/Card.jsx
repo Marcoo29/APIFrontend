@@ -1,40 +1,26 @@
 const Card = () => {
   return (
       <div className="overflow-x-auto">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:gap-6">
-          {/* EJEMPLO DE PRODUCTO */}
-          <div className="group relative flex flex-col overflow-hidden rounded-lg bg-background-light shadow-sm transition-shadow duration-300 hover:shadow-lg dark:bg-background-dark">
-            <div className="relative">
-              <div
-                className="aspect-square w-full bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAyNDqllY5iqGHfYAPupYmiTc3xtXQKXrH6ukphv183nKM9WL1LGbMHF_8sS1TH_UZjlmPmsbi_LuMurWPPpWWtc3hLHdqnt0hmIAf9o9Bdc2TyMjTY1km0p0xzxPPGgvJaHxV0GGtBAvJIAB4z3b6h6nS6fx_842FiqOWXMk3rHVrPNE-LUdCTb3TJVSYu3O-j2WuVIkGwqPteuDjI9jcra-wQcsR3fyZLfbf8fO9OZdSxLjmhhOzLnRalO0Er0rjgaFaDqmMV8cY")',
-                }}
-              />
-              <div className="absolute inset-0 bg-black/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
-              <button className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-background-light/70 text-[#221010] opacity-0 transition-opacity group-hover:opacity-100 dark:bg-background-dark/70 dark:text-[#f8f5f5]">
-                <span className="material-symbols-outlined text-lg">
-                  favorite
-                </span>
-              </button>
-            </div>
-            <div className="flex flex-1 flex-col p-4">
-              <h3 className="font-bold">Air Filter</h3>
-              <p className="text-sm text-[#221010]/60 dark:text-[#f8f5f5]/60">
-                Performance Intake
-              </p>
-              <div className="mt-auto flex flex-col items-center pt-4 space-y-2">
-                <span className="text-lg font-bold text-primary">$49.99</span>
-                <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-primary/90">
-                  <span className="material-symbols-outlined text-xl bg-black">
-                    add_shopping_cart
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
+        
+
+<div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <a href="#">
+        <img class="p-8 rounded-t-lg" src="/docs/images/products/apple-watch.png" alt="product image" />
+    </a>
+    <div class="px-5 pb-5">
+        <a href="#">
+            <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Filtro de aire</h5>
+        </a>
+        <div class="flex items-center mt-2.5 mb-5">
+            
         </div>
+        <div class="flex items-center justify-between">
+            <span class="text-3xl font-bold text-gray-900 dark:text-white">$15.000</span>
+            <a href="#" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</a>
+        </div>
+    </div>
+</div>
+
       </div>
         );
 

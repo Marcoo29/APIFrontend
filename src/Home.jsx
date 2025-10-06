@@ -1,4 +1,5 @@
-import Card from './Card';
+import Card from "./Card";
+import Categories from "./Categories";
 
 const Home = () => {
   return (
@@ -20,34 +21,19 @@ const Home = () => {
 
       {/* MAIN */}
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {/* FILTROS */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-            Performance Parts
-          </h1>
-          <div className="flex flex-wrap gap-2">
-            <button className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">
-              All
-            </button>
-            <button className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-[#221010] hover:bg-primary/20 dark:bg-primary/20 dark:text-[#f8f5f5] dark:hover:bg-primary/30">
-              Engine
-            </button>
-            <button className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-[#221010] hover:bg-primary/20 dark:bg-primary/20 dark:text-[#f8f5f5] dark:hover:bg-primary/30">
-              Suspension
-            </button>
-            <button className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-[#221010] hover:bg-primary/20 dark:bg-primary/20 dark:text-[#f8f5f5] dark:hover:bg-primary/30">
-              Brakes
-            </button>
-            <button className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-[#221010] hover:bg-primary/20 dark:bg-primary/20 dark:text-[#f8f5f5] dark:hover:bg-primary/30">
-              Exhaust
-            </button>
+        <Categories />
+
+        <div className="grid grid-cols-[0.7fr_3fr]">
+          <div>asd</div>
+          <div className="grid grid-cols-3 gap-4">
+            {Array.from({ length: 20 }, (_, i) => (
+              <Card key={i} />
+            ))}
           </div>
         </div>
-
-        <Card />
       </main>
     </section>
   );
-}
+};
 
-        export default Home;
+export default Home;

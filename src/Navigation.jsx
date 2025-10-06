@@ -3,7 +3,7 @@ const Navigation = () => {
     
   return (
     <header className="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-      <nav className="container mx-auto px-6 py-2 flex justify-between items-center">
+      <nav className="container mx-auto px-6 py-1 flex justify-between items-center">
         <a className="flex items-center gap-2" href="#">
           <svg
             className="h-8 w-8 text-primary"
