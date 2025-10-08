@@ -1,4 +1,5 @@
 import Card from "./Card";
+import CardList from "./CardList";
 import Categories from "./Categories";
 
 const Home = () => {
@@ -25,11 +26,13 @@ const Home = () => {
 
         <div className="grid grid-cols-[0.7fr_3fr]">
           <div>asd</div>
-          <div className="grid grid-cols-3 gap-4">
+          <CardList />
+          
+          {/*<div className="grid grid-cols-3 gap-4">
             {Array.from({ length: 20 }, (_, i) => (
               <Card key={i} />
             ))}
-          </div>
+          </div>*/}
         </div>
       </main>
     </section>

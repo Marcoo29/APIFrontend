@@ -2,7 +2,7 @@ const Categories = () => {
   return (
     <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
       <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-        Performance Parts
+        Buscá por categoría
       </h1>
       <div className="flex flex-wrap gap-2">
         <div>
