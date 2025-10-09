@@ -1,0 +1,42 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+
+const Login = () => {
+  return (
+    <div>
+      <div className="container mt-5" style={{ maxWidth: "500px" }}>
+        <h2 className="mb-4">Iniciar Sesión</h2>
+        <form>
+          <div className="mb-3">
+            <label className="form-label">Correo electrónico</label>
+            <input
+              type="email"
+              className="form-control"
+              name="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Contraseña</label>
+            <input
+              type="password"
+              className="form-control"
+              name="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button type="submit" className="btn btn-success w-100">
+            Iniciar Sesión
+          </button>
+        </form>
+        <div className="text-center mt-3">
+          <Link to="/register" className=" w-100">
+            ¿No tenés cuenta? Registrarse
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

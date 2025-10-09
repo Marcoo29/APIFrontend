@@ -6,6 +6,8 @@ import Navigation from "./Navigation";
 import Landing from "./Landing";
 import Home from "./Home";
 import Footer from "./Footer";
+import Login from "./Login";
+import Register from "./Register";
 import "./index.css"; // Tailwind
 
 function App() {
@@ -16,7 +18,9 @@ function App() {
     <Navigation />
    <Landing />
    <Home />
+    <Register />
     <Footer />
+   
     </>
 
   );
