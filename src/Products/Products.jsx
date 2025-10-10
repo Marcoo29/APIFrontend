@@ -2,7 +2,7 @@ import Card from "./Card";
 import CardList from "./CardList";
 import Categories from "./Categories";
 
-const Home = () => {
+const Products = () => {
   return (
     <section
       className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark"
@@ -27,16 +27,10 @@ const Home = () => {
         <div className="grid grid-cols-[0.7fr_3fr]">
           <div>asd</div>
           <CardList />
-          
-          {/*<div className="grid grid-cols-3 gap-4">
-            {Array.from({ length: 20 }, (_, i) => (
-              <Card key={i} />
-            ))}
-          </div>*/}
         </div>
       </main>
     </section>
   );
 };
 
-export default Home;
+export default Products;

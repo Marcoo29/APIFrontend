@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
     
@@ -19,27 +20,31 @@ const Navigation = () => {
               strokeLinejoin="round"
             />
           </svg>
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">
+          <Link to="/home" className="text-2xl font-bold text-gray-900 dark:text-white">
             Autopartes
-          </span>
+          </Link>
         </a>
 
         <div className="hidden md:flex items-center space-x-8">
-          <a
+          <Link
+            to="/home"
             className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
-            href="#"
           >
             Inicio
-          </a>
-          <a className="text-primary font-semibold" href="#">
-            Productos
-          </a>
-          <a
+           </Link>
+          <Link
+            to="/products"
             className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
-            href="#"
+            
           >
+            Productos
+           </Link>
+          <Link
+            to="/contact"
+            className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
+            >
             Contacto
-          </a>
+          </Link>
         </div>
 
         <div className="flex items-center space-x-4">

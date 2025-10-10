@@ -1,5 +1,11 @@
+import { Link, useNavigate } from "react-router-dom";
+
 export default function Landing() {
+  const navigate = useNavigate()
+
+  
   return (
+    
     <section className="relative w-full h-screen">
       <div className="absolute inset-0">
         <img
@@ -24,12 +30,8 @@ export default function Landing() {
             de alta calidad.
           </p>
           <button
+            onClick={() => navigate("/products")}
             className="mt-8 rounded-lg bg-red-600 px-12 py-4 font-bold text-white shadow-lg transition-all filter grayscale hover:grayscale-0 duration-300 hover:shadow-2xl"
-            onClick={() => {
-              document
-                .getElementById("home")
-                .scrollIntoView({ behavior: "smooth" });
-            }}
           >
             Explorar Catálogo
           </button>
