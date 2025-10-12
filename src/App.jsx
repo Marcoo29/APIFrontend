@@ -3,7 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Navigation from "./components/Navigation";
-import Landing from "./Landing";
+import Landing from "./Landing/Landing";
 import Products from "./Products/Products";
 import Footer from "./components/Footer";
 import Login from "./Login/Login";
@@ -15,17 +15,21 @@ function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <>
-      <Navigation />
-      <Routes>
-        <Route path="/" element={<Landing />}/>
-        <Route path="/#" element={<Landing />}/>
-        <Route path="/home" element={<Landing />}/>
-	      <Route path="/products" element={<Products />} />
-      </Routes>
-    <Footer />
-    </>
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1">
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/#" element={<Landing />} />
+          <Route path="/home" element={<Landing />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </main>
 
+      <Footer />
+    </div>
   );
 }
 
