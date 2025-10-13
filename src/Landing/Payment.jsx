@@ -3,7 +3,7 @@ import React from "react";
 
 const Payment = () => {
   return (
-    <div className="bg-background-light py-6 px-4 shadow-md w-full mx-auto">
+    <div className="bg-gray-200 py-6 px-4 shadow-md w-full mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-gray-800 dark:text-gray-200">
         {/* Pagá en cuotas */}
         <div className="flex items-center space-x-4">

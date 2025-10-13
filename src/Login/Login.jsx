@@ -21,15 +21,15 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark font-display min-h-screen flex items-center justify-center">
+    <div className="bg-background-light dark:bg-background-dark border-r border-gray-300  font-display min-h-screen flex items-center justify-center">
       <div className="flex w-full max-w-6xl mx-auto overflow-hidden bg-white dark:bg-background-dark/80 rounded-lg shadow-2xl">
         {/* Imagen lateral */}
         <div className="md:w-1/2 hidden md:block">
           <div className="w-full h-[500px] overflow-hidden">
             <img
               alt="Coche gris en la calle"
-              className="w-full h-full object-adjust"
-              src="https://i.imgur.com/N9Xr6BI.jpeg"
+              className="w-full h-full object-cover"
+              src="https://i.imgur.com/njTrnld.jpeg"
             />
           </div>
         </div>
@@ -38,7 +38,7 @@ const Login = () => {
         <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
           <div className="mb-10 text-left">
             <h1 className="text-4xl font-bold text-text-light dark:text-text-dark">
-              Inicio de sesión
+              INICIAR SESIÓN
             </h1>
           </div>
 

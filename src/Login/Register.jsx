@@ -8,31 +8,22 @@ const Register = () => {
   const [warning, setWarning] = useState("");
   const navigate = useNavigate();
 
-  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark font-display">
-      <div className="flex mt-3 flex-col md:flex-row w-full max-w-6xl bg-white dark:bg-background-dark/80 rounded-lg shadow-2xl overflow-hidden">
-        {/* Imagen lateral */}
-        <div className="md:w-1/2 hidden md:block">
-          <img
-            alt="Coche en taller mecánico"
-            src="https://i.imgur.com/vmVACxa.jpeg"
-            className="w-full h-full object-adjust"
-          />
-        </div>
-
-        {/* Formulario de registro */}
-        <div className="w-full md:w-1/2 pt-4 pb-8 px-3 md:pt-8 md:pb-12 md:px-12 flex flex-col justify-center">
-          <h1 className="text-4xl text-left font-bold text-text-light dark:text-text-dark mb-4">
-            Registro
-          </h1>
-
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="">
+    <div className="bg-background-light dark:bg-background-dark font-display min-h-screen flex items-center justify-center p-4">
+      <div className="flex w-full mb-6 max-w-5xl mx-auto overflow-hidden bg-white dark:bg-background-dark/80 rounded-lg shadow-2xl">
+        {/* Formulario */}
+        <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col justify-center">
+          <div className="text-left">
+            <h1 className="text-3xl font-bold text-text-light dark:text-text-dark">
+              CREAR CUENTA
+            </h1>
+          </div>
+          <form className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
                 <label
                   htmlFor="name"
-                  className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                  className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-1"
                 >
                   Nombre
                 </label>
@@ -40,13 +31,13 @@ const Register = () => {
                   id="name"
                   type="text"
                   placeholder="Nombre"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
                 />
               </div>
-              <div className="">
+              <div>
                 <label
                   htmlFor="surname"
-                  className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                  className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-1"
                 >
                   Apellido
                 </label>
@@ -54,14 +45,15 @@ const Register = () => {
                   id="surname"
                   type="text"
                   placeholder="Apellido"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
                 />
               </div>
             </div>
-            <div className="mb-6">
+
+            <div>
               <label
                 htmlFor="username"
-                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-1"
               >
                 Nombre de Usuario
               </label>
@@ -69,13 +61,14 @@ const Register = () => {
                 id="username"
                 type="text"
                 placeholder="Tu nombre de usuario"
-                className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
-            <div className="mb-6">
+
+            <div>
               <label
                 htmlFor="email"
-                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-1"
               >
                 Correo Electrónico
               </label>
@@ -83,51 +76,65 @@ const Register = () => {
                 id="email"
                 type="email"
                 placeholder="example@hotmail.com"
-                className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
-            <div className="mb-6">
+
+            <div>
               <label
                 htmlFor="password"
-                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-1"
               >
                 Contraseña
               </label>
               <input
                 id="password"
-                type="mpassworda"
+                type="password"
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
-            <div className="mb-6">
+
+            <div>
               <label
                 htmlFor="confirm-password"
-                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-1"
               >
-                Contraseña
+                Confirmar Contraseña
               </label>
               <input
                 id="confirm-password"
                 type="password"
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
+
             <div>
               <button
                 type="submit"
-                className="w-full bg-red-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-900 transition-colors duration-300"
+                className="w-full bg-red-700 text-white font-semibold py-2 px-3 rounded-md hover:bg-red-900 transition-colors duration-300 text-sm"
               >
-                Registrarse
+                CREAR CUENTA
               </button>
             </div>
           </form>
 
-          <div className="text-center mt-4">
-            <Link to="/login" className="text-primary hover:font-bold">
+          <div className="text-center mt-3">
+            <Link to="/login" className="text-primary hover:font-bold text-sm">
               ¿Ya tenés cuenta? <u>Iniciar sesión</u>
             </Link>
+          </div>
+        </div>
+
+        {/* Imagen lateral */}
+        <div className="md:w-1/2 hidden md:flex items-center justify-center">
+          <div className="w-full h-[450px] flex items-center justify-center">
+            <img
+              alt="Coche gris en la calle"
+              className="object-contain max-h-full max-w-full rounded-lg"
+              src="https://i.imgur.com/njTrnld.jpeg"
+            />
           </div>
         </div>
       </div>

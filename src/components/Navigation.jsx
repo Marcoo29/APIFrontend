@@ -12,20 +12,12 @@ const Navigation = () => {
     <header className="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
       <nav className="container mx-auto px-6 py-1 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <svg
+          <img
             className="h-8 w-8 text-primary"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            src="https://i.imgur.com/k7iy3rd.jpeg"
             />
-          </svg>
+          
+           
           <Link
             to="/home"
             className="text-2xl font-bold text-gray-900 dark:text-white"
