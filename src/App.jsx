@@ -8,6 +8,7 @@ import Products from "./Products/Products";
 import Footer from "./components/Footer";
 import Login from "./Login/Login";
 import Register from "./Login/Register";
+import Users from "./Login/Users";
 import "./index.css"; // Tailwind
 import { Routes, Route } from "react-router-dom";
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/users" element={<Users />} />
         </Routes>
       </main>
 

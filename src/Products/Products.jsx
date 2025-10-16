@@ -1,13 +1,18 @@
+import { useEffect, useState } from "react";
 import Card from "./Card";
 import CardList from "./CardList";
 import Categories from "./Categories";
 
 const Products = () => {
+  const [products, setProducts] = useState([]); // ✅ estado agregado
+
+
   return (
     <section
       className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark"
       id="home"
     >
+
       {/* HEADER */}
       <header className="sticky top-0 z-10 w-full border-b border-primary/20 bg-background-light/80 dark:border-primary/30 dark:bg-background-dark/80 backdrop-blur-sm">
         <div className="container mx-auto flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">

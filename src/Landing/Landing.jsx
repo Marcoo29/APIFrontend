@@ -6,14 +6,14 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col  ">
       {/* Sección de Landing */}
       <section className="relative w-full h-screen">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 ">
           <img
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA4uwZ4PybLPI8W9YDE5B99sqVkteQTkrag-JuLm_P84uzMZ2eWT1xLG1yP6aTyWXW-M8p4TrHlFLSh8-rYjCU4HEMsVl0T31Q7O3yTZutaKLlX7D7X2vWpfa9pGyLtv-p1_aGtgDSzlELXh8KTb1v-PIO49rFpj1es0-sFHyS19cAa7Qek6wKx8uQ13VI0H4yxVBCyMDHFLNGAtLWUTiybRRj3avG0EVnn4EdeXzebqY4sSzw17cuRXdJzTFKOp1xqRhRlMGZGiA"
             alt="Fondo auto"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-b-3xl"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
@@ -28,8 +28,8 @@ export default function Landing() {
               AUTOPARTES
             </h1>
             <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
-              Mejorá y repará tu auto con nuestra exclusiva selección de repuestos
-              de alta calidad.
+              Mejorá y repará tu auto con nuestra exclusiva selección de
+              repuestos de alta calidad.
             </p>
             <button
               onClick={() => navigate("/products")}
@@ -76,7 +76,8 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="p-4 bg-background-light">
+      <div className="h-12 w-full bg-gradient-to-b from-black via-gray-800/30 to-bg-background-light"></div>
+      <section className="p-2 bg-background-light">
         <Payment />
       </section>
       <section className="p-4 bg-background-light">
