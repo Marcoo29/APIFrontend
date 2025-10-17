@@ -1,87 +1,126 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Navigation = () => {
-  const username = localStorage.getItem("name"); // revisa si hay usuario logueado
+  const [menuOpen, setMenuOpen] = useState(false);
+  const username = localStorage.getItem("name");
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isLoginPage = location.pathname === "/login" || location.pathname === "/register";
+  const isLoginPage =
+    location.pathname === "/login" || location.pathname === "/register";
 
   const handleLogout = () => {
     localStorage.removeItem("name");
-    localStorage.removeItem("token"); //  TOKEN
-    navigate("/home"); // redirige a la landing page
+    localStorage.removeItem("token");
+    navigate("/home");
   };
 
   return (
-    <header className="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-      <nav className="container mx-auto px-6 py-1 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <img className="h-8 w-8 text-primary" src="https://i.imgur.com/k7iy3rd.jpeg" />
-          <Link to="/home" className="text-2xl font-bold text-gray-900 dark:text-white">
-            Autopartes
-          </Link>
+    <header className="fixed top-0 left-0 w-full z-50">
+      <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
+        {/* Botón hamburguesa */}
+        <div>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex flex-col justify-center items-center w-10 h-10 space-y-1 border-2 border-red-500 hover:bg-red-500/10 transition-all duration-200 focus:outline-none"
+          >
+            <span
+              className={`block w-6 h-0.5 bg-red-500 transition-transform duration-300 ${
+                menuOpen ? "rotate-45 translate-y-1.5" : ""
+              }`}
+            />
+            <span
+              className={`block w-6 h-0.5 bg-red-500 transition-opacity duration-300 ${
+                menuOpen ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <span
+              className={`block w-6 h-0.5 bg-red-500 transition-transform duration-300 ${
+                menuOpen ? "-rotate-45 -translate-y-1.5" : ""
+              }`}
+            />
+          </button>
         </div>
 
-        <div className="hidden md:flex items-center space-x-8">
-          {!isLoginPage && (
-            <>
-              <Link
-                to="/home"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
-              >
-                Inicio
-              </Link>
-              <Link
-                to="/products"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
-              >
-                Productos
-              </Link>
-              <Link
-                to="/contact"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
-              >
-                Contacto
-              </Link>
-            </>
+        {/* Iconos lado derecho */}
+        <div className="flex items-center gap-6">
+          {username ? (
+            <button
+              onClick={handleLogout}
+              className="text-red-500 hover:text-red-600 transition-colors"
+              title="Cerrar sesión"
+            >
+              <span className="material-symbols-outlined text-2xl">
+                account_circle
+              </span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="text-red-500 hover:text-red-600 transition-colors"
+              title="Ingreso / Registro"
+            >
+              <span className="material-symbols-outlined text-2xl">
+                person
+              </span>
+            </Link>
           )}
-        </div>
 
-        <div className="flex items-center space-x-4">
-          {!isLoginPage && (
-            <>
-              {username ? (
-                <>
-                  <span className="text-gray-700 dark:text-gray-300 font-semibold">
-                    Hola, {username}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    className="text-red-600 dark:text-red-400 hover:underline"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <Link
-                  to="/login"
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
-                >
-                  Ingreso/Registro
-                </Link>
-              )}
-
-              <button className="relative p-2 rounded-full bg-primary/20 dark:bg-primary/30 text-primary hover:bg-primary/30 dark:hover:bg-primary/40 transition-colors duration-300">
-                <span className="material-symbols-outlined">shopping_cart</span>
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red text-xs font-bold text-red">
-                  3
-                </span>
-              </button>
-            </>
-          )}
+          <button
+            className="relative text-red-500 hover:text-red-600 transition-colors"
+            title="Carrito"
+          >
+            <span className="material-symbols-outlined text-2xl">
+              shopping_cart
+            </span>
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+              3
+            </span>
+          </button>
         </div>
       </nav>
+
+      {/* Overlay + Panel lateral */}
+      {menuOpen && !isLoginPage && (
+        <>
+          {/* Fondo clickeable */}
+          <div
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => setMenuOpen(false)}
+          />
+
+          {/* Panel lateral */}
+          <div className="fixed top-0 left-0 h-screen w-2/3 max-w-xs bg-[#1a1a1a]/95 z-50 flex flex-col justify-start px-6 pt-8 pb-4">
+            {/* Botón cerrar */}
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="self-end text-red-500 hover:text-red-600 transition mb-8"
+              title="Cerrar menú"
+            >
+              <span className="material-symbols-outlined text-2xl">close</span>
+            </button>
+
+            {/* Enlaces con rectángulo fijo al hover */}
+            <div className="flex flex-col space-y-3">
+              {[
+                { name: "Inicio", path: "/home" },
+                { name: "Productos", path: "/products" },
+                { name: "Contacto", path: "/contact" },
+              ].map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-white text-lg font-medium px-3 py-2 hover:bg-red-600 transition-colors duration-200"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </header>
   );
 };
