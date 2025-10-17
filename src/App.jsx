@@ -1,25 +1,23 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Landing from "./Landing/Landing";
 import Products from "./Products/Products";
-import Footer from "./components/Footer";
+import Footer from "./Landing/Footer";
 import Login from "./Login/Login";
 import Register from "./Login/Register";
 import Contact from "./components/Contact";
 import Users from "./Login/Users";
-import "./index.css"; // Tailwind
-import { Routes, Route } from "react-router-dom";
+import "./index.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <div className="flex flex-col min-h-screen">
+      {/* ✅ Navbar SIEMPRE visible */}
+      <Navigation />
+
+      {/* Contenido principal */}
       <main className="flex-1">
-        <Navigation />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/#" element={<Landing />} />
@@ -32,6 +30,7 @@ function App() {
         </Routes>
       </main>
 
+      {/* Footer global */}
       <Footer />
     </div>
   );

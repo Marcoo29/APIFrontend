@@ -72,7 +72,7 @@ export default function BrandsSection() {
         <div className="w-24 border-t-2 border-white/70 mt-10 mb-6"></div>
 
         {/* Texto */}
-        <p className="text-sm md:text-base font-medium max-w-2xl leading-relaxed mb-6 tracking-wide">
+        <p className="text-sm md:text-base font-large max-w-2xl leading-relaxed mb-5 tracking-wide">
           UN CATÁLOGO DE{" "}
           <span className="font-bold">75.000 PRODUCTOS</span> Y MÁS DE{" "}
           <span className="font-bold">200 MARCAS</span> LÍDERES EN AUTOPARTES
@@ -81,9 +81,9 @@ export default function BrandsSection() {
         </p>
 
         {/* Botón */}
-        <button className="mt-1 flex items-center gap-2 border-2 border-white px-5 py-2 rounded-md font-bold uppercase text-xs tracking-wide hover:bg-white hover:text-[#E10600] transition-colors duration-300">
+        <button className="mt-1 flex items-center gap-2 border-2 border-white px-8 py-2 squared-md font-bold uppercase text-xs tracking-wide hover:bg-white hover:text-[#E10600] transition-colors duration-300">
           <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          Ver todas las marcas
+          Ver tododos los productos
         </button>
       </div>
 

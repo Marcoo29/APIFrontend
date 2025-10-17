@@ -2,13 +2,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const Navigation = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const username = localStorage.getItem("name");
   const location = useLocation();
   const navigate = useNavigate();
-
-  const isLoginPage =
-    location.pathname === "/login" || location.pathname === "/register";
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("name");
@@ -16,111 +13,136 @@ const Navigation = () => {
     navigate("/home");
   };
 
+  // Detectamos si estamos en login/register
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
+
   return (
-    <header className="fixed top-0 left-0 w-full z-50">
-      <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-        {/* Botón hamburguesa */}
-        <div>
+    <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
+      <nav className="container mx-auto px-6 py-2 flex justify-between items-center">
+        {/* BOTÓN HAMBURGUESA */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-2 border border-red-600 text-red-600 rounded-sm hover:bg-red-600 hover:text-white transition-colors"
+          aria-label="Abrir menú"
+        >
+          <span className="material-symbols-outlined text-2xl">
+            {menuOpen ? "close" : "menu"}
+          </span>
+        </button>
+
+        {/* ICONOS DERECHA */}
+        {!isAuthPage && (
+          <div className="flex items-center gap-4">
+            {username ? (
+              <>
+                <span className="text-gray-800 dark:text-gray-200">
+                  Hola, {username}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="text-red-600 hover:underline"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="text-red-600 hover:text-red-800 transition-colors"
+                title="Ingreso/Registro"
+              >
+                <span className="material-symbols-outlined text-2xl">
+                  person
+                </span>
+              </Link>
+            )}
+
+            <button className="relative text-red-600 hover:text-red-800">
+              <span className="material-symbols-outlined text-2xl">
+                shopping_cart
+              </span>
+              <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+                3
+              </span>
+            </button>
+          </div>
+        )}
+      </nav>
+
+      {/* OVERLAY */}
+      <div
+        onClick={() => setMenuOpen(false)}
+        className={`fixed inset-0 bg-black/40 transition-opacity duration-200 z-[45] ${
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      />
+
+      {/* MENÚ LATERAL */}
+      <aside
+        className={`fixed top-0 left-0 h-full w-72 bg-white dark:bg-[#1f1f1f] border-r border-gray-200 dark:border-gray-700 z-[50] transform transition-transform duration-300 ${
+          menuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+          <span className="font-bold text-gray-900 dark:text-white">
+            Menú
+          </span>
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="flex flex-col justify-center items-center w-10 h-10 space-y-1 border-2 border-red-500 hover:bg-red-500/10 transition-all duration-200 focus:outline-none"
+            onClick={() => setMenuOpen(false)}
+            className="p-1 text-gray-500 hover:text-red-600"
+            aria-label="Cerrar menú"
           >
-            <span
-              className={`block w-6 h-0.5 bg-red-500 transition-transform duration-300 ${
-                menuOpen ? "rotate-45 translate-y-1.5" : ""
-              }`}
-            />
-            <span
-              className={`block w-6 h-0.5 bg-red-500 transition-opacity duration-300 ${
-                menuOpen ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`block w-6 h-0.5 bg-red-500 transition-transform duration-300 ${
-                menuOpen ? "-rotate-45 -translate-y-1.5" : ""
-              }`}
-            />
+            <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
-        {/* Iconos lado derecho */}
-        <div className="flex items-center gap-6">
+        <nav className="p-2">
+          <Link
+            to="/home"
+            onClick={() => setMenuOpen(false)}
+            className="block px-4 py-3 text-gray-800 dark:text-gray-200 hover:bg-red-50 hover:text-red-700"
+          >
+            Inicio
+          </Link>
+          <Link
+            to="/products"
+            onClick={() => setMenuOpen(false)}
+            className="block px-4 py-3 text-gray-800 dark:text-gray-200 hover:bg-red-50 hover:text-red-700"
+          >
+            Productos
+          </Link>
+          <Link
+            to="/contact"
+            onClick={() => setMenuOpen(false)}
+            className="block px-4 py-3 text-gray-800 dark:text-gray-200 hover:bg-red-50 hover:text-red-700"
+          >
+            Contacto
+          </Link>
+
+          <div className="mt-2 border-t border-gray-200 dark:border-gray-700" />
+
           {username ? (
             <button
-              onClick={handleLogout}
-              className="text-red-500 hover:text-red-600 transition-colors"
-              title="Cerrar sesión"
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"
             >
-              <span className="material-symbols-outlined text-2xl">
-                account_circle
-              </span>
+              Cerrar sesión
             </button>
           ) : (
             <Link
               to="/login"
-              className="text-red-500 hover:text-red-600 transition-colors"
-              title="Ingreso / Registro"
+              onClick={() => setMenuOpen(false)}
+              className="block px-4 py-3 text-gray-800 dark:text-gray-200 hover:bg-red-50 hover:text-red-700"
             >
-              <span className="material-symbols-outlined text-2xl">
-                person
-              </span>
+              Ingresar / Registrarse
             </Link>
           )}
-
-          <button
-            className="relative text-red-500 hover:text-red-600 transition-colors"
-            title="Carrito"
-          >
-            <span className="material-symbols-outlined text-2xl">
-              shopping_cart
-            </span>
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
-              3
-            </span>
-          </button>
-        </div>
-      </nav>
-
-      {/* Overlay + Panel lateral */}
-      {menuOpen && !isLoginPage && (
-        <>
-          {/* Fondo clickeable */}
-          <div
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setMenuOpen(false)}
-          />
-
-          {/* Panel lateral */}
-          <div className="fixed top-0 left-0 h-screen w-2/3 max-w-xs bg-[#1a1a1a]/95 z-50 flex flex-col justify-start px-6 pt-8 pb-4">
-            {/* Botón cerrar */}
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="self-end text-red-500 hover:text-red-600 transition mb-8"
-              title="Cerrar menú"
-            >
-              <span className="material-symbols-outlined text-2xl">close</span>
-            </button>
-
-            {/* Enlaces con rectángulo fijo al hover */}
-            <div className="flex flex-col space-y-3">
-              {[
-                { name: "Inicio", path: "/home" },
-                { name: "Productos", path: "/products" },
-                { name: "Contacto", path: "/contact" },
-              ].map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-white text-lg font-medium px-3 py-2 hover:bg-red-600 transition-colors duration-200"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+        </nav>
+      </aside>
     </header>
   );
 };

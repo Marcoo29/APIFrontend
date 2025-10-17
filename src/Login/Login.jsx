@@ -27,24 +27,14 @@ const Login = () => {
       );
 
       if (!response.ok) {
-      // Si el backend responde con un error (403, 401, etc)
-      setError("Correo o contraseña incorrecta"); // <-- tu mensaje personalizado
-      return;
-    }
+        setError("Correo o contraseña incorrecta");
+        return;
+      }
 
       const data = await response.json();
-      console.log("Datos recibidos del backend:", data);
-
-      if (response.ok) {
-        // Guardamos el token y el nombre en localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("name", data.name); // o el campo que venga del backend
-
-        alert("¡Ingreso exitoso!");
-        navigate("/"); // redirige a landing page
-      } else {
-        setError(data.message || "Error al iniciar sesión");
-      }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("name", data.name);
+      navigate("/");
     } catch (err) {
       console.error(err);
       setError("Error en la conexión con el servidor");
@@ -52,79 +42,93 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark border-r border-gray-300  font-display min-h-screen flex items-center justify-center">
-      <div className="flex w-full max-w-6xl mx-auto overflow-hidden bg-white dark:bg-background-dark/80 rounded-lg shadow-2xl">
-        {/* Imagen lateral */}
-        <div className="md:w-1/2 hidden md:block">
-          <div className="w-full h-[500px] overflow-hidden">
-            <img
-              alt="Coche gris en la calle"
-              className="w-full h-full object-cover"
-              src="https://i.imgur.com/njTrnld.jpeg"
-            />
+    <div className="relative z-10 min-h-screen flex items-center justify-center bg-[#2c2c2c] font-display">
+      {/* Caja principal visible sin recortar menú */}
+      <div className="relative z-10 flex w-full max-w-5xl bg-white rounded-2xl overflow-visible shadow-2xl">
+        {/* LADO IZQUIERDO - Imagen con overlay */}
+        <div className="hidden md:flex md:w-1/2 relative">
+          <img
+            src="/img_login.jpg"
+            alt="FleetParts Login"
+            className="object-cover w-full h-full"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#2c2c2c]/90 via-[#2c2c2c]/60 to-transparent flex flex-col justify-end items-start p-10">
+            <h2 className="text-4xl font-bold text-white mb-2">
+              Bienvenido a FleetParts
+            </h2>
+            <p className="text-gray-200">
+              Tu portal exclusivo de repuestos pesados.
+            </p>
           </div>
         </div>
 
-        {/* Formulario */}
-        <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
-          <div className="mb-10 text-left">
-            <h1 className="text-4xl font-bold text-text-light dark:text-text-dark">
-              INICIAR SESIÓN
-            </h1>
-          </div>
+        {/* LADO DERECHO - Formulario */}
+        <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-gray-50">
+          <h1 className="text-3xl font-extrabold text-gray-800 mb-8 border-b-4 border-red-600 w-fit pb-1">
+            Iniciar sesión
+          </h1>
 
-          <form className="w-full" onSubmit={handleSubmit}>
-            <div className="mb-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* EMAIL */}
+            <div>
               <label
                 htmlFor="email"
-                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
-                Correo Electrónico
+                Correo electrónico
               </label>
               <input
                 id="email"
-                type="text"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@hotmail.com"
-                className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                placeholder="usuario@empresa.com"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none bg-white text-gray-800 placeholder-gray-500"
               />
             </div>
 
-            <div className="mb-8">
+            {/* PASSWORD */}
+            <div>
               <label
                 htmlFor="password"
-                className="block text-left text-text-light dark:text-text-dark text-sm font-bold mb-2"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Contraseña
               </label>
               <input
                 id="password"
                 type="password"
-                placeholder="*******"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary border-none placeholder-gray-500 dark:placeholder-gray-400"
+                placeholder="*******"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none bg-white text-gray-800 placeholder-gray-500"
               />
-              {/* Mensaje de error */}
-              {error && (
-                <p className="text-red-600 text-sm mt-4 text-center font-semibold">
-                  {error}
-                </p>
-              )}
             </div>
 
+            {/* ERROR */}
+            {error && (
+              <p className="text-red-600 text-sm font-semibold text-center">
+                {error}
+              </p>
+            )}
+
+            {/* BOTÓN */}
             <button
               type="submit"
-              className="w-full bg-red-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-900 transition-colors duration-300"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md transition duration-200 shadow-md"
             >
-              Iniciar Sesión
+              Iniciar sesión
             </button>
           </form>
 
-          <div className="text-center mt-3">
-            <Link to="/register" className="hover:font-bold">
-              ¿No tenés cuenta? <u>Registrarse</u>
+          {/* REGISTRO */}
+          <div className="text-center mt-6 text-gray-700">
+            ¿No tenés cuenta?{" "}
+            <Link
+              to="/register"
+              className="text-red-600 font-semibold hover:underline"
+            >
+              Registrate
             </Link>
           </div>
         </div>

@@ -1,31 +1,68 @@
+import { useState } from "react";
+
 const Card = ({ id, title, price, image }) => {
+  const [cantidad, setCantidad] = useState(1);
+
+  const aumentar = () => setCantidad((prev) => Math.min(prev + 1, 99));
+  const disminuir = () => setCantidad((prev) => Math.max(prev - 1, 1));
+
   return (
-    <div className="overflow-x-auto">
-      <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-        <a href={`/products/${id}`}>
+    <div className="w-full max-w-sm bg-white border border-gray-300 rounded-none shadow-sm hover:shadow-md hover:border-red-600 transition-all duration-200 font-display">
+      {/* Imagen */}
+      <a href={`/products/${id}`}>
+        <div className="bg-gray-50 flex justify-center items-center h-60 overflow-hidden">
           <img
-            className="p-8 rounded-t-lg"
-            src={image || "https://via.placeholder.com/150"}
+            src={image || "https://via.placeholder.com/300x220?text=Producto"}
             alt={title || "Producto"}
+            className="object-contain h-full p-4"
           />
+        </div>
+      </a>
+
+      {/* Contenido */}
+      <div className="px-5 py-4 flex flex-col items-center">
+        {/* Título */}
+        <a href={`/products/${id}`}>
+          <h5 className="text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600 transition-colors duration-200 text-center mb-2">
+            {title || "Producto de ejemplo"}
+          </h5>
         </a>
-        <div className="px-5 pb-5">
-          <a href={`/products/${id}`}>
-            <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-              {title || "Producto de ejemplo"}
-            </h5>
-          </a>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">
-              ${price ?? "0"}
-            </span>
-            <a
-              href="#"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+
+        {/* Precio */}
+        <span className="text-2xl font-bold text-gray-900 mb-3">
+          ${price ?? "0"}
+        </span>
+
+        {/* Controles */}
+        <div className="flex items-center justify-center gap-3 w-full">
+          {/* Selector de cantidad sutil */}
+          <div className="flex items-center border border-gray-300 rounded-none px-2 py-1 text-sm text-gray-800">
+            <button
+              onClick={disminuir}
+              className="px-1 text-gray-500 hover:text-red-600 transition"
             >
-              Add to cart
-            </a>
+              −
+            </button>
+            <input
+              type="number"
+              value={cantidad}
+              readOnly
+              className="w-6 text-center bg-transparent text-gray-800 focus:outline-none"
+            />
+            <button
+              onClick={aumentar}
+              className="px-1 text-gray-500 hover:text-red-600 transition"
+            >
+              +
+            </button>
           </div>
+
+          {/* Botón agregar */}
+          <button
+            className="flex-1 bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 transition-colors duration-300"
+          >
+            AGREGAR
+          </button>
         </div>
       </div>
     </div>
