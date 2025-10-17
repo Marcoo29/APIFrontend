@@ -1,24 +1,23 @@
-const Card = () => {
+const Card = ({ id, title, price, image }) => {
   return (
     <div className="overflow-x-auto">
       <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-        <a href="#">
+        <a href={`/products/${id}`}>
           <img
             className="p-8 rounded-t-lg"
-            src="/docs/images/products/apple-watch.png"
-            alt="product image"
+            src={image || "https://via.placeholder.com/150"}
+            alt={title || "Producto"}
           />
         </a>
         <div className="px-5 pb-5">
-          <a href="#">
+          <a href={`/products/${id}`}>
             <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-              Filtro de aire
+              {title || "Producto de ejemplo"}
             </h5>
           </a>
-          <div className="flex items-center mt-2.5 mb-5"></div>
-          <div className="flex items-center justify-between">
-            <span className="text-3xl font-bold text-gray-900 dark:text-white">
-              $15.000
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">
+              ${price ?? "0"}
             </span>
             <a
               href="#"
