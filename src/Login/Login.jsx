@@ -7,7 +7,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -16,8 +16,39 @@ const Login = () => {
       return;
     }
 
-    // Si pasa la validación
-    console.log("Iniciando sesión...");
+    try {
+      const response = await fetch(
+        "http://localhost:4002/api/v1/auth/authenticate",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      if (!response.ok) {
+      // Si el backend responde con un error (403, 401, etc)
+      setError("Correo o contraseña incorrecta"); // <-- tu mensaje personalizado
+      return;
+    }
+
+      const data = await response.json();
+      console.log("Datos recibidos del backend:", data);
+
+      if (response.ok) {
+        // Guardamos el token y el nombre en localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("name", data.name); // o el campo que venga del backend
+
+        alert("¡Ingreso exitoso!");
+        navigate("/"); // redirige a landing page
+      } else {
+        setError(data.message || "Error al iniciar sesión");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Error en la conexión con el servidor");
+    }
   };
 
   return (
