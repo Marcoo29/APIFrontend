@@ -1,74 +1,104 @@
-// Footer.jsx
-import React from "react";
-
 const Footer = () => {
   return (
-    <footer className="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-300">
-      <div className="container mx-auto px-6 py-2">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo y descripción */}
-          <div className="col-span-1 md:col-span-1 flex justify-center items-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Autopartes
+    <footer className="bg-[#1a1a1a] text-gray-300 font-display border-t-2 border-red-600">
+      <div className="container mx-auto px-6 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+          {/* Columna 1: Marca */}
+          <div className="flex flex-col items-start">
+            <h2 className="text-3xl font-bold text-white tracking-wide mb-2">
+              FleetParts
             </h2>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+              Especialistas en repuestos pesados. Calidad, confianza y envío inmediato a todo el país.
+            </p>
           </div>
 
-          {/* Navegación */}
-          <div className="col-span-1">
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+          {/* Columna 2: Navegación */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3 border-b border-red-600 pb-1 inline-block">
               Navegación
             </h3>
-            <nav className="mt-4 space-y-2">
+            <nav className="mt-3 flex flex-col space-y-2">
               <a
-                href="#"
-                className="block text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors duration-300"
+                href="/home"
+                className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Inicio
               </a>
               <a
-                href="#"
-                className="block text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors duration-300"
+                href="/products"
+                className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Productos
               </a>
               <a
-                href="#"
-                className="block text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors duration-300"
+                href="/contact"
+                className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Contacto
               </a>
               <a
-                href="#"
-                className="block text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors duration-300"
+                href="/about"
+                className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Acerca de nosotros
               </a>
             </nav>
           </div>
 
-          {/* Legal */}
-          <div className="col-span-2">
-            <nav className="mt-4 space-y-2">
-              <span
-                href="#"
-                className="block text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors duration-300"
+          {/* Columna 3: Información legal */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3 border-b border-red-600 pb-1 inline-block">
+              Legal
+            </h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Defensa al consumidor. Para más información{" "}
+              <a
+                href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-red-500 hover:text-red-400 underline"
               >
-                Defensa de las y los consumidores. Para reclamos <a class="btn-link font-small" href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" data-component="consumer-defense"><u>ingresá acá.</u></a>
-              </span>
-              
-            </nav>
+                click aquí.
+              </a>
+              .
+            </p>
           </div>
-
         </div>
 
-        <div className="mt-10 border-t border-gray-200 dark:border-gray-800 pt-8">
-          <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
-            © 2025. All rights reserved.
+        {/* Línea inferior */}
+        <div className="mt-10 border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-gray-500">
+            © 2025 FleetParts. Todos los derechos reservados.
           </p>
+          <div className="flex space-x-4 mt-4 md:mt-0">
+            <a
+              href="#"
+              className="text-gray-400 hover:text-red-500 transition-colors"
+              title="Instagram"
+            >
+              <span className="material-symbols-outlined">camera_alt</span>
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-red-500 transition-colors"
+              title="Facebook"
+            >
+              <span className="material-symbols-outlined">public</span>
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-red-500 transition-colors"
+              title="WhatsApp"
+            >
+              <span className="material-symbols-outlined">chat</span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
   );
 };
 
-export default Footer;
+export default Footer;
