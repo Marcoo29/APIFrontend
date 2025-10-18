@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Landing from "./Landing/Landing";
 import Products from "./Products/Products";
+import ProductDetail from "./Products/ProductDetail";
 import Footer from "./Landing/Footer";
 import Login from "./Login/Login";
 import Register from "./Login/Register";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/#" element={<Landing />} />
           <Route path="/home" element={<Landing />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/users" element={<Users />} />

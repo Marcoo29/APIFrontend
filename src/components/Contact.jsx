@@ -5,7 +5,7 @@ const Contact = () => {
         <div className="w-full max-w-5xl bg-white dark:bg-[#222] border border-gray-200 dark:border-red-900/30 shadow-xl rounded-none p-10">
           {/* Título */}
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center tracking-wide border-b-2 border-red-600 pb-2">
-            Contáctanos
+            Contactanos
           </h1>
 
           {/* Texto descriptivo */}

@@ -36,7 +36,7 @@ const Navigation = () => {
           <div className="flex items-center gap-4">
             {username ? (
               <>
-                <span className="text-gray-800 dark:text-gray-200">
+                <span className="text-white dark:text-gray-200">
                   Hola, {username}
                 </span>
                 <button

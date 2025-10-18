@@ -4,6 +4,8 @@ import Categories from "./Categories";
 import Pagination from "./Pagination";
 
 const Products = () => {
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(12);
@@ -11,20 +13,19 @@ const Products = () => {
   const [layoutView, setLayoutView] = useState("grid");
   const [searchTerm, setSearchTerm] = useState(""); // 🔍 Nuevo estado para el buscador
 
+  
+
   useEffect(() => {
-    fetch("http://localhost:4002/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch(() => {
-        const placeholderProducts = Array.from({ length: 12 }, (_, i) => ({
-          id: i + 1,
-          name: `Producto de ejemplo ${i + 1}`,
-          price: 1000 + i * 10,
-          images: [{ url: "https://via.placeholder.com/150" }],
-        }));
-        setProducts(placeholderProducts);
-      });
-  }, []);
+  fetch(`http://localhost:4002/products?page=${page}&size=${itemsPerPage}`)
+    .then(res => res.json())
+    .then((data) => {
+      console.log("📦 Backend devolvió:", data);
+      setProducts(data.content || []);
+      setTotalItems(data.totalElements || 0); // 🔹 total de productos
+      setTotalPages(data.totalPages || 1);   // 🔹 total de páginas
+    })
+    .catch(err => console.error("Error cargando productos:", err));
+}, [page, itemsPerPage]);
 
   // 🔁 Ordenamiento
   const sortedProducts = [...products].sort((a, b) => {
@@ -42,20 +43,9 @@ const Products = () => {
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // 📊 Paginación
-  const totalItems = filteredProducts.length || 0;
-  const totalPages =
-    itemsPerPage === "all" ? 1 : Math.ceil(totalItems / itemsPerPage);
-  const startIndex = itemsPerPage === "all" ? 0 : page * itemsPerPage;
-  const endIndex =
-    itemsPerPage === "all"
-      ? totalItems
-      : Math.min(startIndex + itemsPerPage, totalItems);
 
-  const paginatedProducts =
-    itemsPerPage === "all"
-      ? filteredProducts
-      : filteredProducts.slice(startIndex, endIndex);
+
+  const paginatedProducts = products;
 
   return (
     <section
@@ -63,7 +53,6 @@ const Products = () => {
       id="home"
     >
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8 mt-16">
-
         {/* 🔍 Buscador visualmente alineado al header */}
         <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
           <div className="relative">
@@ -90,7 +79,6 @@ const Products = () => {
             </svg>
           </div>
         </div>
-
 
         {/* 🧱 Grilla principal */}
         <div className="grid grid-cols-[1fr_3fr] gap-8">

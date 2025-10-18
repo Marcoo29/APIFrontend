@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 const brandRows = [
   [
@@ -73,18 +73,19 @@ export default function BrandsSection() {
 
         {/* Texto */}
         <p className="text-sm md:text-base font-large max-w-2xl leading-relaxed mb-5 tracking-wide">
-          UN CATÁLOGO DE{" "}
-          <span className="font-bold">75.000 PRODUCTOS</span> Y MÁS DE{" "}
-          <span className="font-bold">200 MARCAS</span> LÍDERES EN AUTOPARTES
-          HACEN POSIBLE QUE NUESTROS CLIENTES ENCUENTREN LA SOLUCIÓN INTEGRAL A
-          SUS NECESIDADES.
+          UN CATÁLOGO DE <span className="font-bold">75.000 PRODUCTOS</span> Y
+          MÁS DE <span className="font-bold">200 MARCAS</span> LÍDERES EN
+          AUTOPARTES HACEN POSIBLE QUE NUESTROS CLIENTES ENCUENTREN LA SOLUCIÓN
+          INTEGRAL A SUS NECESIDADES.
         </p>
 
         {/* Botón */}
-        <button className="mt-1 flex items-center gap-2 border-2 border-white px-8 py-2 squared-md font-bold uppercase text-xs tracking-wide hover:bg-white hover:text-[#E10600] transition-colors duration-300">
-          <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          Ver tododos los productos
-        </button>
+        <Link
+          to="/products"
+          className="mt-1 flex items-center gap-2 border-2 border-white px-8 py-2 squared-md font-bold uppercase text-xs tracking-wide hover:bg-white hover:text-[#E10600] transition-colors duration-300"
+        >
+          VER TODOS LOS PRODUCTOS
+        </Link>
       </div>
 
       {/* Animaciones */}
