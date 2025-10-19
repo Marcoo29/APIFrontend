@@ -10,6 +10,7 @@ import Register from "./Login/Register";
 import Contact from "./components/Contact";
 import Users from "./Login/Users";
 import "./index.css";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
 
       {/* Contenido principal */}
       <main className="flex-1">
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/#" element={<Landing />} />
