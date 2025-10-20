@@ -15,10 +15,8 @@ import ScrollToTop from "./components/ScrollToTop";
 function App() {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* ✅ Navbar SIEMPRE visible */}
       <Navigation />
 
-      {/* Contenido principal */}
       <main className="flex-1">
         <ScrollToTop />
         <Routes>
@@ -34,7 +32,6 @@ function App() {
         </Routes>
       </main>
 
-      {/* Footer global */}
       <Footer />
     </div>
   );

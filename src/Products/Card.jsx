@@ -23,7 +23,7 @@ const Card = ({ id, title, price, image }) => {
       <div className="px-5 py-4 flex flex-col items-center">
         {/* Título */}
         <a href={`/products/${id}`}>
-          <h5 className="text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600 transition-colors duration-200 text-center mb-2">
+          <h5 className="text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600 transition-colors duration-200 text-center mb-2 line-clamp-2">
             {title || "Producto de ejemplo"}
           </h5>
         </a>

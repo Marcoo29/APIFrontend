@@ -3,12 +3,10 @@ const Contact = () => {
     <div className="min-h-screen bg-[#f1f1f1] dark:bg-[#1b1b1b] font-display flex flex-col text-gray-800 dark:text-gray-200">
       <main className="flex-grow flex items-center justify-center px-6 py-16">
         <div className="w-full max-w-5xl bg-white dark:bg-[#222] border border-gray-200 dark:border-red-900/30 shadow-xl rounded-none p-10">
-          {/* Título */}
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center tracking-wide border-b-2 border-red-600 pb-2">
             Contactanos
           </h1>
 
-          {/* Texto descriptivo */}
           <p className="text-center text-gray-600 dark:text-gray-400 mb-10 max-w-5xl mx-auto leading-relaxed">
             Contamos con más de 20 años de experiencia en el rubro de repuestos
             para vehículos pesados. Nuestro equipo está para asesorarte en cada
@@ -16,7 +14,6 @@ const Contact = () => {
             necesidades.
           </p>
 
-          {/* Información de contacto */}
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 justify-items-center mb-12">
             {[
               {
@@ -72,7 +69,6 @@ const Contact = () => {
             ))}
           </div>
 
-          {/* Formulario */}
           <form
             className="mt-8 grid gap-6 sm:grid-cols-2"
             action="https://formspree.io/f/xvgwlkjj"

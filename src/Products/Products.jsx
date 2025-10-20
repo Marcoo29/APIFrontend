@@ -11,23 +11,43 @@ const Products = () => {
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [sortOption, setSortOption] = useState("name-asc");
   const [layoutView, setLayoutView] = useState("grid");
-  const [searchTerm, setSearchTerm] = useState(""); // 🔍 Nuevo estado para el buscador
-
-  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
-  fetch(`http://localhost:4002/products?page=${page}&size=${itemsPerPage}`)
-    .then(res => res.json())
-    .then((data) => {
-      console.log("📦 Backend devolvió:", data);
-      setProducts(data.content || []);
-      setTotalItems(data.totalElements || 0); // 🔹 total de productos
-      setTotalPages(data.totalPages || 1);   // 🔹 total de páginas
-    })
-    .catch(err => console.error("Error cargando productos:", err));
-}, [page, itemsPerPage]);
+    const fetchProducts = async () => {
+      try {
+        // 🔹 Si es "all", pedimos todos los productos
+        const sizeParam = itemsPerPage === "all" ? 100000 : itemsPerPage;
+        const pageParam = itemsPerPage === "all" ? 0 : page;
 
-  // 🔁 Ordenamiento
+        const res = await fetch(
+          `http://localhost:4002/products?page=${page}&size=${itemsPerPage}&sort=${sortOption}`
+        );
+        const data = await res.json();
+
+        // Filtramos solo los disponibles
+        const availableOnly = (data.content || []).filter(
+          (p) => p.productStatus === "AVAILABLE"
+        );
+
+        setProducts(availableOnly);
+        setTotalItems(availableOnly.length);
+
+        // Calculamos totalPages solo si no es "all"
+        setTotalPages(itemsPerPage === "all" ? 1 : data.totalPages || 1);
+
+        // Resetear página si es "all"
+        if (itemsPerPage === "all") setPage(0);
+      } catch (err) {
+        console.error("Error cargando productos:", err);
+      }
+    };
+
+    fetchProducts();
+  }, [page, itemsPerPage]);
+
+  // 🔁 Ordenamiento global
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOption === "name-asc")
       return a.name.localeCompare(b.name, "es", { sensitivity: "base" });
@@ -38,22 +58,21 @@ const Products = () => {
     return 0;
   });
 
-  // 🔍 Filtrado en tiempo real
-  const filteredProducts = sortedProducts.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-
-
-  const paginatedProducts = products;
+  // 🔍 Filtrado por búsqueda y categoría
+  const filteredProducts = sortedProducts.filter((p) => {
+    const matchesSearch = p.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory
+      ? p.category?.name === selectedCategory || p.categoryName === selectedCategory
+      : true;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
-    <section
-      className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark"
-      id="home"
-    >
+    <section className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8 mt-16">
-        {/* 🔍 Buscador visualmente alineado al header */}
+        {/* 🔍 Buscador */}
         <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
           <div className="relative">
             <input
@@ -80,14 +99,11 @@ const Products = () => {
           </div>
         </div>
 
-        {/* 🧱 Grilla principal */}
         <div className="grid grid-cols-[1fr_3fr] gap-8">
-          {/* 📂 Categorías a la izquierda */}
-          <Categories
-            onCategorySelect={(cat) => console.log("Seleccionaste:", cat)}
-          />
+          {/* Categorías */}
+          <Categories onCategorySelect={setSelectedCategory} />
 
-          {/* 🧱 Contenido principal */}
+          {/* Productos */}
           <div className="flex flex-col">
             <Pagination
               type="top"
@@ -103,7 +119,7 @@ const Products = () => {
             />
 
             <div className="mt-6">
-              <CardList products={paginatedProducts} layoutView={layoutView} />
+              <CardList products={filteredProducts} layoutView={layoutView} />
             </div>
 
             <Pagination

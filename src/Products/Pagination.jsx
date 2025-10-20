@@ -6,15 +6,18 @@ const Pagination = ({
   itemsPerPage,
   layoutView,
   onLayoutChange,
-  onPageChange,
   onSortChange,
   onItemsPerPageChange,
+  onPageChange,
 }) => {
   const prevPage = () => page > 0 && onPageChange(page - 1);
   const nextPage = () => page < totalPages - 1 && onPageChange(page + 1);
 
   const handleSortChange = (e) => onSortChange?.(e.target.value);
-  const handleItemsPerPageChange = (e) => onItemsPerPageChange?.(e.target.value);
+  const handleItemsPerPageChange = (e) => {
+    const value = e.target.value === "all" ? "all" : Number(e.target.value);
+    onItemsPerPageChange?.(value);
+  };
 
   const startItem =
     totalItems === 0 || itemsPerPage === "all" ? 0 : page * itemsPerPage + 1;
@@ -32,7 +35,7 @@ const Pagination = ({
       {/* --- FILA SUPERIOR --- */}
       {type === "top" && (
         <div className="flex flex-wrap justify-between items-center border border-gray-200 rounded-sm bg-gray-50 px-4 py-3 text-sm shadow-sm">
-          {/* 🔘 Botones de vista */}
+          {/* Botones de layout */}
           <div className="flex items-center gap-2 text-gray-500">
             <button
               onClick={() => onLayoutChange?.("grid")}
@@ -98,17 +101,19 @@ const Pagination = ({
         <div className="flex justify-center items-center mt-4 space-x-4">
           <button
             onClick={prevPage}
-            disabled={page === 0}
+            disabled={page === 0 || itemsPerPage === "all"}
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded disabled:opacity-50 transition"
           >
             Anterior
           </button>
+
           <span className="text-gray-700 text-sm">
             Página {page + 1} de {totalPages}
           </span>
+
           <button
             onClick={nextPage}
-            disabled={page === totalPages - 1}
+            disabled={page === totalPages - 1 || itemsPerPage === "all"}
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded disabled:opacity-50 transition"
           >
             Siguiente
