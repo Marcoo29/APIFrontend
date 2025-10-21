@@ -6,8 +6,14 @@ const Card = ({ id, title, price, image }) => {
   const aumentar = () => setCantidad((prev) => Math.min(prev + 1, 99));
   const disminuir = () => setCantidad((prev) => Math.max(prev - 1, 1));
 
+  // 🔹 Formatear precio con separadores de miles (formato argentino)
+  const formattedPrice =
+    typeof price === "number"
+      ? price.toLocaleString("es-AR")
+      : price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
   return (
-    <div className="w-full max-w-sm bg-white border border-gray-300 rounded-none shadow-sm hover:shadow-md hover:border-red-600 transition-all duration-200 font-display">
+    <div className="w-full max-w-sm bg-white border border-gray-300 rounded-none shadow-sm hover:shadow-md hover:border-red-600 hover:shadow-red-200 transition-all duration-200 font-display">
       {/* Imagen */}
       <a href={`/products/${id}`}>
         <div className="bg-gray-50 flex justify-center items-center h-60 overflow-hidden">
@@ -30,12 +36,12 @@ const Card = ({ id, title, price, image }) => {
 
         {/* Precio */}
         <span className="text-2xl font-bold text-gray-900 mb-3">
-          ${price ?? "0"}
+          ${formattedPrice ?? "0"}
         </span>
 
         {/* Controles */}
         <div className="flex items-center justify-center gap-3 w-full">
-          {/* Selector de cantidad sutil */}
+          {/* Selector de cantidad */}
           <div className="flex items-center border border-gray-300 rounded-none px-2 py-1 text-sm text-gray-800">
             <button
               onClick={disminuir}
@@ -57,11 +63,14 @@ const Card = ({ id, title, price, image }) => {
             </button>
           </div>
 
-          {/* Botón agregar */}
+          {/* Botón agregar con ícono de carrito */}
           <button
-            className="flex-1 bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 transition-colors duration-300"
+            className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 transition-colors duration-300"
           >
-            AGREGAR
+            Agregar
+            <span className="material-symbols-outlined text-sm">
+              add_shopping_cart
+            </span>
           </button>
         </div>
       </div>

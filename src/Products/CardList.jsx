@@ -18,35 +18,43 @@ export default function CardList({ products = [], layoutView = "grid" }) {
           : "flex flex-col gap-4"
       }
     >
-      {products.map((product) => (
-        <div
-          key={product.id}
-          className={
-            layoutView === "list"
-              ? "flex items-center border border-gray-200 p-4 rounded-sm bg-white hover:shadow-sm transition"
-              : ""
-          }
-        >
-          {/* Si está en vista lista, mostramos imagen al costado */}
-          {layoutView === "list" && (
-            <img
-              src={product.images?.[0]?.url || "https://via.placeholder.com/150"}
-              alt={product.name}
-              className="w-24 h-24 object-contain mr-6"
-            />
-          )}
+      {products.map((product) => {
+        // 🔹 Formatear el precio con separador de miles (ej: 105.000)
+        const formattedPrice =
+          typeof product.price === "number"
+            ? product.price.toLocaleString("es-AR")
+            : product.price;
 
-          {/* Card reutilizada */}
-          <div className={layoutView === "list" ? "flex-1" : ""}>
-            <Card
-              id={product.id}
-              title={product.name}
-              price={product.price}
-              image={product.images?.[0]?.url}
-            />
+        return (
+          <div
+            key={product.id}
+            className={
+              layoutView === "list"
+                ? "flex items-center border border-gray-200 p-4 rounded-sm bg-white hover:shadow-sm transition"
+                : ""
+            }
+          >
+            {/* Si está en vista lista, mostramos imagen al costado */}
+            {layoutView === "list" && (
+              <img
+                src={product.images?.[0]?.url || "https://via.placeholder.com/150"}
+                alt={product.name}
+                className="w-24 h-24 object-contain mr-6"
+              />
+            )}
+
+            {/* Card reutilizada */}
+            <div className={layoutView === "list" ? "flex-1" : ""}>
+              <Card
+                id={product.id}
+                title={product.name}
+                price={formattedPrice}
+                image={product.images?.[0]?.url}
+              />
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

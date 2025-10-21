@@ -1,9 +1,23 @@
 import BrandSection from "./BrandSection";
 import ProductGrid from "./ProductGrid";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+
+  const handleSearch = () => {
+    if (query.trim() !== "") {
+      navigate(`/products?search=${encodeURIComponent(query.trim())}`);
+    } else {
+      navigate("/products");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
+  };
 
   return (
     <div className="relative flex flex-col font-display text-white overflow-hidden bg-[#3b3b3b]">
@@ -28,7 +42,9 @@ export default function Landing() {
         {Array.from({ length: 7 }).map((_, i) => (
           <div
             key={i}
-            className={`border-l border-white/10 ${i === 0 ? "border-l-[#B91C1C]/70" : ""}`}
+            className={`border-l border-white/10 ${
+              i === 0 ? "border-l-[#B91C1C]/70" : ""
+            }`}
           />
         ))}
       </div>
@@ -94,15 +110,15 @@ export default function Landing() {
 
               {/* Texto institucional */}
               <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed text-justify text-left mb-10">
-                <span className="font-semibold text-white">FleetParts</span> es una empresa
-                argentina con más de dos décadas de trayectoria en la importación,
-                distribución y comercialización de repuestos para vehículos pesados.
-                Nacida del espíritu emprendedor y la pasión por el transporte, hoy somos
-                referentes en soluciones para flotas, ofreciendo calidad, disponibilidad y
-                respaldo técnico en cada entrega.
+                <span className="font-semibold text-white">FleetParts</span> es una
+                empresa argentina con más de dos décadas de trayectoria en la
+                importación, distribución y comercialización de repuestos para
+                vehículos pesados. Nacida del espíritu emprendedor y la pasión por
+                el transporte, hoy somos referentes en soluciones para flotas,
+                ofreciendo calidad, disponibilidad y respaldo técnico en cada entrega.
               </p>
 
-              {/* Métricas alineadas con las 4 líneas derechas */}
+              {/* Métricas */}
               <div className="grid grid-cols-4 gap-6 mt-4 mb-10 pr-8 text-white text-left justify-items-start">
                 {[
                   { value: "20+", label: "AÑOS DE EXPERIENCIA" },
@@ -112,28 +128,55 @@ export default function Landing() {
                 ].map((stat, index) => (
                   <div key={index} className="border-l-2 border-[#B91C1C]/80 pl-4">
                     <p className="text-4xl font-bold">{stat.value}</p>
-                    <p className="text-sm tracking-widest text-gray-200">{stat.label}</p>
+                    <p className="text-sm tracking-widest text-gray-200">
+                      {stat.label}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Buscador reubicado (más centrado) */}
+            {/* 🔍 Buscador principal rectangular */}
             <div className="relative w-full max-w-2xl mb-16">
-              <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg overflow-hidden hover:shadow-[#B91C1C]/30 transition-all duration-300">
+              <div
+                className="
+                  flex items-center 
+                  bg-white/10 backdrop-blur-md 
+                  border border-white/20 
+                  w-full shadow-sm overflow-hidden 
+                  transition-all duration-300 
+                  hover:border-[#B91C1C]
+                "
+              >
                 <input
                   type="text"
                   placeholder="Buscar por número de parte, descripción o tipo de vehículo..."
                   className="flex-grow py-4 px-6 bg-transparent text-white placeholder-gray-300 focus:outline-none"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
                 <button
                   className="px-6 py-3 bg-[#B91C1C] hover:bg-[#dc2626] transition-all duration-300"
-                  onClick={() => navigate('/products')}
+                  onClick={handleSearch}
                   aria-label="Buscar"
                 >
                   <span className="material-symbols-outlined text-2xl text-white">
                     search
                   </span>
+                </button>
+              </div>
+
+              {/* Botón "Ver todos los productos" */}
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => navigate("/products")}
+                  className="
+                    text-sm text-gray-200 underline underline-offset-4 
+                    transition-all hover:text-[#B91C1C]
+                  "
+                >
+                  Ver todos los productos
                 </button>
               </div>
             </div>
