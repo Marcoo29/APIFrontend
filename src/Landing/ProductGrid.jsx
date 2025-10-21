@@ -31,8 +31,8 @@ export default function ProductsGrid() {
       <div className="w-full max-w-6xl">
         {/* Título en dos renglones */}
         <h2 className="text-4xl md:text-5xl font-extrabold mb-10 tracking-tight text-left leading-tight">
-          NUESTROS <br />
-          PRODUCTOS
+          SOMOS <br />
+          ESPECIALISTAS...
         </h2>
 
         {/* Grid de categorías */}
