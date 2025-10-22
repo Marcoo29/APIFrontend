@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // 🧭 agregado
 import Card from "./Card";
 
 export default function CardList({ products = [], layoutView = "grid" }) {
   const [imagesMap, setImagesMap] = useState({});
+  const navigate = useNavigate(); // 🧭 inicialización
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -56,7 +58,8 @@ export default function CardList({ products = [], layoutView = "grid" }) {
           return (
             <div
               key={product.id}
-              className="flex items-center bg-white border border-gray-200 hover:border-red-500 hover:shadow-md transition-all duration-200 overflow-hidden"
+              onClick={() => navigate(`/products/${product.id}`)} // 🧭 click lleva al detalle
+              className="flex items-center bg-white border border-gray-200 hover:border-red-500 hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer"
             >
               {/* 🖼 Imagen */}
               <div className="w-48 h-48 flex-shrink-0 bg-gray-50 flex items-center justify-center border-r border-gray-200 overflow-hidden">
@@ -71,7 +74,7 @@ export default function CardList({ products = [], layoutView = "grid" }) {
               {/* 📋 Info */}
               <div className="flex flex-col justify-between p-5 flex-1">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1 hover:text-red-600 transition-colors cursor-pointer">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1 hover:text-red-600 transition-colors">
                     {product.name}
                   </h3>
                   {product.manufacturer && (
@@ -89,7 +92,9 @@ export default function CardList({ products = [], layoutView = "grid" }) {
                     ${formattedPrice}
                   </span>
 
+                  {/* 🚫 Evita que el botón dispare el navigate */}
                   <button
+                    onClick={(e) => e.stopPropagation()}
                     className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-sm font-semibold text-sm transition-colors"
                   >
                     Agregar
@@ -103,16 +108,21 @@ export default function CardList({ products = [], layoutView = "grid" }) {
           );
         }
 
-        // Vista grilla
+        // ✅ Vista grilla
         return (
-          <Card
+          <div
             key={product.id}
-            id={product.id}
-            title={product.name}
-            price={formattedPrice}
-            image={imageUrl}
-            manufacturer={product.manufacturer}
-          />
+            onClick={() => navigate(`/products/${product.id}`)} // 🧭 click lleva al detalle
+            className="cursor-pointer"
+          >
+            <Card
+              id={product.id}
+              title={product.name}
+              price={formattedPrice}
+              image={imageUrl}
+              manufacturer={product.manufacturer}
+            />
+          </div>
         );
       })}
     </div>
