@@ -1,3 +1,4 @@
+// Categories.jsx
 import { useEffect, useState } from "react";
 
 export default function Categories({
@@ -27,12 +28,12 @@ export default function Categories({
   }, [backendUrl]);
 
   const handleSelect = (category) => {
-    if (activeCategory === category.id) {
+    if (activeCategory === category?.id || category === null) {
       setActiveCategory(null);
-      onCategorySelect?.(null); // deselecciona
+      onCategorySelect?.(null); // muestra todos los productos
     } else {
       setActiveCategory(category.id);
-      onCategorySelect?.(category.id); 
+      onCategorySelect?.(category.id);
     }
   };
 
@@ -42,8 +43,22 @@ export default function Categories({
         Categorías
       </h3>
       <ul className="space-y-2">
+        {/* Botón para ver todas las categorías */}
+        <li>
+          <button
+            onClick={() => handleSelect(null)}
+            className={`w-full text-left px-3 py-2 rounded-sm transition-all duration-150 ${
+              activeCategory === null
+                ? "bg-red-600 text-white font-medium"
+                : "text-gray-700 hover:text-red-600"
+            }`}
+          >
+            Ver todas las categorías
+          </button>
+        </li>
+
         {categories.map((c) => {
-          const isActive = activeCategory === c.name;
+          const isActive = activeCategory === c.id;
           return (
             <li key={c.id}>
               <button

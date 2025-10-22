@@ -1,3 +1,4 @@
+// Products.jsx
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import CardList from "./CardList";
@@ -33,10 +34,10 @@ const Products = () => {
     setSearchTerm(paramSearch);
   }, [location.search]);
 
-  // Resetear página cuando cambian búsqueda, sort o itemsPerPage
+  // Resetear página cuando cambian búsqueda, sort, itemsPerPage o categoría
   useEffect(() => {
     setPage(0);
-  }, [searchTerm, sortOption, itemsPerPage]);
+  }, [searchTerm, sortOption, itemsPerPage, selectedCategory]);
 
   // Fetch de productos
   useEffect(() => {
@@ -45,7 +46,6 @@ const Products = () => {
     if (selectedCategory) {
       url = `http://localhost:4002/products/by-category/${selectedCategory}?page=${page}&size=${sizeParam}&sort=${sortOption}`;
     } else {
-      // 🔹 Llamar al endpoint de todos los productos con paginación, búsqueda y sort
       url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
         searchTerm || ""
       )}`;
@@ -54,11 +54,25 @@ const Products = () => {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        // 🔹 /by-category devuelve array, /products devuelve data.content
-        const fetchedProducts = Array.isArray(data) ? data : data.content || [];
+        let fetchedProducts = [];
+        let total = 0;
+        let pages = 1;
+
+        if (Array.isArray(data)) {
+          // endpoint /by-category que devuelve solo array
+          fetchedProducts = data;
+          total = data.length;
+          pages = 1;
+        } else {
+          // endpoint paginado /products
+          fetchedProducts = data.content || [];
+          total = data.totalItems || fetchedProducts.length;
+          pages = data.totalPages || 1;
+        }
+
         setProducts(fetchedProducts);
-        setTotalItems(fetchedProducts.length);
-        setTotalPages(selectedCategory ? 1 : data.totalPages || 1);
+        setTotalItems(total);
+        setTotalPages(pages);
       })
       .catch((err) => console.error("Error cargando productos:", err));
   }, [selectedCategory, page, sizeParam, sortOption, searchTerm]);
