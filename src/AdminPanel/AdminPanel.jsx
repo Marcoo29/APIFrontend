@@ -6,7 +6,6 @@ const AdminPanel = () => {
   const [categories, setCategories] = useState([]);
   const [user, setUser] = useState(null);
 
-  // Leer usuario del localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
@@ -14,7 +13,7 @@ const AdminPanel = () => {
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-[#F5F5F5]">
         <p className="text-gray-700 text-lg">Cargando usuario...</p>
       </div>
     );
@@ -22,8 +21,8 @@ const AdminPanel = () => {
 
   if (user.role !== "ADMIN") {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-red-500 text-lg font-semibold">
+      <div className="flex justify-center items-center h-screen bg-[#F5F5F5]">
+        <p className="text-[#D32F2F] text-lg font-semibold">
           🚫 Acceso denegado. Solo administradores.
         </p>
       </div>
@@ -31,20 +30,23 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-gray-50 rounded-2xl mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        Panel de Administración
-      </h2>
+    <div className="min-h-screen w-full bg-[#F5F5F5] flex flex-col">
+      {/* Contenedor principal centrado */}
+      <div className="w-full max-w-7xl mx-auto px-10 py-5">
+        <h2 className="text-2xl font-bold text-[#333] border-b border-[#ddd] pb-3 mb-6">
+          Panel de Administrador
+        </h2>
 
-      {/* Contenedor de columnas */}
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Columna de Categorías */}
-        <div className="flex-2">
-          <AddCategories categories={categories} setCategories={setCategories} user={user} />
-        </div>
+        {/* 🧱 Contenedor en dos columnas sin gap superior extra */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          {/* Bloque izquierdo */}
+          <AddCategories
+            categories={categories}
+            setCategories={setCategories}
+            user={user}
+          />
 
-        {/* Columna de Productos */}
-        <div className="flex-1">
+          {/* Bloque derecho */}
           <AddProducts categories={categories} user={user} />
         </div>
       </div>

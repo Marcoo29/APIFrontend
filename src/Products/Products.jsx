@@ -44,7 +44,7 @@ const Products = () => {
     let url;
 
     if (selectedCategory) {
-      url = `http://localhost:4002/products/by-category/${selectedCategory}?page=${page}&size=${sizeParam}&sort=${sortOption}`;
+      url = `http://localhost:4002/products/by-category/${parseInt(selectedCategory)}?page=${page}&size=${sizeParam}&sort=${sortOption}`;
     } else {
       url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
         searchTerm || ""
