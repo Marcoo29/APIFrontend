@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -9,27 +10,23 @@ export default function ProductDetail() {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [imageBase64, setImageBase64] = useState(null); // 🖼 Imagen principal
+  const [imageBase64, setImageBase64] = useState(null);
+  const { role } = useAuth(); // ✅ Rol actual
 
   useEffect(() => {
-    // 🔹 Obtener el producto por ID
     fetch(`http://localhost:4002/products/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);
         setLoading(false);
 
-        // 🔹 Cargar la imagen principal
         fetch(`http://localhost:4002/images?id=${id}`)
           .then((res) => res.json())
           .then((data) => {
-            if (data && data.file) {
-              setImageBase64(data.file);
-            }
+            if (data && data.file) setImageBase64(data.file);
           })
           .catch((err) => console.error("Error cargando imagen:", err));
 
-        // 🔹 Productos relacionados con imágenes
         fetch(`http://localhost:4002/products?page=0&size=100`)
           .then((res) => res.json())
           .then(async (all) => {
@@ -40,7 +37,6 @@ export default function ProductDetail() {
                 p.id !== data.id
             );
 
-            // Cargar imagen de cada producto relacionado
             const withImages = await Promise.all(
               filtered.slice(0, 8).map(async (p) => {
                 try {
@@ -49,18 +45,15 @@ export default function ProductDetail() {
                   if (imgData && imgData.file) {
                     return { ...p, imageBase64: imgData.file };
                   }
-                } catch (e) {
-                  console.warn(`Error cargando imagen del producto ${p.id}`, e);
+                } catch {
+                  /* nada */
                 }
                 return p;
               })
             );
 
             setRelatedProducts(withImages);
-          })
-          .catch((err) =>
-            console.error("Error cargando productos relacionados:", err)
-          );
+          });
       })
       .catch((err) => console.error("Error cargando producto:", err));
   }, [id]);
@@ -103,11 +96,8 @@ export default function ProductDetail() {
         {/* 🔙 Botón Volver atrás */}
         <button
           onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate("/products");
-            }
+            if (window.history.length > 1) navigate(-1);
+            else navigate("/products");
           }}
           className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 transition-colors mb-3 mt-4"
         >
@@ -136,7 +126,6 @@ export default function ProductDetail() {
         {/* 📦 Ficha principal */}
         <div className="bg-white shadow-sm border border-gray-200 overflow-hidden mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
-            {/* 🖼 Imagen */}
             <div className="flex items-center justify-center bg-gray-100 border-r border-gray-200 aspect-square">
               {imageBase64 ? (
                 <img
@@ -152,7 +141,6 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {/* 📋 Info */}
             <div className="flex flex-col p-8 justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase text-red-600">
@@ -179,13 +167,23 @@ export default function ProductDetail() {
                 </p>
               </div>
 
+              {/* 🛒 Botón según el rol */}
               <div className="pt-6 border-t border-gray-200 mt-6">
-                <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-md transition-colors duration-200">
-                  Agregar al carrito
-                  <span className="material-symbols-outlined text-sm">
-                    add_shopping_cart
-                  </span>
-                </button>
+                {role === "USER" ? (
+                  <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-md transition-colors duration-200">
+                    Agregar al carrito
+                    <span className="material-symbols-outlined text-sm">
+                      add_shopping_cart
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full flex items-center justify-center gap-2 bg-gray-300 text-gray-500 font-semibold py-3 rounded-md cursor-not-allowed"
+                  >
+                    Solo usuarios finales
+                  </button>
+                )}
               </div>
             </div>
           </div>

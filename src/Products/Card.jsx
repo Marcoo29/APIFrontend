@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../Context/AuthContext"; // ✅ Import del contexto
 
 const Card = ({ id, title, price, image, manufacturer }) => {
   const [cantidad, setCantidad] = useState(1);
-  const [imageBase64, setImageBase64] = useState(null); // 🖼 Imagen desde el backend
+  const [imageBase64, setImageBase64] = useState(null);
+  const { role } = useAuth(); // ✅ obtenemos el rol logueado
 
-  // 🔹 Cargar imagen asociada al producto
   useEffect(() => {
     fetch(`http://localhost:4002/images?id=${id}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.file) {
-          setImageBase64(data.file);
-        }
+        if (data && data.file) setImageBase64(data.file);
       })
       .catch((err) => console.error("Error cargando imagen:", err));
   }, [id]);
@@ -47,24 +46,21 @@ const Card = ({ id, title, price, image, manufacturer }) => {
         </div>
       </a>
 
-    {/* Contenido */}
-    <div className="px-5 py-4 flex flex-col items-center">
-      {/* Título */}
-      <a href={`/products/${id}`}>
-        <h5 className="text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600 transition-colors duration-200 text-center mb-1 line-clamp-2">
-          {title || "Producto de ejemplo"}
-        </h5>
-      </a>
+      {/* Contenido */}
+      <div className="px-5 py-4 flex flex-col items-center">
+        <a href={`/products/${id}`}>
+          <h5 className="text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600 transition-colors duration-200 text-center mb-1 line-clamp-2">
+            {title || "Producto de ejemplo"}
+          </h5>
+        </a>
 
-      {/* Fabricante */}
-      <p className="text-xs uppercase text-red-600 font-semibold tracking-wide mb-2 text-center">
-        {manufacturer || "Sin fabricante"}
-      </p>
+        <p className="text-xs uppercase text-red-600 font-semibold tracking-wide mb-2 text-center">
+          {manufacturer || "Sin fabricante"}
+        </p>
 
-      {/* Precio */}
-      <span className="text-2xl font-bold text-gray-900 mb-3">
-        ${formattedPrice ?? "0"}
-      </span>
+        <span className="text-2xl font-bold text-gray-900 mb-3">
+          ${formattedPrice ?? "0"}
+        </span>
 
         <div className="flex items-center justify-center gap-3 w-full">
           <div className="flex items-center border border-gray-300 rounded-none px-2 py-1 text-sm text-gray-800">
@@ -72,7 +68,7 @@ const Card = ({ id, title, price, image, manufacturer }) => {
               onClick={disminuir}
               className="px-1 text-gray-500 hover:text-red-600 transition"
             >
-              
+              -
             </button>
             <input
               type="number"
@@ -88,12 +84,22 @@ const Card = ({ id, title, price, image, manufacturer }) => {
             </button>
           </div>
 
-          <button className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 transition-colors duration-300">
-            Agregar
-            <span className="material-symbols-outlined text-sm">
-              add_shopping_cart
-            </span>
-          </button>
+          {/* 🔒 Botón condicional según el rol */}
+          {role === "USER" ? (
+            <button className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 transition-colors duration-300">
+              Agregar
+              <span className="material-symbols-outlined text-sm">
+                add_shopping_cart
+              </span>
+            </button>
+          ) : (
+            <button
+              disabled
+              className="flex-1 flex items-center justify-center gap-2 bg-gray-300 text-gray-600 py-2 text-sm font-semibold cursor-not-allowed"
+            >
+              Solo usuarios
+            </button>
+          )}
         </div>
       </div>
     </div>

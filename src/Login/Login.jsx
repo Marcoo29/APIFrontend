@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext"; // ✅ importamos el contexto
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth(); // ✅ función que actualiza el contexto
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,8 +34,21 @@ const Login = () => {
       }
 
       const data = await response.json();
+
+      // ✅ Guardamos en localStorage (como ya hacías)
       localStorage.setItem("token", data.token);
       localStorage.setItem("name", data.name);
+      localStorage.setItem("role", data.role);
+
+      // ✅ Actualizamos el contexto global
+      login({
+        name: data.name,
+        email,
+        role: data.role,
+        token: data.token,
+      });
+
+      // ✅ Redirigimos al inicio
       navigate("/");
     } catch (err) {
       console.error(err);
@@ -43,9 +58,8 @@ const Login = () => {
 
   return (
     <div className="relative z-10 min-h-screen flex items-center justify-center bg-[#2c2c2c] font-display">
-      {/* Caja principal visible sin recortar menú */}
       <div className="relative z-10 flex w-full max-w-5xl bg-white rounded-2xl overflow-visible shadow-2xl">
-        {/* LADO IZQUIERDO - Imagen con overlay */}
+        {/* LADO IZQUIERDO - Imagen */}
         <div className="hidden md:flex md:w-1/2 relative">
           <img
             src="/img_login.jpg"
@@ -69,7 +83,6 @@ const Login = () => {
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* EMAIL */}
             <div>
               <label
                 htmlFor="email"
@@ -87,7 +100,6 @@ const Login = () => {
               />
             </div>
 
-            {/* PASSWORD */}
             <div>
               <label
                 htmlFor="password"
@@ -105,14 +117,12 @@ const Login = () => {
               />
             </div>
 
-            {/* ERROR */}
             {error && (
               <p className="text-red-600 text-sm font-semibold text-center">
                 {error}
               </p>
             )}
 
-            {/* BOTÓN */}
             <button
               type="submit"
               className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md transition duration-200 shadow-md"
@@ -121,7 +131,6 @@ const Login = () => {
             </button>
           </form>
 
-          {/* REGISTRO */}
           <div className="text-center mt-6 text-gray-700">
             ¿No tenés cuenta?{" "}
             <Link

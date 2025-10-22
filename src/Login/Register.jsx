@@ -8,6 +8,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("USER");
+  const [adminCode, setAdminCode] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -15,13 +17,26 @@ const Register = () => {
     e.preventDefault();
     setError("");
 
-    if (!name || !lastname || !username || !email || !password || !confirmPassword) {
+    if (
+      !name ||
+      !lastname ||
+      !username ||
+      !email ||
+      !password ||
+      !confirmPassword
+    ) {
       setError("Por favor, completá todos los campos.");
       return;
     }
 
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden.");
+      return;
+    }
+
+    // 🧩 Validar si es admin
+    if (role === "ADMIN" && adminCode !== "ingreso_admin") {
+      setError("Código de administrador incorrecto.");
       return;
     }
 
@@ -35,7 +50,7 @@ const Register = () => {
           username,
           email,
           password,
-          role: "USER",
+          role, // 👈 Envía el rol correcto
         }),
       });
 
@@ -134,6 +149,45 @@ const Register = () => {
               />
             </div>
 
+            {/* 🔹 Selección de Rol */}
+            <div>
+              <label
+                htmlFor="role"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Rol
+              </label>
+              <select
+                id="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none bg-white text-gray-800"
+              >
+                <option value="USER">Usuario final</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+            </div>
+
+            {/* 🔐 Campo para código admin */}
+            {role === "ADMIN" && (
+              <div>
+                <label
+                  htmlFor="adminCode"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Código de administrador
+                </label>
+                <input
+                  id="adminCode"
+                  type="password"
+                  value={adminCode}
+                  onChange={(e) => setAdminCode(e.target.value)}
+                  placeholder="Ingresá el código secreto"
+                  className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none bg-white text-gray-800 placeholder-gray-500"
+                />
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
@@ -198,7 +252,7 @@ const Register = () => {
           </div>
         </div>
 
-        {/* LADO DERECHO - Imagen con overlay */}
+        {/* LADO DERECHO - Imagen */}
         <div className="hidden md:flex md:w-1/2 relative">
           <img
             src="/img_register.jpg"

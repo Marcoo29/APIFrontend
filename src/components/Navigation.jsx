@@ -1,21 +1,44 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const Navigation = () => {
   const username = localStorage.getItem("name");
+  const role = localStorage.getItem("role");
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   const handleLogout = () => {
     localStorage.removeItem("name");
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     navigate("/home");
   };
+
+  // 🔸 Cierra el menú desplegable al hacer click afuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Detectamos si estamos en login/register
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
+
+  // 🔹 Colores del ícono según rol
+  const userColor =
+    role === "ADMIN"
+      ? "text-yellow-400 hover:text-yellow-500"
+      : role === "USER"
+      ? "text-red-600 hover:text-red-700"
+      : "text-red-600 hover:text-red-700";
 
   return (
     <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
@@ -33,19 +56,85 @@ const Navigation = () => {
 
         {/* ICONOS DERECHA */}
         {!isAuthPage && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 relative">
             {username ? (
-              <>
-                <span className="text-white dark:text-gray-200">
-                  Hola, {username}
-                </span>
+              <div className="relative" ref={userMenuRef}>
                 <button
-                  onClick={handleLogout}
-                  className="text-red-600 hover:underline"
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className={`flex items-center justify-center text-3xl transition-colors ${userColor}`}
+                  title="Cuenta de usuario"
                 >
-                  Logout
+                  <span className="material-symbols-outlined text-2xl">
+                    person
+                  </span>
                 </button>
-              </>
+
+                {/* DESPLEGABLE DE USUARIO */}
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 shadow-lg border border-gray-200 rounded-md z-50">
+                    <ul className="flex flex-col text-sm font-medium">
+                      <li className="px-4 py-2 border-b text-gray-600">
+                        Hola, <span className="font-semibold">{username}</span>
+                      </li>
+
+                      <li
+                        onClick={() => {
+                          navigate("/profile");
+                          setUserMenuOpen(false);
+                        }}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        Datos Personales
+                      </li>
+
+                      {role === "USER" ? (
+                        <>
+                          <li
+                            onClick={() => {
+                              navigate("/orders");
+                              setUserMenuOpen(false);
+                            }}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            Ver Pedidos
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li
+                            onClick={() => {
+                              navigate("/orders-general");
+                              setUserMenuOpen(false);
+                            }}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            Ver Pedidos General
+                          </li>
+                          <li
+                            onClick={() => {
+                              navigate("/admin");
+                              setUserMenuOpen(false);
+                            }}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            Panel de Admin.
+                          </li>
+                        </>
+                      )}
+
+                      <li
+                        onClick={() => {
+                          handleLogout();
+                          setUserMenuOpen(false);
+                        }}
+                        className="px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer"
+                      >
+                        Cerrar Sesión
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link
                 to="/login"
@@ -58,6 +147,7 @@ const Navigation = () => {
               </Link>
             )}
 
+            {/* 🛒 Carrito */}
             <button className="relative text-red-600 hover:text-red-800">
               <span className="material-symbols-outlined text-2xl">
                 shopping_cart
@@ -74,7 +164,9 @@ const Navigation = () => {
       <div
         onClick={() => setMenuOpen(false)}
         className={`fixed inset-0 bg-black/40 transition-opacity duration-200 z-[45] ${
-          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          menuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
       />
 
@@ -85,9 +177,7 @@ const Navigation = () => {
         }`}
       >
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-          <span className="font-bold text-gray-900 dark:text-white">
-            Menú
-          </span>
+          <span className="font-bold text-gray-900 dark:text-white">Menú</span>
           <button
             onClick={() => setMenuOpen(false)}
             className="p-1 text-gray-500 hover:text-red-600"
