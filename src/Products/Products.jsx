@@ -8,10 +8,10 @@ const Products = () => {
   const { categoryName } = useParams();
   const location = useLocation();
 
-  // 🔍 Obtener el parámetro ?search de la URL
   const searchParams = new URLSearchParams(location.search);
   const initialSearch = searchParams.get("search") || "";
-
+  const queryCategory = searchParams.get("category") || null;
+  const [selectedCategory, setSelectedCategory] = useState(categoryName || queryCategory || null);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [products, setProducts] = useState([]);
@@ -20,7 +20,6 @@ const Products = () => {
   const [sortOption, setSortOption] = useState("name-asc");
   const [layoutView, setLayoutView] = useState("grid");
   const [searchTerm, setSearchTerm] = useState(initialSearch);
-  const [selectedCategory, setSelectedCategory] = useState(categoryName || null);
 
   // ✅ “Todos” muestra todo
   const sizeParam = itemsPerPage === "all" ? totalItems || 1000 : itemsPerPage;
@@ -48,8 +47,8 @@ const Products = () => {
         let fetchedProducts = data.content || [];
 
         // ✅ Filtrar por categoría (sidebar o URL directa)
-        if (selectedCategory || categoryName) {
-          const filterCat = (selectedCategory || categoryName)?.toLowerCase().trim();
+        if (selectedCategory) {
+          const filterCat = selectedCategory.toLowerCase().trim();
 
           fetchedProducts = fetchedProducts.filter(
             (p) =>

@@ -48,7 +48,6 @@ export default function Categories({
         shadow-sm 
         font-display
         self-start
-        sticky top-[100px]
         max-h-[80vh]
         overflow-y-auto
       "

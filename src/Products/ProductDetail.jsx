@@ -4,28 +4,59 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [imageBase64, setImageBase64] = useState(null); // 🖼 Imagen principal
 
   useEffect(() => {
+    // 🔹 Obtener el producto por ID
     fetch(`http://localhost:4002/products/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);
         setLoading(false);
 
+        // 🔹 Cargar la imagen principal
+        fetch(`http://localhost:4002/images?id=${id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data && data.file) {
+              setImageBase64(data.file);
+            }
+          })
+          .catch((err) => console.error("Error cargando imagen:", err));
+
+        // 🔹 Productos relacionados con imágenes
         fetch(`http://localhost:4002/products?page=0&size=100`)
           .then((res) => res.json())
-          .then((all) => {
+          .then(async (all) => {
             const list = all.content || [];
             const filtered = list.filter(
               (p) =>
                 p.category?.description === data.category?.description &&
                 p.id !== data.id
             );
-            setRelatedProducts(filtered.slice(0, 8));
+
+            // Cargar imagen de cada producto relacionado
+            const withImages = await Promise.all(
+              filtered.slice(0, 8).map(async (p) => {
+                try {
+                  const res = await fetch(`http://localhost:4002/images?id=${p.id}`);
+                  const imgData = await res.json();
+                  if (imgData && imgData.file) {
+                    return { ...p, imageBase64: imgData.file };
+                  }
+                } catch (e) {
+                  console.warn(`Error cargando imagen del producto ${p.id}`, e);
+                }
+                return p;
+              })
+            );
+
+            setRelatedProducts(withImages);
           })
           .catch((err) =>
             console.error("Error cargando productos relacionados:", err)
@@ -71,7 +102,13 @@ export default function ProductDetail() {
 
         {/* 🔙 Botón Volver atrás */}
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate("/products");
+            }
+          }}
           className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 transition-colors mb-3 mt-4"
         >
           <span className="material-symbols-outlined text-base">arrow_back</span>
@@ -97,26 +134,27 @@ export default function ProductDetail() {
         </nav>
 
         {/* 📦 Ficha principal */}
-        <div className="bg-white shadow-sm squared-xl border border-gray-200 overflow-hidden mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+        <div className="bg-white shadow-sm border border-gray-200 overflow-hidden mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
             {/* 🖼 Imagen */}
-            <div className="flex items-center justify-center bg-gray-100 p-8 border-r border-gray-200">
-              {product.image ? (
+            <div className="flex items-center justify-center bg-gray-100 border-r border-gray-200 aspect-square">
+              {imageBase64 ? (
                 <img
-                  src={product.image}
+                  src={`data:image/jpeg;base64,${imageBase64}`}
                   alt={product.name}
-                  className="max-h-[400px] object-contain"
+                  className="w-full h-full object-contain rounded-md"
+                  loading="lazy"
                 />
               ) : (
-                <div className="text-gray-400 italic">
+                <div className="text-gray-400 italic text-center">
                   Sin imagen disponible
                 </div>
               )}
             </div>
 
             {/* 📋 Info */}
-            <div className="flex flex-col p-8">
-              <div className="mb-4">
+            <div className="flex flex-col p-8 justify-between">
+              <div>
                 <p className="text-sm font-semibold uppercase text-red-600">
                   Fabricante: {product.manufacturer}
                 </p>
@@ -129,22 +167,20 @@ export default function ProductDetail() {
                     {product.stock}
                   </span>
                 </p>
-              </div>
 
-              <hr className="border-red-500 w-full my-3" />
+                <hr className="border-red-500 w-full my-4" />
 
-              <div className="my-4">
-                <span className="text-4xl font-bold text-gray-900">
+                <span className="text-4xl font-bold text-gray-900 block mb-4">
                   ${product.price?.toLocaleString("es-AR")}
                 </span>
+
+                <p className="text-base text-gray-700 leading-relaxed">
+                  {product.description || "Sin descripción disponible."}
+                </p>
               </div>
 
-              <p className="text-base text-gray-700 leading-relaxed mb-6">
-                {product.description || "Sin descripción disponible."}
-              </p>
-
-              <div className="mt-auto pt-6 border-t border-gray-200">
-                <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 squared-md transition-colors duration-200">
+              <div className="pt-6 border-t border-gray-200 mt-6">
+                <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-md transition-colors duration-200">
                   Agregar al carrito
                   <span className="material-symbols-outlined text-sm">
                     add_shopping_cart
@@ -159,7 +195,7 @@ export default function ProductDetail() {
         {relatedProducts.length > 0 && (
           <section className="mt-10">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-semibold text-red-600 tracking-wide mb-2">
+              <h2 className="text-2xl font-semibold text-red-500 tracking-wide mb-2">
                 También podría interesarte
               </h2>
               <div className="w-240 h-[2px] bg-gray-200 mx-auto"></div>
@@ -170,19 +206,22 @@ export default function ProductDetail() {
                 <div
                   key={p.id}
                   onClick={() => navigate(`/products/${p.id}`)}
-                  className="min-w-[230px] max-w-[230px] bg-white border border-gray-200 squared-none flex flex-col items-center justify-between shadow-sm hover:shadow-md hover:shadow-red-200 hover:border-red-400 transition-all duration-300 cursor-pointer"
+                  className="min-w-[230px] max-w-[230px] bg-white border border-gray-200 flex flex-col items-center justify-between shadow-sm hover:shadow-md hover:shadow-red-200 hover:border-red-400 transition-all duration-300 cursor-pointer"
                 >
-                  <div className="p-4 h-[200px] flex items-center justify-center bg-gray-50 w-full border-b border-gray-200">
-                    {p.image ? (
+                  <div className="bg-gray-50 w-full border-b border-gray-200 overflow-hidden flex items-center justify-center h-[230px]">
+                    {p.imageBase64 ? (
                       <img
-                        src={p.image}
+                        src={`data:image/jpeg;base64,${p.imageBase64}`}
                         alt={p.name}
-                        className="max-h-[160px] object-contain"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     ) : (
-                      <div className="text-gray-400 text-sm italic">
-                        Sin imagen
-                      </div>
+                      <img
+                        src="https://via.placeholder.com/230x230?text=Producto"
+                        alt="Sin imagen"
+                        className="w-full h-full object-cover opacity-70"
+                      />
                     )}
                   </div>
 
@@ -195,7 +234,7 @@ export default function ProductDetail() {
                         e.stopPropagation();
                         navigate(`/products/${p.id}`);
                       }}
-                      className="w-[120px] text-white bg-red-500 hover:bg-red-600 text-xs font-semibold py-2 px-4 squared-none transition-colors"
+                      className="w-[120px] text-white bg-red-500 hover:bg-red-600 text-xs font-semibold py-2 px-4 transition-colors"
                     >
                       Ver producto
                     </button>
