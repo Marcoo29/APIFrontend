@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API_BASE = "http://localhost:4002";
+
 const AddProducts = ({ categories, user }) => {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
@@ -35,26 +37,58 @@ const AddProducts = ({ categories, user }) => {
     setError("");
 
     try {
-      const formData = new FormData();
-      formData.append("name", productName);
-      formData.append("price", price);
-      formData.append("manufacturer", manufacturer);
-      formData.append("stock", stock);
-      formData.append("description", description);
-      formData.append("fitFor", fitFor);
-      formData.append("status", status);
-      formData.append("categoryId", categoryId);
-      formData.append("image", image);
+      // 1) Crear el producto SIN imagen (JSON)
+      const productPayload = {
+        name: productName.trim(),
+        price: Number(price),
+        manufacturer: manufacturer.trim(),
+        stock: Number(stock),
+        description: description.trim(),
+        fitFor: fitFor.trim(),
+        status,
+        categoryId, // si tu API espera número, usa Number(categoryId)
+      };
 
-      const response = await fetch("http://localhost:4002/products", {
+      const createRes = await fetch(`${API_BASE}/products`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${user.token}` },
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(productPayload),
       });
 
-      if (!response.ok) throw new Error("Error al crear el producto");
+      if (!createRes.ok) {
+        const txt = await createRes.text();
+        throw new Error(txt || "Error al crear el producto");
+      }
 
-      // limpiar campos
+      const created = await createRes.json();
+      const productId = created?.id ?? created?.productId;
+      if (!productId) throw new Error("No se recibió el ID del producto creado.");
+
+      // 2) Subir SOLO la imagen a /products/image con los nombres EXACTOS:
+      //    productId (Long), name (String), file (MultipartFile)
+      const fd = new FormData();
+      fd.append("productId", String(productId));
+      fd.append("name", productName); // opcional; podés enviar null/"" si no querés
+      fd.append("file", image);       // ← nombre EXACTO: "file"
+
+      const uploadRes = await fetch(`${API_BASE}/images`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          // ⚠️ No seteés Content-Type; el navegador pone el boundary correcto
+        },
+        body: fd,
+      });
+
+      if (!uploadRes.ok) {
+        const txt = await uploadRes.text();
+        throw new Error(txt || "El producto se creó, pero falló la subida de la imagen.");
+      }
+
+      // 3) Limpiar formulario
       setProductName("");
       setPrice("");
       setManufacturer("");
