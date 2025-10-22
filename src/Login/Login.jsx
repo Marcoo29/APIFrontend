@@ -32,8 +32,13 @@ const Login = () => {
       }
 
       const data = await response.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("name", data.name);
+
+      // Guardamos un objeto "user" completo para AdminPanel
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ name: data.name, role: data.role, token: data.access_token || data.token })
+      );
+
       navigate("/");
     } catch (err) {
       console.error(err);
@@ -43,9 +48,8 @@ const Login = () => {
 
   return (
     <div className="relative z-10 min-h-screen flex items-center justify-center bg-[#2c2c2c] font-display">
-      {/* Caja principal visible sin recortar menú */}
       <div className="relative z-10 flex w-full max-w-5xl bg-white rounded-2xl overflow-visible shadow-2xl">
-        {/* LADO IZQUIERDO - Imagen con overlay */}
+        {/* LADO IZQUIERDO */}
         <div className="hidden md:flex md:w-1/2 relative">
           <img
             src="/img_login.jpg"
@@ -62,14 +66,13 @@ const Login = () => {
           </div>
         </div>
 
-        {/* LADO DERECHO - Formulario */}
+        {/* LADO DERECHO - FORMULARIO */}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-gray-50">
           <h1 className="text-3xl font-extrabold text-gray-800 mb-8 border-b-4 border-red-600 w-fit pb-1">
             Iniciar sesión
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* EMAIL */}
             <div>
               <label
                 htmlFor="email"
@@ -87,7 +90,6 @@ const Login = () => {
               />
             </div>
 
-            {/* PASSWORD */}
             <div>
               <label
                 htmlFor="password"
@@ -105,14 +107,12 @@ const Login = () => {
               />
             </div>
 
-            {/* ERROR */}
             {error && (
               <p className="text-red-600 text-sm font-semibold text-center">
                 {error}
               </p>
             )}
 
-            {/* BOTÓN */}
             <button
               type="submit"
               className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md transition duration-200 shadow-md"
@@ -121,7 +121,6 @@ const Login = () => {
             </button>
           </form>
 
-          {/* REGISTRO */}
           <div className="text-center mt-6 text-gray-700">
             ¿No tenés cuenta?{" "}
             <Link

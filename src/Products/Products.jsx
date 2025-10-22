@@ -11,7 +11,10 @@ const Products = () => {
   const searchParams = new URLSearchParams(location.search);
   const initialSearch = searchParams.get("search") || "";
   const queryCategory = searchParams.get("category") || null;
-  const [selectedCategory, setSelectedCategory] = useState(categoryName || queryCategory || null);
+
+  const [selectedCategory, setSelectedCategory] = useState(
+    categoryName || queryCategory || null
+  );
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [products, setProducts] = useState([]);
@@ -21,53 +24,49 @@ const Products = () => {
   const [layoutView, setLayoutView] = useState("grid");
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
-  // ✅ “Todos” muestra todo
   const sizeParam = itemsPerPage === "all" ? totalItems || 1000 : itemsPerPage;
 
-  // 🔹 Actualizar búsqueda si cambia el parámetro en la URL
+  // Actualizar búsqueda si cambia el parámetro en la URL
   useEffect(() => {
-    const paramSearch = new URLSearchParams(location.search).get("search") || "";
+    const paramSearch =
+      new URLSearchParams(location.search).get("search") || "";
     setSearchTerm(paramSearch);
   }, [location.search]);
 
-  // 🔹 Resetear página cuando cambian búsqueda, sort o itemsPerPage
+  // Resetear página cuando cambian búsqueda, sort o itemsPerPage
   useEffect(() => {
     setPage(0);
   }, [searchTerm, sortOption, itemsPerPage]);
 
-  // 🔹 Fetch de productos (incluye búsqueda)
+  // Fetch de productos
   useEffect(() => {
-    const url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
-      searchTerm || ""
-    )}`;
+    let url;
+
+    if (selectedCategory) {
+      url = `http://localhost:4002/products/by-category/${selectedCategory}?page=${page}&size=${sizeParam}&sort=${sortOption}`;
+    } else {
+      // 🔹 Llamar al endpoint de todos los productos con paginación, búsqueda y sort
+      url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
+        searchTerm || ""
+      )}`;
+    }
 
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        let fetchedProducts = data.content || [];
-
-        // ✅ Filtrar por categoría (sidebar o URL directa)
-        if (selectedCategory) {
-          const filterCat = selectedCategory.toLowerCase().trim();
-
-          fetchedProducts = fetchedProducts.filter(
-            (p) =>
-              p.category?.description?.toLowerCase().trim() === filterCat ||
-              p.categoryDescription?.toLowerCase().trim() === filterCat
-          );
-        }
-
+        // 🔹 /by-category devuelve array, /products devuelve data.content
+        const fetchedProducts = Array.isArray(data) ? data : data.content || [];
         setProducts(fetchedProducts);
-        setTotalItems(data.totalElements || fetchedProducts.length);
-        setTotalPages(data.totalPages || 1);
+        setTotalItems(fetchedProducts.length);
+        setTotalPages(selectedCategory ? 1 : data.totalPages || 1);
       })
       .catch((err) => console.error("Error cargando productos:", err));
-  }, [page, sizeParam, sortOption, searchTerm, selectedCategory, categoryName]);
+  }, [selectedCategory, page, sizeParam, sortOption, searchTerm]);
 
   return (
     <section className="relative flex min-h-screen w-full flex-col bg-[#f6f6f6]">
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8 mt-16">
-        {/* 🔍 Buscador con ícono de lupa */}
+        {/* Buscador */}
         <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
           <div className="relative">
             <input
@@ -84,10 +83,10 @@ const Products = () => {
         </div>
 
         <div className="grid grid-cols-[1fr_3fr] gap-8">
-          {/* 📂 Categorías */}
+          {/* Categorías */}
           <Categories onCategorySelect={setSelectedCategory} />
 
-          {/* 🧱 Productos */}
+          {/* Productos */}
           <div className="flex flex-col">
             <Pagination
               type="top"

@@ -2,14 +2,17 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const Navigation = () => {
-  const username = localStorage.getItem("name");
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const username = user?.name || null;
+  const userRole = user?.role || null;
+
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("name");
-    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/home");
   };
 
@@ -33,19 +36,20 @@ const Navigation = () => {
 
         {/* ICONOS DERECHA */}
         {!isAuthPage && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 text-lg">
+            {username && (location.pathname === "/home" || location.pathname === "/") && (
+              <span className="text-red-600 text-lg font-semibold">
+                Hola, {username}
+              </span>
+            )}
+
             {username ? (
-              <>
-                <span className="text-white dark:text-gray-200">
-                  Hola, {username}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="text-red-600 hover:underline"
-                >
-                  Logout
-                </button>
-              </>
+              <button
+                onClick={handleLogout}
+                className="text-red-600 hover:underline"
+              >
+                Logout
+              </button>
             ) : (
               <Link
                 to="/login"
@@ -74,7 +78,9 @@ const Navigation = () => {
       <div
         onClick={() => setMenuOpen(false)}
         className={`fixed inset-0 bg-black/40 transition-opacity duration-200 z-[45] ${
-          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          menuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
       />
 
@@ -85,9 +91,7 @@ const Navigation = () => {
         }`}
       >
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-          <span className="font-bold text-gray-900 dark:text-white">
-            Menú
-          </span>
+          <span className="font-bold text-gray-900 dark:text-white">Menú</span>
           <button
             onClick={() => setMenuOpen(false)}
             className="p-1 text-gray-500 hover:text-red-600"
@@ -119,6 +123,17 @@ const Navigation = () => {
           >
             Contacto
           </Link>
+
+          {/* Mostrar solo si es ADMIN */}
+          {userRole === "ADMIN" && (
+            <Link
+              to="/adminpanel"
+              onClick={() => setMenuOpen(false)}
+              className="block px-4 py-3 mt-2 bg-red-50 text-red-700 font-semibold rounded hover:bg-red-100"
+            >
+              Panel de Administrador
+            </Link>
+          )}
 
           <div className="mt-2 border-t border-gray-200 dark:border-gray-700" />
 

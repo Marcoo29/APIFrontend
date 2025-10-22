@@ -8,9 +8,10 @@ import Footer from "./Landing/Footer";
 import Login from "./Login/Login";
 import Register from "./Login/Register";
 import Contact from "./components/Contact";
-import Users from "./Login/Users";
+import UserPanel from "./Login/UserPanel";
 import "./index.css";
 import ScrollToTop from "./components/ScrollToTop";
+import AdminPanel from "./AdminPanel/AdminPanel";
 
 function App() {
   return (
@@ -28,8 +29,9 @@ function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="/userpanel" element={<UserPanel />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/adminpanel" element={<AdminPanel />} />
         </Routes>
       </main>
 
