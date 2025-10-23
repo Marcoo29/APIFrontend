@@ -10,14 +10,14 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
-  const [cantidad, setCantidad] = useState(1); // 🔹 NUEVO
+  const [cantidad, setCantidad] = useState(1);
+  const [mensaje, setMensaje] = useState(""); // ✅ mensaje de confirmación
 
   // 🔹 Obtener usuario del localStorage
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userRole = user?.role || null;
 
-  // 🔹 Funciones cantidad
   const aumentar = () => setCantidad((prev) => Math.min(prev + 1, 99));
   const disminuir = () => setCantidad((prev) => Math.max(prev - 1, 1));
 
@@ -31,9 +31,7 @@ export default function ProductDetail() {
         fetch(`http://localhost:4002/images?id=${id}`)
           .then((res) => res.json())
           .then((data) => {
-            if (data && data.file) {
-              setImageBase64(data.file);
-            }
+            if (data && data.file) setImageBase64(data.file);
           })
           .catch((err) => console.error("Error cargando imagen:", err));
 
@@ -51,7 +49,9 @@ export default function ProductDetail() {
             const withImages = await Promise.all(
               filtered.slice(0, 8).map(async (p) => {
                 try {
-                  const res = await fetch(`http://localhost:4002/images?id=${p.id}`);
+                  const res = await fetch(
+                    `http://localhost:4002/images?id=${p.id}`
+                  );
                   const imgData = await res.json();
                   if (imgData && imgData.file) {
                     return { ...p, imageBase64: imgData.file };
@@ -76,6 +76,36 @@ export default function ProductDetail() {
     if (e.key === "Enter" && searchTerm.trim() !== "") {
       navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
     }
+  };
+
+  // 🛒 Agregar al carrito
+  const agregarAlCarrito = () => {
+    if (userRole === "ADMIN" || !product) return;
+
+    const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingIndex = currentCart.findIndex((item) => item.id === product.id);
+
+    if (existingIndex !== -1) {
+      currentCart[existingIndex].qty += cantidad;
+    } else {
+      currentCart.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        manufacturer: product.manufacturer,
+        image: imageBase64,
+        qty: cantidad,
+      });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(currentCart));
+
+    // 🔁 actualiza el contador del carrito
+    window.dispatchEvent(new Event("storage"));
+
+    // ✅ mensaje visual
+    setMensaje("✅ Producto agregado al carrito");
+    setTimeout(() => setMensaje(""), 2000);
   };
 
   if (loading) return <p className="text-center mt-10">Cargando producto...</p>;
@@ -106,17 +136,25 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* 🔙 Botón Volver atrás */}
+        {/* 🔙 Volver atrás */}
         <button
           onClick={() => {
-            if (window.history.length > 1) navigate(-1);
-            else navigate("/products");
+            const previousPath = document.referrer; // ← Ruta desde donde venía el usuario
+
+            // Si venís de la misma app (ej. /products, /cart, etc.)
+            if (previousPath && previousPath.includes(window.location.origin)) {
+              navigate(-1);
+            } else {
+              // Si entraste directo (sin historial o desde otro dominio)
+              navigate("/products");
+            }
           }}
           className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 transition-colors mb-3 mt-4"
         >
           <span className="material-symbols-outlined text-base">arrow_back</span>
           <span className="font-medium">VOLVER ATRÁS</span>
         </button>
+
 
         {/* 🧭 Breadcrumb */}
         <nav className="text-sm text-gray-500 mb-4">
@@ -184,7 +222,7 @@ export default function ProductDetail() {
 
               {/* 🔴 Controles cantidad y botón agregar */}
               <div className="pt-6 border-t border-gray-200 mt-6 flex items-center justify-center gap-3 w-full">
-                {/* 🔹 Selector cantidad alineado a la izquierda */}
+                {/* Selector cantidad */}
                 <div className="flex items-center border border-gray-300 rounded-none px-2 py-3 text-sm text-gray-800">
                   <button
                     onClick={disminuir}
@@ -206,8 +244,9 @@ export default function ProductDetail() {
                   </button>
                 </div>
 
-                {/* 🔹 Botón agregar alineado al lado derecho */}
+                {/* Botón agregar */}
                 <button
+                  onClick={agregarAlCarrito}
                   disabled={userRole === "ADMIN"}
                   className={`flex-1 flex items-center justify-center gap-2 font-semibold py-3 transition-colors duration-200 ${
                     userRole === "ADMIN"
@@ -226,13 +265,20 @@ export default function ProductDetail() {
                   </span>
                 </button>
               </div>
+
+              {/* ✅ Mensaje de confirmación */}
+              {mensaje && (
+                <p className="text-green-600 text-sm text-center mt-4 font-medium animate-fadeIn">
+                  {mensaje}
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         {/* 🧲 Productos relacionados */}
         {relatedProducts.length > 0 && (
-          <section className="mt-10">
+          <section className="mt-10 relative">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-semibold text-red-500 tracking-wide mb-2">
                 También podría interesarte
@@ -240,49 +286,87 @@ export default function ProductDetail() {
               <div className="w-240 h-[2px] bg-gray-200 mx-auto"></div>
             </div>
 
-            <div className="flex gap-5 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-              {relatedProducts.map((p) => (
-                <div
-                  key={p.id}
-                  onClick={() => navigate(`/products/${p.id}`)}
-                  className="min-w-[230px] max-w-[230px] bg-white border border-gray-200 flex flex-col items-center justify-between shadow-sm hover:shadow-md hover:shadow-red-200 hover:border-red-400 transition-all duration-300 cursor-pointer"
-                >
-                  <div className="bg-gray-50 w-full border-b border-gray-200 overflow-hidden flex items-center justify-center h-[230px]">
-                    {p.imageBase64 ? (
-                      <img
-                        src={`data:image/jpeg;base64,${p.imageBase64}`}
-                        alt={p.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <img
-                        src="https://via.placeholder.com/230x230?text=Producto"
-                        alt="Sin imagen"
-                        className="w-full h-full object-cover opacity-70"
-                      />
-                    )}
-                  </div>
+            <div className="relative flex items-center">
+              {/* Flecha izquierda (afuera del carrusel) */}
+              <button
+                onClick={() => {
+                  document.getElementById("relatedScroll").scrollBy({
+                    left: -250,
+                    behavior: "smooth",
+                  });
+                }}
+                className="absolute -left-12 top-1/2 -translate-y-1/2 z-20 bg-white border border-gray-300 hover:border-red-500 rounded p-2 shadow-sm hover:shadow-md transition"
+              >
+                <span className="material-symbols-outlined text-gray-600 hover:text-red-600">
+                  chevron_left
+                </span>
+              </button>
 
-                  <div className="p-4 text-center flex flex-col items-center justify-between flex-1 w-full">
-                    <p className="font-semibold text-sm text-gray-800 mb-3 leading-tight">
-                      {truncateName(p.name)}
-                    </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/products/${p.id}`);
-                      }}
-                      className="w-[120px] text-white bg-red-500 hover:bg-red-600 text-xs font-semibold py-2 px-4 transition-colors"
-                    >
-                      Ver producto
-                    </button>
+              {/* Lista de productos relacionados */}
+              <div
+                id="relatedScroll"
+                className="flex gap-5 overflow-x-hidden scroll-smooth pb-6 px-10 mx-auto"
+              >
+                {relatedProducts.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => navigate(`/products/${p.id}`)}
+                    className="min-w-[230px] max-w-[230px] bg-white border border-gray-200 flex flex-col items-center justify-between shadow-sm hover:shadow-md hover:shadow-red-200 hover:border-red-400 transition-all duration-300 cursor-pointer rounded-md"
+                  >
+                    <div className="bg-gray-50 w-full border-b border-gray-200 overflow-hidden flex items-center justify-center h-[230px] rounded-t-md">
+                      {p.imageBase64 ? (
+                        <img
+                          src={`data:image/jpeg;base64,${p.imageBase64}`}
+                          alt={p.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <img
+                          src="https://via.placeholder.com/230x230?text=Producto"
+                          alt="Sin imagen"
+                          className="w-full h-full object-cover opacity-70"
+                        />
+                      )}
+                    </div>
+
+                    <div className="p-4 text-center flex flex-col items-center justify-between flex-1 w-full">
+                      <p className="font-semibold text-sm text-gray-800 mb-3 leading-tight">
+                        {p.name.length > 25 ? p.name.slice(0, 25) + "..." : p.name}
+                      </p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/products/${p.id}`);
+                        }}
+                        className="w-[120px] text-white bg-red-500 hover:bg-red-600 text-xs font-semibold py-2 px-4 transition-colors rounded-sm"
+                      >
+                        Ver producto
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* Flecha derecha (afuera del carrusel) */}
+              <button
+                onClick={() => {
+                  document.getElementById("relatedScroll").scrollBy({
+                    left: 250,
+                    behavior: "smooth",
+                  });
+                }}
+                className="absolute -right-12 top-1/2 -translate-y-1/2 z-20 bg-white border border-gray-300 hover:border-red-500 rounded p-2 shadow-sm hover:shadow-md transition"
+              >
+                <span className="material-symbols-outlined text-gray-600 hover:text-red-600">
+                  chevron_right
+                </span>
+              </button>
             </div>
           </section>
         )}
+
+
       </main>
     </div>
   );

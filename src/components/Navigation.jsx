@@ -13,10 +13,11 @@ const Navigation = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/home");
-  };
+ const handleLogout = () => {
+  localStorage.clear();
+  navigate("/home");
+};
+
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
@@ -140,14 +141,13 @@ const Navigation = () => {
             </div>
 
             {/* 🛒 Icono carrito */}
-            <button className="relative text-red-600 hover:text-red-800">
-              <span className="material-symbols-outlined text-2xl">
-                shopping_cart
-              </span>
-              <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
-                3
-              </span>
-            </button>
+            <Link
+              to="/cart"
+              className="relative text-red-600 hover:text-red-800"
+            >
+              <span className="material-symbols-outlined text-2xl">shopping_cart</span>
+              {/* Badge opcional */}
+            </Link>
           </div>
         )}
       </nav>
