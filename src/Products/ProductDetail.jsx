@@ -10,11 +10,16 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
+  const [cantidad, setCantidad] = useState(1); // 🔹 NUEVO
 
   // 🔹 Obtener usuario del localStorage
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userRole = user?.role || null;
+
+  // 🔹 Funciones cantidad
+  const aumentar = () => setCantidad((prev) => Math.min(prev + 1, 99));
+  const disminuir = () => setCantidad((prev) => Math.max(prev - 1, 1));
 
   useEffect(() => {
     fetch(`http://localhost:4002/products/${id}`)
@@ -104,11 +109,8 @@ export default function ProductDetail() {
         {/* 🔙 Botón Volver atrás */}
         <button
           onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate("/products");
-            }
+            if (window.history.length > 1) navigate(-1);
+            else navigate("/products");
           }}
           className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 transition-colors mb-3 mt-4"
         >
@@ -180,11 +182,34 @@ export default function ProductDetail() {
                 </p>
               </div>
 
-              {/* 🔴 Botón agregar bloqueado para admin */}
-              <div className="pt-6 border-t border-gray-200 mt-6">
+              {/* 🔴 Controles cantidad y botón agregar */}
+              <div className="pt-6 border-t border-gray-200 mt-6 flex items-center justify-center gap-3 w-full">
+                {/* 🔹 Selector cantidad alineado a la izquierda */}
+                <div className="flex items-center border border-gray-300 rounded-none px-2 py-3 text-sm text-gray-800">
+                  <button
+                    onClick={disminuir}
+                    className="px-2 text-gray-500 hover:text-red-600 transition"
+                  >
+                    –
+                  </button>
+                  <input
+                    type="number"
+                    value={cantidad}
+                    readOnly
+                    className="w-8 text-center bg-transparent text-gray-800 focus:outline-none"
+                  />
+                  <button
+                    onClick={aumentar}
+                    className="px-2 text-gray-500 hover:text-red-600 transition"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* 🔹 Botón agregar alineado al lado derecho */}
                 <button
                   disabled={userRole === "ADMIN"}
-                  className={`w-full flex items-center justify-center gap-2 font-semibold py-3 squared-md transition-colors duration-200 ${
+                  className={`flex-1 flex items-center justify-center gap-2 font-semibold py-3 transition-colors duration-200 ${
                     userRole === "ADMIN"
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-red-500 hover:bg-red-600 text-white"
