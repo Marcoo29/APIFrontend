@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 
-const ModifyProducts = ({ user }) => {
-  const [products, setProducts] = useState([]);
+const ModifyProducts = ({ user, products, setProducts }) => {
   const [editingId, setEditingId] = useState(null);
   const [editedProduct, setEditedProduct] = useState({});
   const [error, setError] = useState("");
 
-  // 🔄 Cargar productos
-    useEffect(() => {
-    if (!user) return;
-    const url =
-        user.role === "ADMIN"
-        ? "http://localhost:4002/products/all"
-        : "http://localhost:4002/products";
+  // 🔢 Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-    fetch(url, {
-        headers: { Authorization: `Bearer ${user.token}` },
-    })
-        .then((res) => res.json())
-        .then((data) => {
-        const productsArray = Array.isArray(data) ? data : data.content || [];
-        setProducts(productsArray);
-})
-
-        .catch(() => setError("Error al cargar productos"));
-    }, [user]);
+  // 📄 Productos paginados
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const currentProducts = useMemo(() => {
+    const indexOfLast = currentPage * itemsPerPage;
+    const indexOfFirst = indexOfLast - itemsPerPage;
+    return products.slice(indexOfFirst, indexOfLast);
+  }, [products, currentPage]);
 
   // ✏️ Click en lápiz
   const handleEditClick = (prod) => {
@@ -36,7 +27,6 @@ const ModifyProducts = ({ user }) => {
   // 💾 Guardar cambios
   const handleEditSubmit = async (prodId) => {
     setError("");
-
     try {
       const response = await fetch(
         `http://localhost:4002/products/${prodId}/update`,
@@ -53,7 +43,7 @@ const ModifyProducts = ({ user }) => {
             stock: Number(editedProduct.stock),
             description: editedProduct.description,
             fitFor: editedProduct.fitFor,
-            productStatus: editedProduct.productStatus, // ✅ campo correcto
+            productStatus: editedProduct.productStatus,
             categoryId: editedProduct.categoryId,
           }),
         }
@@ -63,7 +53,6 @@ const ModifyProducts = ({ user }) => {
 
       const updatedProduct = await response.json();
 
-      // 🔁 Actualiza la lista local
       setProducts((prev) =>
         prev.map((p) => (p.id === prodId ? updatedProduct : p))
       );
@@ -78,6 +67,9 @@ const ModifyProducts = ({ user }) => {
   const handleChange = (field, value) => {
     setEditedProduct((prev) => ({ ...prev, [field]: value }));
   };
+
+  // 📏 Calcular cuántas filas vacías faltan
+  const emptyRows = itemsPerPage - currentProducts.length;
 
   return (
     <div className="w-full bg-white border border-[#dcdcdc] shadow-sm p-8 mt-10">
@@ -104,7 +96,7 @@ const ModifyProducts = ({ user }) => {
           </thead>
 
           <tbody>
-            {products.length === 0 ? (
+            {currentProducts.length === 0 ? (
               <tr>
                 <td
                   colSpan="9"
@@ -114,103 +106,148 @@ const ModifyProducts = ({ user }) => {
                 </td>
               </tr>
             ) : (
-              products.map((prod) => (
-                <tr
-                  key={prod.id}
-                  className="border-t hover:bg-[#fafafa] transition"
-                >
-                  <td className="px-3 py-2 text-gray-600">{prod.id}</td>
+              <>
+                {currentProducts.map((prod) => (
+                  <tr
+                    key={prod.id}
+                    className="border-t hover:bg-[#fafafa] transition"
+                  >
+                    <td className="px-3 py-2 text-gray-600">{prod.id}</td>
 
-                  {[
-                    "name",
-                    "price",
-                    "manufacturer",
-                    "stock",
-                    "description",
-                    "fitFor",
-                    "productStatus", // ✅ campo actualizado
-                  ].map((field) => (
-                    <td key={field} className="px-3 py-2">
-                      {editingId === prod.id ? (
-                        field === "productStatus" ? (
-                          <select
-                            value={editedProduct.productStatus || "AVAILABLE"}
-                            onChange={(e) =>
-                              handleChange("productStatus", e.target.value)
-                            }
-                            className="border border-[#ccc] px-2 py-1 text-sm w-full focus:outline-none focus:border-[#D32F2F]"
-                          >
-                            <option value="AVAILABLE">Disponible</option>
-                            <option value="NOT_AVAILABLE">
-                              No disponible
-                            </option>
-                          </select>
+                    {[
+                      "name",
+                      "price",
+                      "manufacturer",
+                      "stock",
+                      "description",
+                      "fitFor",
+                      "productStatus",
+                    ].map((field) => (
+                      <td key={field} className="px-3 py-2">
+                        {editingId === prod.id ? (
+                          field === "productStatus" ? (
+                            <select
+                              value={editedProduct.productStatus || "AVAILABLE"}
+                              onChange={(e) =>
+                                handleChange("productStatus", e.target.value)
+                              }
+                              className="border border-[#ccc] px-2 py-1 text-sm w-full focus:outline-none focus:border-[#D32F2F]"
+                            >
+                              <option value="AVAILABLE">Disponible</option>
+                              <option value="NOT_AVAILABLE">
+                                No disponible
+                              </option>
+                            </select>
+                          ) : (
+                            <input
+                              type={
+                                field === "price" || field === "stock"
+                                  ? "number"
+                                  : "text"
+                              }
+                              value={editedProduct[field] || ""}
+                              onChange={(e) =>
+                                handleChange(field, e.target.value)
+                              }
+                              className="border border-[#ccc] px-2 py-1 text-sm w-full focus:outline-none focus:border-[#D32F2F]"
+                            />
+                          )
                         ) : (
-                          <input
-                            type={
-                              field === "price" || field === "stock"
-                                ? "number"
-                                : "text"
-                            }
-                            value={editedProduct[field] || ""}
-                            onChange={(e) =>
-                              handleChange(field, e.target.value)
-                            }
-                            className="border border-[#ccc] px-2 py-1 text-sm w-full focus:outline-none focus:border-[#D32F2F]"
-                          />
-                        )
-                      ) : (
-                        <span
-                          className={`text-sm font-medium ${
-                            field === "productStatus"
+                          <span
+                            className={`text-sm font-medium ${
+                              field === "productStatus"
+                                ? prod.productStatus?.toUpperCase() ===
+                                  "AVAILABLE"
+                                  ? "text-green-600"
+                                  : prod.productStatus?.toUpperCase() ===
+                                    "NOT_AVAILABLE"
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                                : "text-[#444]"
+                            }`}
+                          >
+                            {field === "productStatus"
                               ? prod.productStatus?.toUpperCase() ===
                                 "AVAILABLE"
-                                ? "text-green-600"
+                                ? "Disponible"
                                 : prod.productStatus?.toUpperCase() ===
                                   "NOT_AVAILABLE"
-                                ? "text-red-500"
-                                : "text-gray-400"
-                              : "text-[#444]"
-                          }`}
-                        >
-                          {field === "productStatus"
-                            ? prod.productStatus?.toUpperCase() === "AVAILABLE"
-                              ? "Disponible"
-                              : prod.productStatus?.toUpperCase() ===
-                                "NOT_AVAILABLE"
-                              ? "No disponible"
-                              : "-"
-                            : prod[field] ?? "-"}
-                        </span>
-                      )}
-                    </td>
-                  ))}
+                                ? "No disponible"
+                                : "-"
+                              : prod[field] ?? "-"}
+                          </span>
+                        )}
+                      </td>
+                    ))}
 
-                  {/* Lápiz / Guardar */}
-                  <td className="px-3 py-2 text-center">
-                    <button
-                      onClick={() =>
-                        editingId === prod.id
-                          ? handleEditSubmit(prod.id)
-                          : handleEditClick(prod)
-                      }
-                      className="text-[#D32F2F] hover:text-[#b71c1c] transition"
-                      title={
-                        editingId === prod.id
-                          ? "Guardar cambios"
-                          : "Editar producto"
-                      }
-                    >
-                      <span className="material-symbols-outlined text-base">
-                        {editingId === prod.id ? "check" : "edit"}
-                      </span>
-                    </button>
-                  </td>
-                </tr>
-              ))
+                    <td className="px-3 py-2 text-center">
+                      <button
+                        onClick={() =>
+                          editingId === prod.id
+                            ? handleEditSubmit(prod.id)
+                            : handleEditClick(prod)
+                        }
+                        className="text-[#D32F2F] hover:text-[#b71c1c] transition"
+                        title={
+                          editingId === prod.id
+                            ? "Guardar cambios"
+                            : "Editar producto"
+                        }
+                      >
+                        <span className="material-symbols-outlined text-base">
+                          {editingId === prod.id ? "check" : "edit"}
+                        </span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+                {/* 🔲 Filas vacías para mantener altura fija */}
+                {emptyRows > 0 &&
+                  Array.from({ length: emptyRows }).map((_, i) => (
+                    <tr key={`empty-${i}`} className="border-t h-[45px]">
+                      <td colSpan="9">&nbsp;</td>
+                    </tr>
+                  ))}
+              </>
             )}
           </tbody>
         </table>
+
+        {/* 🔽 Controles de paginación */}
+        {products.length > itemsPerPage && (
+          <div className="flex justify-center items-center gap-4 mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 border rounded ${
+                currentPage === 1
+                  ? "text-gray-400 border-gray-300 cursor-not-allowed"
+                  : "text-[#D32F2F] border-[#D32F2F] hover:bg-[#D32F2F] hover:text-white transition"
+              }`}
+            >
+              Anterior
+            </button>
+
+            <span className="text-sm text-gray-600">
+              Página {currentPage} de {totalPages}
+            </span>
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 border rounded ${
+                currentPage === totalPages
+                  ? "text-gray-400 border-gray-300 cursor-not-allowed"
+                  : "text-[#D32F2F] border-[#D32F2F] hover:bg-[#D32F2F] hover:text-white transition"
+              }`}
+            >
+              Siguiente
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

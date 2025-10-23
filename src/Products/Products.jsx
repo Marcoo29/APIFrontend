@@ -117,21 +117,33 @@ const Products = () => {
   return (
     <section className="relative flex min-h-screen w-full flex-col bg-[#f6f6f6]">
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8 mt-16">
-        {/* 🔍 Buscador */}
-        <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Buscar productos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full border border-gray-300 rounded-none py-2.5 pl-10 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent shadow-sm bg-white"
-            />
-            <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">
-              search
-            </span>
-          </div>
+
+      {/* 🔍 Buscador */}
+      <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Buscar productos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full border border-gray-300 rounded-none py-2.5 pl-10 pr-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent shadow-sm bg-white"
+          />
+          <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">
+            search
+          </span>
+
+          {/* ❌ Botón para limpiar búsqueda */}
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-2.5 text-gray-400 hover:text-red-600 transition-colors"
+              aria-label="Borrar búsqueda"
+            >
+              <span className="material-symbols-outlined text-[20px]">close</span>
+            </button>
+          )}
         </div>
+      </div>
 
         <div className="grid grid-cols-[1fr_3fr] gap-8">
           {/* 🗂 Categorías */}

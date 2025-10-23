@@ -34,7 +34,7 @@ const Navigation = () => {
 
   return (
     <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
-      <nav className="container mx-auto px-6 py-2 flex justify-between items-center">
+      <nav className="w-full px-4 py-2 flex justify-between items-center fixed top-0 left-0 right-0 z-50">
         {/* BOTÓN HAMBURGUESA */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}

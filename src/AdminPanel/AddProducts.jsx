@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const API_BASE = "http://localhost:4002";
 
-const AddProducts = ({ categories, user }) => {
+const AddProducts = ({ categories, user, products, setProducts }) => {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [manufacturer, setManufacturer] = useState("");
@@ -37,7 +37,7 @@ const AddProducts = ({ categories, user }) => {
     setError("");
 
     try {
-      // 1) Crear el producto SIN imagen (JSON)
+      // 1️⃣ Crear el producto sin imagen
       const productPayload = {
         name: productName.trim(),
         price: Number(price),
@@ -46,7 +46,7 @@ const AddProducts = ({ categories, user }) => {
         description: description.trim(),
         fitFor: fitFor.trim(),
         productStatus: status,
-        categoryId, // si tu API espera número, usa Number(categoryId)
+        categoryId,
       };
 
       const createRes = await fetch(`${API_BASE}/products`, {
@@ -67,18 +67,16 @@ const AddProducts = ({ categories, user }) => {
       const productId = created?.id ?? created?.productId;
       if (!productId) throw new Error("No se recibió el ID del producto creado.");
 
-      // 2) Subir SOLO la imagen a /products/image con los nombres EXACTOS:
-      //    productId (Long), name (String), file (MultipartFile)
+      // 2️⃣ Subir la imagen
       const fd = new FormData();
       fd.append("productId", String(productId));
-      fd.append("name", productName); // opcional; podés enviar null/"" si no querés
-      fd.append("file", image);       // ← nombre EXACTO: "file"
+      fd.append("name", productName);
+      fd.append("file", image);
 
       const uploadRes = await fetch(`${API_BASE}/images`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${user.token}`,
-          // ⚠️ No seteés Content-Type; el navegador pone el boundary correcto
         },
         body: fd,
       });
@@ -88,7 +86,11 @@ const AddProducts = ({ categories, user }) => {
         throw new Error(txt || "El producto se creó, pero falló la subida de la imagen.");
       }
 
-      // 3) Limpiar formulario
+      // ✅ 3️⃣ Actualizar la lista de productos en el front
+      // (esto es lo que faltaba)
+      setProducts((prev) => [...prev, created]);
+
+      // 4️⃣ Limpiar formulario
       setProductName("");
       setPrice("");
       setManufacturer("");
@@ -183,7 +185,7 @@ const AddProducts = ({ categories, user }) => {
           ))}
         </select>
 
-        {/* 🎨 Campo de imagen personalizado */}
+        {/* 🎨 Imagen del producto */}
         <div className="flex flex-col">
           <label className="text-sm text-[#555] mb-2 font-medium">
             Imagen del producto
@@ -208,7 +210,6 @@ const AddProducts = ({ categories, user }) => {
             </span>
           </div>
 
-          {/* Mini preview */}
           {preview && (
             <div className="mt-3">
               <img

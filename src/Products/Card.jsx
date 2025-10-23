@@ -4,7 +4,7 @@ const Card = ({ id, title, price, image, manufacturer }) => {
   const [cantidad, setCantidad] = useState(1);
   const [imageBase64, setImageBase64] = useState(null);
 
-  // 🔹 Obtener el usuario del localStorage
+  // 🔹 Obtener usuario local
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userRole = user?.role || null;
@@ -52,9 +52,16 @@ const Card = ({ id, title, price, image, manufacturer }) => {
 
       {/* Contenido */}
       <div className="px-5 py-4 flex flex-col items-center">
-        {/* Título */}
+        {/* 🧱 Título con altura fija de 2 líneas */}
         <a href={`/products/${id}`}>
-          <h5 className="text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600 transition-colors duration-200 text-center mb-1 line-clamp-2">
+          <h5
+            title={title} // tooltip completo al pasar el mouse
+            className="
+              text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600
+              transition-colors duration-200 text-center mb-1
+              line-clamp-2 overflow-hidden leading-snug min-h-[48px]
+            "
+          >
             {title || "Producto de ejemplo"}
           </h5>
         </a>

@@ -55,7 +55,7 @@ export default function Landing() {
           <div className="col-span-1" />
 
           {/* Contenido principal */}
-          <div className="col-span-6 flex flex-col justify-between pt-24 pl-8 pr-8 max-w-[1100px]">
+          <div className="col-span-6 flex flex-col justify-start pt-20 pl-8 pr-8 max-w-[1100px]">
             {/* Texto + métricas */}
             <div>
               {/* Logo y título */}
@@ -137,46 +137,53 @@ export default function Landing() {
             </div>
 
             {/* 🔍 Buscador principal rectangular */}
-            <div className="relative w-full max-w-2xl mb-16">
-              <div
-                className="
-                  flex items-center 
-                  bg-white/10 backdrop-blur-md 
-                  border border-white/20 
-                  w-full shadow-sm overflow-hidden 
-                  transition-all duration-300 
-                  hover:border-[#B91C1C]
-                "
-              >
-                <input
-                  type="text"
-                  placeholder="Buscar por número de parte, descripción o tipo de vehículo..."
-                  className="flex-grow py-4 px-6 bg-transparent text-white placeholder-gray-300 focus:outline-none"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
-                <button
-                  className="px-6 py-3 bg-[#B91C1C] hover:bg-[#dc2626] transition-all duration-300"
-                  onClick={handleSearch}
-                  aria-label="Buscar"
-                >
-                  <span className="material-symbols-outlined text-2xl text-white">
-                    search
-                  </span>
-                </button>
-              </div>
-
-              {/* Botón "Ver todos los productos" */}
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={() => navigate("/products")}
+            <div className="relative w-full max-w-3xl mt-[120px]"> {/* 🔼 sube fuerte hacia arriba */}
+              <div className="flex items-stretch w-full">
+                {/* Campo de texto + lupa */}
+                <div
                   className="
-                    text-sm text-gray-200 underline underline-offset-4 
-                    transition-all hover:text-[#B91C1C]
+                    flex items-center flex-grow
+                    bg-white/10 backdrop-blur-md 
+                    border border-white/20 
+                    shadow-sm overflow-hidden 
+                    transition-all duration-300 
+                    hover:border-[#B91C1C]
                   "
                 >
-                  Ver todos los productos
+                  <input
+                    type="text"
+                    placeholder="Buscar por número de parte, descripción o tipo de vehículo..."
+                    className="flex-grow py-4 px-6 bg-transparent text-white placeholder-gray-300 focus:outline-none"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <button
+                    className="py-3 px-6 bg-[#B91C1C] hover:bg-[#dc2626] transition-all duration-300 flex items-center justify-center"
+                    onClick={handleSearch}
+                    aria-label="Buscar"
+                  >
+                    <span className="material-symbols-outlined text-2xl text-white">
+                      search
+                    </span>
+                  </button>
+                </div>
+
+                {/* 🟥 Botón "Ver todos los productos" más compacto */}
+                <button
+                  onClick={() => navigate('/products')}
+                  className="
+                    ml-3 px-5 py-2
+                    flex flex-col justify-center items-center 
+                    bg-[#B91C1C]/90 hover:bg-[#dc2626] 
+                    text-white font-semibold leading-tight tracking-wide
+                    border border-white/20
+                    transition-all duration-300
+                    w-[130px] h-[60px]
+                  "
+                >
+                  <span className="text-[12px] md:text-[14px]">TODOS LOS</span>
+                  <span className="text-[12px] md:text-[14px]">PRODUCTOS</span>
                 </button>
               </div>
             </div>
