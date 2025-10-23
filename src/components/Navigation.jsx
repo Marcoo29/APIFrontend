@@ -62,14 +62,13 @@ const Navigation = () => {
               </Link>
             )}
 
-            <button className="relative text-red-600 hover:text-red-800">
-              <span className="material-symbols-outlined text-2xl">
-                shopping_cart
-              </span>
-              <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
-                3
-              </span>
-            </button>
+            <Link
+              to="/cart"
+              className="relative text-red-600 hover:text-red-800"
+            >
+              <span className="material-symbols-outlined text-2xl">shopping_cart</span>
+              {/* Badge opcional */}
+            </Link>
           </div>
         )}
       </nav>

@@ -24,6 +24,33 @@ const Card = ({ id, title, price, image, manufacturer }) => {
       ? price.toLocaleString("es-AR")
       : price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
+  const handleCarrito = () => {
+    // 1️⃣ Recuperar el carrito del localStorage o inicializar vacío
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    // 2️⃣ Buscar si ya existe el producto
+    const index = cart.findIndex((x) => x.id === id);
+
+    // 3️⃣ Si existe, aumentar cantidad
+    if (index >= 0) {
+      cart[index].qty += 1;
+    } else {
+      // 4️⃣ Si no existe, agregar nuevo producto
+      cart.push({
+        id: id,
+        name: title,
+        price: price,
+        qty: 1,
+      });
+  }
+
+  // 5️⃣ Guardar carrito actualizado
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  // 6️⃣ Feedback opcional
+  alert(`✅ ${title} agregado al carrito`);
+  };
+
   return (
     <div className="w-full max-w-sm bg-white border border-gray-300 rounded-none shadow-sm hover:shadow-md hover:border-red-600 hover:shadow-red-200 transition-all duration-200 font-display">
       {/* Imagen */}
@@ -88,7 +115,10 @@ const Card = ({ id, title, price, image, manufacturer }) => {
             </button>
           </div>
 
-          <button className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 transition-colors duration-300">
+          <button 
+          className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 transition-colors duration-300"
+          onClick={handleCarrito}
+          >
             Agregar
             <span className="material-symbols-outlined text-sm">
               add_shopping_cart

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Landing from "./Landing/Landing";
@@ -12,6 +11,7 @@ import UserPanel from "./Login/UserPanel";
 import "./index.css";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminPanel from "./AdminPanel/AdminPanel";
+import Cart from "./Cart/Cart";
 
 function App() {
   return (
@@ -32,6 +32,7 @@ function App() {
           <Route path="/userpanel" element={<UserPanel />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/adminpanel" element={<AdminPanel />} />
+          <Route path="cart" element={<Cart/>}/>
         </Routes>
       </main>
 
