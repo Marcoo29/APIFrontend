@@ -95,7 +95,7 @@ const Navigation = () => {
                       <>
                         <li>
                           <Link
-                            to="/orders-admin"
+                            to="/operations"
                             className="block px-4 py-1.5 hover:bg-red-50 hover:text-red-700"
                             onClick={() => setUserMenuOpen(false)}
                           >
