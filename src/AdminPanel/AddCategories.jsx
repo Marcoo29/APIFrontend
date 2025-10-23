@@ -4,15 +4,19 @@ const AddCategories = ({ categories, setCategories, user }) => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [error, setError] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editedName, setEditedName] = useState("");
 
+  // 🔄 Cargar categorías
   useEffect(() => {
     if (!user) return;
     fetch("http://localhost:4002/categories")
       .then((res) => res.json())
-      .then((data) => setCategories(data.content || []))
+      .then((data) => setCategories(data.content || data || []))
       .catch(() => setError("Error al cargar categorías"));
   }, [user, setCategories]);
 
+  // ➕ Crear nueva categoría
   const handleAddCategory = async (e) => {
     e.preventDefault();
     if (!newCategoryName.trim()) return;
@@ -42,12 +46,55 @@ const AddCategories = ({ categories, setCategories, user }) => {
     }
   };
 
+  // ✏️ Habilitar edición
+  const handleEditClick = (cat) => {
+    setEditingId(cat.id);
+    setEditedName(cat.description);
+    setError("");
+  };
+
+  // 💾 Guardar edición
+  const handleEditSubmit = async (catId) => {
+    if (!editedName.trim()) return;
+
+    setError("");
+
+    try {
+      const response = await fetch(`http://localhost:4002/categories/${catId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ description: editedName }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 400) {
+          throw new Error("Ya existe una categoría con ese nombre");
+        }
+        throw new Error("Error al actualizar la categoría");
+      }
+
+      setCategories((prev) =>
+        prev.map((cat) =>
+          cat.id === catId ? { ...cat, description: editedName } : cat
+        )
+      );
+
+      setEditingId(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="w-full bg-white border border-[#dcdcdc] shadow-sm p-8">
       <h3 className="text-xl font-semibold text-[#333] mb-6 border-b pb-3">
         Gestión de Categorías
       </h3>
 
+      {/* ➕ Formulario agregar */}
       <form
         onSubmit={handleAddCategory}
         className="flex flex-col sm:flex-row gap-3 mb-6"
@@ -76,7 +123,7 @@ const AddCategories = ({ categories, setCategories, user }) => {
 
       <ul className="border border-[#dcdcdc] divide-y divide-[#eaeaea]">
         {categories.length === 0 ? (
-          <li className="p-3 text-gray-500 text-sm">
+          <li className="p-3 text-gray-500 text-sm italic">
             No hay categorías registradas.
           </li>
         ) : (
@@ -85,8 +132,43 @@ const AddCategories = ({ categories, setCategories, user }) => {
               key={cat.id}
               className="p-3 flex justify-between items-center hover:bg-[#fafafa] transition"
             >
-              <span className="text-[#444]">{cat.description}</span>
-              <span className="text-xs text-gray-400">ID: {cat.id}</span>
+              <div className="flex items-center gap-2 w-full justify-between">
+                {/* Campo editable */}
+                {editingId === cat.id ? (
+                  <input
+                    type="text"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="flex-1 border border-[#ccc] px-2 py-1 text-sm focus:outline-none focus:border-[#D32F2F]"
+                    autoFocus
+                  />
+                ) : (
+                  <span className="text-[#444]">{cat.description}</span>
+                )}
+
+                {/* ✅ / ✏️ Botón */}
+                <button
+                  onClick={() =>
+                    editingId === cat.id
+                      ? handleEditSubmit(cat.id)
+                      : handleEditClick(cat)
+                  }
+                  className="text-[#D32F2F] hover:text-[#b71c1c] transition"
+                  title={
+                    editingId === cat.id
+                      ? "Guardar cambios"
+                      : "Editar categoría"
+                  }
+                >
+                  <span className="material-symbols-outlined text-base">
+                    {editingId === cat.id ? "check" : "edit"}
+                  </span>
+                </button>
+              </div>
+
+              <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">
+                ID: {cat.id}
+              </span>
             </li>
           ))
         )}
