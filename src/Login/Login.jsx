@@ -36,7 +36,7 @@ const Login = () => {
       // Guardamos un objeto "user" completo para AdminPanel
       localStorage.setItem(
         "user",
-        JSON.stringify({ name: data.name, role: data.role, token: data.access_token || data.token })
+        JSON.stringify({ email:data.email, name: data.name, role: data.role, token: data.access_token || data.token })
       );
 
       navigate("/");

@@ -1,13 +1,24 @@
-// Categories.jsx
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Categories({
   backendUrl = "http://localhost:4002/categories?page=0&size=100",
-  onCategorySelect, // callback para pasar el nombre/id al padre
+  onCategorySelect,
 }) {
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // 🔹 Obtener categoría actual desde la URL (?category=)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const categoryFromUrl = params.get("category");
+    setActiveCategory(categoryFromUrl ? categoryFromUrl.toLowerCase() : null);
+  }, [location.search]);
+
+  // 🔹 Cargar categorías desde el backend
   useEffect(() => {
     fetch(backendUrl)
       .then((res) => res.json())
@@ -18,22 +29,28 @@ export default function Categories({
             : Array.isArray(data)
             ? data
             : [];
+
         const mapped = fetched.map((c) => ({
           id: c.id,
           name: c.description,
         }));
+
         setCategories(mapped);
       })
       .catch((err) => console.error("Error cargando categorías:", err));
   }, [backendUrl]);
 
+  // 🔹 Click en categoría → cambia estado, callback y URL
   const handleSelect = (category) => {
-    if (activeCategory === category?.id || category === null) {
+    if (category === null) {
       setActiveCategory(null);
-      onCategorySelect?.(null); // muestra todos los productos
+      onCategorySelect?.(null);
+      navigate(`/products`);
     } else {
-      setActiveCategory(category.id);
-      onCategorySelect?.(category.id);
+      const lowerName = category.name.toLowerCase();
+      setActiveCategory(lowerName);
+      onCategorySelect?.(category.name);
+      navigate(`/products?category=${encodeURIComponent(lowerName)}`);
     }
   };
 
@@ -42,8 +59,9 @@ export default function Categories({
       <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-red-500 pb-2 text-center">
         Categorías
       </h3>
+
       <ul className="space-y-2">
-        {/* Botón para ver todas las categorías */}
+        {/* Botón para ver todas */}
         <li>
           <button
             onClick={() => handleSelect(null)}
@@ -57,8 +75,12 @@ export default function Categories({
           </button>
         </li>
 
+        {/* Lista de categorías */}
         {categories.map((c) => {
-          const isActive = activeCategory === c.id;
+          const isActive =
+            activeCategory === c.name.toLowerCase().trim() ||
+            activeCategory === String(c.id);
+
           return (
             <li key={c.id}>
               <button

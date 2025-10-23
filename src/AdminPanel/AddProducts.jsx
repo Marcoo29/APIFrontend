@@ -45,7 +45,7 @@ const AddProducts = ({ categories, user }) => {
         stock: Number(stock),
         description: description.trim(),
         fitFor: fitFor.trim(),
-        status,
+        productStatus: status,
         categoryId, // si tu API espera número, usa Number(categoryId)
       };
 

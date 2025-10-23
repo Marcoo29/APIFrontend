@@ -29,7 +29,7 @@ function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/userpanel" element={<UserPanel />} />
+          <Route path="/profile" element={<UserPanel />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/adminpanel" element={<AdminPanel />} />
         </Routes>

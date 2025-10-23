@@ -2,11 +2,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 
 const Navigation = () => {
-  const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
-  const username = user?.name || null;
-  const userRole = user?.role || null;
-
+  const username = JSON.parse(localStorage.getItem("user"))?.name || null;
+  const userRole = JSON.parse(localStorage.getItem("user"))?.role || null;
+  const user = JSON.parse(localStorage.getItem("user")) || null;
+  
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -50,11 +49,12 @@ const Navigation = () => {
         {/* ICONOS DERECHA */}
         {!isAuthPage && (
           <div className="flex items-center gap-4 text-lg relative">
-            {username && (location.pathname === "/home" || location.pathname === "/") && (
-              <span className="text-red-600 text-lg font-semibold">
-                Hola, {username}
-              </span>
-            )}
+            {username &&
+              (location.pathname === "/home" || location.pathname === "/") && (
+                <span className="text-red-600 text-lg font-semibold">
+                  Hola, {username}
+                </span>
+              )}
 
             {/* 🔻 Icono persona */}
             <div className="relative" ref={userMenuRef}>
@@ -71,7 +71,9 @@ const Navigation = () => {
                   username ? "text-red-600" : "text-gray-400"
                 }`}
               >
-                <span className="material-symbols-outlined text-3xl">person</span>
+                <span className="material-symbols-outlined text-3xl">
+                  person
+                </span>
               </button>
 
               {/* 🔽 Menú desplegable SOLO si hay usuario */}

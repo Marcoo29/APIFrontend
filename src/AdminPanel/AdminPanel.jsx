@@ -33,7 +33,7 @@ const AdminPanel = () => {
   return (
     <div className="min-h-screen w-full bg-[#F5F5F5] flex flex-col">
       {/* Contenedor principal centrado */}
-      <div className="w-full max-w-7xl mx-auto px-10 py-5">
+      <div className="w-full max-w-7xl mx-auto text-center px-10 mt-14 py-5">
         <h2 className="text-2xl font-bold text-[#333] border-b border-[#ddd] pb-3 mb-6">
           Panel de Administrador
         </h2>

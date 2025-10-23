@@ -1,4 +1,3 @@
-// Products.jsx
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import CardList from "./CardList";
@@ -27,60 +26,98 @@ const Products = () => {
 
   const sizeParam = itemsPerPage === "all" ? totalItems || 1000 : itemsPerPage;
 
-  // Actualizar búsqueda si cambia el parámetro en la URL
+  // 🔹 Actualizar búsqueda si cambia el parámetro en la URL
   useEffect(() => {
     const paramSearch =
       new URLSearchParams(location.search).get("search") || "";
     setSearchTerm(paramSearch);
   }, [location.search]);
 
-  // Resetear página cuando cambian búsqueda, sort, itemsPerPage o categoría
+  // 🔹 Resetear página cuando cambian filtros
   useEffect(() => {
     setPage(0);
   }, [searchTerm, sortOption, itemsPerPage, selectedCategory]);
 
-  // Fetch de productos
+  // 🔹 Fetch de productos (acepta categoría por nombre o ID) con búsqueda
   useEffect(() => {
-    let url;
+    const fetchProducts = async () => {
+      try {
+        let url;
 
-    if (selectedCategory) {
-      url = `http://localhost:4002/products/by-category/${parseInt(selectedCategory)}?page=${page}&size=${sizeParam}&sort=${sortOption}`;
-    } else {
-      url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
-        searchTerm || ""
-      )}`;
-    }
+        if (selectedCategory) {
+          let categoryId = selectedCategory;
 
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
+          // Si la categoría es texto (no número), buscar su ID real
+          if (isNaN(Number(selectedCategory))) {
+            const catRes = await fetch(
+              `http://localhost:4002/categories?page=0&size=100`
+            );
+            const catData = await catRes.json();
+
+            const fetched =
+              catData?.content && Array.isArray(catData.content)
+                ? catData.content
+                : Array.isArray(catData)
+                ? catData
+                : [];
+
+            const match = fetched.find(
+              (c) =>
+                c.description.toLowerCase().trim() ===
+                selectedCategory.toLowerCase().trim()
+            );
+
+            if (match) categoryId = match.id;
+            else categoryId = null; // No existe → mostrar todos
+          }
+
+          if (categoryId) {
+            // 🔹 Aquí agregamos searchTerm al URL de by-category
+            url = `http://localhost:4002/products/by-category/${categoryId}?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(searchTerm || "")}`;
+          } else {
+            url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
+              searchTerm || ""
+            )}`;
+          }
+        } else {
+          // Sin categoría seleccionada → todos los productos
+          url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
+            searchTerm || ""
+          )}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+
         let fetchedProducts = [];
         let total = 0;
         let pages = 1;
 
         if (Array.isArray(data)) {
-          // endpoint /by-category que devuelve solo array
           fetchedProducts = data;
           total = data.length;
           pages = 1;
         } else {
-          // endpoint paginado /products
           fetchedProducts = data.content || [];
-          total = data.totalItems || fetchedProducts.length;
+          total = data.totalElements || fetchedProducts.length;
           pages = data.totalPages || 1;
         }
 
         setProducts(fetchedProducts);
         setTotalItems(total);
         setTotalPages(pages);
-      })
-      .catch((err) => console.error("Error cargando productos:", err));
+      } catch (err) {
+        console.error("Error cargando productos:", err);
+      }
+    };
+
+    fetchProducts();
   }, [selectedCategory, page, sizeParam, sortOption, searchTerm]);
 
   return (
     <section className="relative flex min-h-screen w-full flex-col bg-[#f6f6f6]">
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8 mt-16">
-        {/* Buscador */}
+        {/* 🔍 Buscador */}
         <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
           <div className="relative">
             <input
@@ -97,10 +134,10 @@ const Products = () => {
         </div>
 
         <div className="grid grid-cols-[1fr_3fr] gap-8">
-          {/* Categorías */}
+          {/* 🗂 Categorías */}
           <Categories onCategorySelect={setSelectedCategory} />
 
-          {/* Productos */}
+          {/* 🛒 Productos */}
           <div className="flex flex-col">
             <Pagination
               type="top"
