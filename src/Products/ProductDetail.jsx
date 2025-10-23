@@ -9,17 +9,20 @@ export default function ProductDetail() {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [imageBase64, setImageBase64] = useState(null); // 🖼 Imagen principal
+  const [imageBase64, setImageBase64] = useState(null);
+
+  // 🔹 Obtener usuario del localStorage
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const userRole = user?.role || null;
 
   useEffect(() => {
-    // 🔹 Obtener el producto por ID
     fetch(`http://localhost:4002/products/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);
         setLoading(false);
 
-        // 🔹 Cargar la imagen principal
         fetch(`http://localhost:4002/images?id=${id}`)
           .then((res) => res.json())
           .then((data) => {
@@ -29,7 +32,7 @@ export default function ProductDetail() {
           })
           .catch((err) => console.error("Error cargando imagen:", err));
 
-        // 🔹 Productos relacionados con imágenes
+        // Productos relacionados
         fetch(`http://localhost:4002/products?page=0&size=100`)
           .then((res) => res.json())
           .then(async (all) => {
@@ -40,7 +43,6 @@ export default function ProductDetail() {
                 p.id !== data.id
             );
 
-            // Cargar imagen de cada producto relacionado
             const withImages = await Promise.all(
               filtered.slice(0, 8).map(async (p) => {
                 try {
@@ -72,8 +74,7 @@ export default function ProductDetail() {
   };
 
   if (loading) return <p className="text-center mt-10">Cargando producto...</p>;
-  if (!product)
-    return <p className="text-center mt-10">Producto no encontrado</p>;
+  if (!product) return <p className="text-center mt-10">Producto no encontrado</p>;
 
   const truncateName = (name) =>
     name && name.length > 25 ? name.slice(0, 25) + "..." : name;
@@ -179,8 +180,21 @@ export default function ProductDetail() {
                 </p>
               </div>
 
+              {/* 🔴 Botón agregar bloqueado para admin */}
               <div className="pt-6 border-t border-gray-200 mt-6">
-                <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-md transition-colors duration-200">
+                <button
+                  disabled={userRole === "ADMIN"}
+                  className={`w-full flex items-center justify-center gap-2 font-semibold py-3 squared-md transition-colors duration-200 ${
+                    userRole === "ADMIN"
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-red-500 hover:bg-red-600 text-white"
+                  }`}
+                  title={
+                    userRole === "ADMIN"
+                      ? "Los administradores no pueden agregar productos al carrito"
+                      : "Agregar al carrito"
+                  }
+                >
                   Agregar al carrito
                   <span className="material-symbols-outlined text-sm">
                     add_shopping_cart
@@ -191,7 +205,7 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* 🧲 Carrusel de productos relacionados */}
+        {/* 🧲 Productos relacionados */}
         {relatedProducts.length > 0 && (
           <section className="mt-10">
             <div className="text-center mb-6">

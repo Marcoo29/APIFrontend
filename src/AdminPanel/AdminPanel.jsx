@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AddCategories from "./AddCategories";
 import AddProducts from "./AddProducts";
+import ModifyProducts from "./ModifyProducts"; // 🆕 Import agregado
 
 const AdminPanel = () => {
   const [categories, setCategories] = useState([]);
@@ -48,6 +49,11 @@ const AdminPanel = () => {
 
           {/* Bloque derecho */}
           <AddProducts categories={categories} user={user} />
+        </div>
+
+        {/* 🔽 Nuevo bloque al final */}
+        <div className="mt-10">
+          <ModifyProducts user={user} />
         </div>
       </div>
     </div>

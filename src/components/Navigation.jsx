@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const Navigation = () => {
   const storedUser = localStorage.getItem("user");
@@ -9,16 +9,29 @@ const Navigation = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/home");
   };
 
-  // Detectamos si estamos en login/register
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
+
+  // Cerrar menú si se hace click fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
@@ -36,32 +49,95 @@ const Navigation = () => {
 
         {/* ICONOS DERECHA */}
         {!isAuthPage && (
-          <div className="flex items-center gap-4 text-lg">
+          <div className="flex items-center gap-4 text-lg relative">
             {username && (location.pathname === "/home" || location.pathname === "/") && (
               <span className="text-red-600 text-lg font-semibold">
                 Hola, {username}
               </span>
             )}
 
-            {username ? (
+            {/* 🔻 Icono persona */}
+            <div className="relative" ref={userMenuRef}>
               <button
-                onClick={handleLogout}
-                className="text-red-600 hover:underline"
+                onClick={() => {
+                  // 👇 si no hay usuario, redirige directo al login
+                  if (!user) {
+                    navigate("/login");
+                    return;
+                  }
+                  setUserMenuOpen(!userMenuOpen);
+                }}
+                className={`p-1 hover:text-red-700 transition ${
+                  username ? "text-red-600" : "text-gray-400"
+                }`}
               >
-                Logout
+                <span className="material-symbols-outlined text-3xl">person</span>
               </button>
-            ) : (
-              <Link
-                to="/login"
-                className="text-red-600 hover:text-red-800 transition-colors"
-                title="Ingreso/Registro"
-              >
-                <span className="material-symbols-outlined text-2xl">
-                  person
-                </span>
-              </Link>
-            )}
 
+              {/* 🔽 Menú desplegable SOLO si hay usuario */}
+              {user && userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-md text-gray-800 z-50 text-sm">
+                  <ul className="flex flex-col divide-y divide-gray-100">
+                    <li>
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-1.5 hover:bg-red-50 hover:text-red-700"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Mi Perfil
+                      </Link>
+                    </li>
+
+                    {userRole === "ADMIN" ? (
+                      <>
+                        <li>
+                          <Link
+                            to="/orders-admin"
+                            className="block px-4 py-1.5 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            Ver Pedidos Totales
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            to="/adminpanel"
+                            className="block px-4 py-1.5 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            Panel de Admin
+                          </Link>
+                        </li>
+                      </>
+                    ) : (
+                      <li>
+                        <Link
+                          to="/orders"
+                          className="block px-4 py-1.5 hover:bg-red-50 hover:text-red-700"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          Ver Pedidos
+                        </Link>
+                      </li>
+                    )}
+
+                    <li>
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setUserMenuOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-1.5 text-red-600 hover:bg-red-50"
+                      >
+                        Cerrar Sesión
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* 🛒 Icono carrito */}
             <button className="relative text-red-600 hover:text-red-800">
               <span className="material-symbols-outlined text-2xl">
                 shopping_cart
@@ -123,17 +199,6 @@ const Navigation = () => {
           >
             Contacto
           </Link>
-
-          {/* Mostrar solo si es ADMIN */}
-          {userRole === "ADMIN" && (
-            <Link
-              to="/adminpanel"
-              onClick={() => setMenuOpen(false)}
-              className="block px-4 py-3 mt-2 bg-red-50 text-red-700 font-semibold rounded hover:bg-red-100"
-            >
-              Panel de Administrador
-            </Link>
-          )}
 
           <div className="mt-2 border-t border-gray-200 dark:border-gray-700" />
 
