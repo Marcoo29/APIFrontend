@@ -59,7 +59,6 @@ export default function BrandsSection() {
   return (
     <section className="bg-[#E10600] text-white py-12 overflow-hidden">
       <div className="w-screen flex flex-col items-center text-center">
-        {/* Carruseles */}
         <div className="flex flex-col gap-8 w-screen">
           {brandRows.map((row, idx) => (
             <div key={idx} className="overflow-hidden w-screen">
@@ -68,10 +67,8 @@ export default function BrandsSection() {
           ))}
         </div>
 
-        {/* Línea divisoria */}
         <div className="w-24 border-t-2 border-white/70 mt-10 mb-6"></div>
 
-        {/* Texto */}
         <p className="text-sm md:text-base font-large max-w-2xl leading-relaxed mb-5 tracking-wide">
           UN CATÁLOGO DE <span className="font-bold">75.000 PRODUCTOS</span> Y
           MÁS DE <span className="font-bold">200 MARCAS</span> LÍDERES EN
@@ -79,7 +76,6 @@ export default function BrandsSection() {
           INTEGRAL A SUS NECESIDADES.
         </p>
 
-        {/* Botón */}
         <Link
           to="/products"
           className="mt-1 flex items-center gap-2 border-2 border-white px-8 py-2 squared-md font-bold uppercase text-xs tracking-wide hover:bg-white hover:text-[#E10600] transition-colors duration-300"
@@ -88,7 +84,6 @@ export default function BrandsSection() {
         </Link>
       </div>
 
-      {/* Animaciones */}
       <style>{`
         @keyframes scroll {
           0% { transform: translateX(0); }

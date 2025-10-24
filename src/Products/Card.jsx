@@ -7,12 +7,10 @@ const Card = ({ id, title, price, image, manufacturer }) => {
   const [mensaje, setMensaje] = useState("");
   const navigate = useNavigate();
 
-  // 🔹 Obtener usuario local
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userRole = user?.role || null;
 
-  // 🔹 Cargar imagen asociada al producto
   useEffect(() => {
     fetch(`http://localhost:4002/images?id=${id}`)
       .then((res) => res.json())
@@ -22,7 +20,6 @@ const Card = ({ id, title, price, image, manufacturer }) => {
       .catch((err) => console.error("Error cargando imagen:", err));
   }, [id]);
 
-  // 🔹 Control de cantidad
   const aumentar = (e) => {
     e.stopPropagation();
     setCantidad((prev) => Math.min(prev + 1, 99));
@@ -33,15 +30,13 @@ const Card = ({ id, title, price, image, manufacturer }) => {
     setCantidad((prev) => Math.max(prev - 1, 1));
   };
 
-  // 🔹 Formato de precio
   const formattedPrice =
     typeof price === "number"
       ? price.toLocaleString("es-AR")
       : price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-  // 🔹 Agregar producto al carrito
   const agregarAlCarrito = (e) => {
-    e.stopPropagation(); // 🔒 evita que abra el ProductDetail
+    e.stopPropagation();
     if (userRole === "ADMIN") return;
 
     const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -68,7 +63,6 @@ const Card = ({ id, title, price, image, manufacturer }) => {
     setTimeout(() => setMensaje(""), 2000);
   };
 
-  // 🔹 Abrir detalle del producto
   const abrirDetalle = () => {
     navigate(`/products/${id}`);
   };
@@ -78,7 +72,6 @@ const Card = ({ id, title, price, image, manufacturer }) => {
       className="w-full max-w-sm bg-white border border-gray-300 rounded-none shadow-sm hover:shadow-md hover:border-red-600 hover:shadow-red-200 transition-all duration-200 font-display cursor-pointer"
       onClick={abrirDetalle}
     >
-      {/* Imagen */}
       <div className="bg-gray-50 flex justify-center items-center border-b border-gray-200 aspect-square">
         {imageBase64 ? (
           <img
@@ -97,9 +90,7 @@ const Card = ({ id, title, price, image, manufacturer }) => {
         )}
       </div>
 
-      {/* Contenido */}
       <div className="px-5 py-4 flex flex-col items-center">
-        {/* 🧱 Título */}
         <h5
           title={title}
           className="text-lg font-semibold tracking-tight text-gray-900 hover:text-red-600 transition-colors duration-200 text-center mb-1 line-clamp-2 overflow-hidden leading-snug min-h-[48px]"
@@ -107,20 +98,17 @@ const Card = ({ id, title, price, image, manufacturer }) => {
           {title || "Producto de ejemplo"}
         </h5>
 
-        {/* Fabricante */}
         <p className="text-xs uppercase text-red-600 font-semibold tracking-wide mb-2 text-center">
           {manufacturer || "Sin fabricante"}
         </p>
 
-        {/* Precio */}
         <span className="text-2xl font-bold text-gray-900 mb-3">
           ${formattedPrice ?? "0"}
         </span>
 
-        {/* Controles y botón */}
         <div
           className="flex items-center justify-center gap-3 w-full"
-          onClick={(e) => e.stopPropagation()} // Evita navegación en botones
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center border border-gray-300 rounded-none px-2 py-1 text-sm text-gray-800">
             <button
@@ -159,7 +147,6 @@ const Card = ({ id, title, price, image, manufacturer }) => {
           </button>
         </div>
 
-        {/* Mensaje de confirmación */}
         {mensaje && (
           <p className="text-green-600 text-sm mt-3 font-medium animate-fadeIn">
             {mensaje}

@@ -11,14 +11,12 @@ export default function Categories({
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 🔹 Obtener categoría actual desde la URL (?category=)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const categoryFromUrl = params.get("category");
     setActiveCategory(categoryFromUrl ? categoryFromUrl.toLowerCase() : null);
   }, [location.search]);
 
-  // 🔹 Cargar categorías desde el backend
   useEffect(() => {
     fetch(backendUrl)
       .then((res) => res.json())
@@ -40,7 +38,6 @@ export default function Categories({
       .catch((err) => console.error("Error cargando categorías:", err));
   }, [backendUrl]);
 
-  // 🔹 Click en categoría → cambia estado, callback y URL
   const handleSelect = (category) => {
     if (category === null) {
       setActiveCategory(null);
@@ -61,7 +58,6 @@ export default function Categories({
       </h3>
 
       <ul className="space-y-2">
-        {/* Botón para ver todas */}
         <li>
           <button
             onClick={() => handleSelect(null)}
@@ -75,7 +71,6 @@ export default function Categories({
           </button>
         </li>
 
-        {/* Lista de categorías */}
         {categories.map((c) => {
           const isActive =
             activeCategory === c.name.toLowerCase().trim() ||

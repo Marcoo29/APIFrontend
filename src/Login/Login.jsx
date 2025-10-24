@@ -33,7 +33,6 @@ const Login = () => {
 
       const data = await response.json();
 
-      // Guardamos un objeto "user" completo para AdminPanel
       localStorage.setItem(
         "user",
         JSON.stringify({ email:data.email, name: data.name, role: data.role, token: data.access_token || data.token })
@@ -49,7 +48,6 @@ const Login = () => {
   return (
     <div className="relative z-10 min-h-screen flex items-center justify-center bg-[#2c2c2c] font-display">
       <div className="relative z-10 flex w-full max-w-5xl bg-white rounded-2xl overflow-visible shadow-2xl">
-        {/* LADO IZQUIERDO */}
         <div className="hidden md:flex md:w-1/2 relative">
           <img
             src="/img_login.jpg"
@@ -66,7 +64,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* LADO DERECHO - FORMULARIO */}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-gray-50">
           <h1 className="text-3xl font-extrabold text-gray-800 mb-8 border-b-4 border-red-600 w-fit pb-1">
             Iniciar sesión

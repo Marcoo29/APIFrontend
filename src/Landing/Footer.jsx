@@ -4,7 +4,6 @@ const Footer = () => {
       <div className="container mx-auto px-6 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
-          {/* Columna 1: Marca */}
           <div className="flex flex-col items-start">
             <h2 className="text-3xl font-bold text-white tracking-wide mb-2">
               FleetParts
@@ -14,7 +13,6 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Columna 2: Navegación */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-3 border-b border-red-600 pb-1 inline-block">
               Navegación
@@ -47,7 +45,6 @@ const Footer = () => {
             </nav>
           </div>
 
-          {/* Columna 3: Información legal */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-3 border-b border-red-600 pb-1 inline-block">
               Legal
@@ -67,7 +64,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Línea inferior */}
         <div className="mt-10 border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500">
             © 2025 FleetParts. Todos los derechos reservados.

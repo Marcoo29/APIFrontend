@@ -32,10 +32,8 @@ const Pagination = ({
         type === "bottom" ? "mt-8" : "mb-4"
       }`}
     >
-      {/* --- FILA SUPERIOR --- */}
       {type === "top" && (
         <div className="flex flex-wrap justify-between items-center border border-gray-200 rounded-sm bg-gray-50 px-4 py-3 text-sm shadow-sm">
-          {/* Botones de layout */}
           <div className="flex items-center gap-2 text-gray-500">
             <button
               onClick={() => onLayoutChange?.("grid")}
@@ -61,12 +59,10 @@ const Pagination = ({
             </button>
           </div>
 
-          {/* Texto */}
           <p className="text-gray-600 text-sm">
             Mostrando {startItem}-{endItem} de {totalItems} artículo(s)
           </p>
 
-          {/* Selectores */}
           <div className="flex items-center gap-2">
             <label htmlFor="sort" className="text-gray-600 text-sm">
               Ordenar por:
@@ -96,7 +92,6 @@ const Pagination = ({
         </div>
       )}
 
-      {/* --- FILA INFERIOR --- */}
       {type === "bottom" && (
         <div className="flex justify-center items-center mt-4 space-x-4">
           <button

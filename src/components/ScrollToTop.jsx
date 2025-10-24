@@ -5,12 +5,10 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
   const [isVisible, setIsVisible] = useState(false);
 
-  // 🔼 Cuando cambia de ruta → vuelve arriba
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [pathname]);
 
-  // 👀 Detecta el scroll para mostrar u ocultar el botón
   useEffect(() => {
     const handleScroll = () => {
       setIsVisible(window.scrollY > 300);
@@ -19,7 +17,6 @@ export default function ScrollToTop() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 🔘 Acción al hacer click
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

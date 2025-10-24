@@ -30,7 +30,6 @@ const products = [
 export default function ProductsGrid() {
   const navigate = useNavigate();
 
-  // 🔹 Redirigir al listado de productos filtrado por categoría
   const handleCategoryClick = (category) => {
     const categoryParam = category.toLowerCase().trim();
     navigate(`/products?category=${encodeURIComponent(categoryParam)}`);
@@ -40,13 +39,11 @@ export default function ProductsGrid() {
   return (
     <section className="bg-[#3b3b3b] text-white py-20 px-6 md:px-16 flex flex-col items-center">
       <div className="w-full max-w-6xl">
-        {/* Título */}
         <h2 className="text-4xl md:text-5xl font-extrabold mb-10 tracking-tight text-left leading-tight">
           SOMOS <br />
           ESPECIALISTAS...
         </h2>
 
-        {/* Grid de categorías */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 border border-[#555]">
           {products.map((p, index) => (
             <div

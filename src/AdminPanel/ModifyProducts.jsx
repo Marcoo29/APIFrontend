@@ -5,11 +5,9 @@ const ModifyProducts = ({ user, products, setProducts }) => {
   const [editedProduct, setEditedProduct] = useState({});
   const [error, setError] = useState("");
 
-  // 🔢 Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // 📄 Productos paginados
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const currentProducts = useMemo(() => {
     const indexOfLast = currentPage * itemsPerPage;
@@ -17,14 +15,12 @@ const ModifyProducts = ({ user, products, setProducts }) => {
     return products.slice(indexOfFirst, indexOfLast);
   }, [products, currentPage]);
 
-  // ✏️ Click en lápiz
   const handleEditClick = (prod) => {
     setEditingId(prod.id);
     setEditedProduct({ ...prod });
     setError("");
   };
 
-  // 💾 Guardar cambios
   const handleEditSubmit = async (prodId) => {
     setError("");
     try {
@@ -63,12 +59,10 @@ const ModifyProducts = ({ user, products, setProducts }) => {
     }
   };
 
-  // 🧩 Cambios en inputs
   const handleChange = (field, value) => {
     setEditedProduct((prev) => ({ ...prev, [field]: value }));
   };
 
-  // 📏 Calcular cuántas filas vacías faltan
   const emptyRows = itemsPerPage - currentProducts.length;
 
   return (
@@ -202,7 +196,6 @@ const ModifyProducts = ({ user, products, setProducts }) => {
                   </tr>
                 ))}
 
-                {/* 🔲 Filas vacías para mantener altura fija */}
                 {emptyRows > 0 &&
                   Array.from({ length: emptyRows }).map((_, i) => (
                     <tr key={`empty-${i}`} className="border-t h-[45px]">
@@ -214,7 +207,6 @@ const ModifyProducts = ({ user, products, setProducts }) => {
           </tbody>
         </table>
 
-        {/* 🔽 Controles de paginación */}
         {products.length > itemsPerPage && (
           <div className="flex justify-center items-center gap-4 mt-4">
             <button

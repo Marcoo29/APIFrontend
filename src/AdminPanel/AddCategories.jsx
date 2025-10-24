@@ -7,7 +7,6 @@ const AddCategories = ({ categories, setCategories, user }) => {
   const [editingId, setEditingId] = useState(null);
   const [editedName, setEditedName] = useState("");
 
-  // 🔄 Cargar categorías
   useEffect(() => {
     if (!user) return;
     fetch("http://localhost:4002/categories")
@@ -16,7 +15,6 @@ const AddCategories = ({ categories, setCategories, user }) => {
       .catch(() => setError("Error al cargar categorías"));
   }, [user, setCategories]);
 
-  // ➕ Crear nueva categoría
   const handleAddCategory = async (e) => {
     e.preventDefault();
     if (!newCategoryName.trim()) return;
@@ -46,14 +44,12 @@ const AddCategories = ({ categories, setCategories, user }) => {
     }
   };
 
-  // ✏️ Habilitar edición
   const handleEditClick = (cat) => {
     setEditingId(cat.id);
     setEditedName(cat.description);
     setError("");
   };
 
-  // 💾 Guardar edición
   const handleEditSubmit = async (catId) => {
     if (!editedName.trim()) return;
 
@@ -94,7 +90,6 @@ const AddCategories = ({ categories, setCategories, user }) => {
         Gestión de Categorías
       </h3>
 
-      {/* ➕ Formulario agregar */}
       <form
         onSubmit={handleAddCategory}
         className="flex flex-col sm:flex-row gap-3 mb-6"
@@ -133,7 +128,7 @@ const AddCategories = ({ categories, setCategories, user }) => {
               className="p-3 flex justify-between items-center hover:bg-[#fafafa] transition"
             >
               <div className="flex items-center gap-2 w-full justify-between">
-                {/* Campo editable */}
+
                 {editingId === cat.id ? (
                   <input
                     type="text"
@@ -146,7 +141,7 @@ const AddCategories = ({ categories, setCategories, user }) => {
                   <span className="text-[#444]">{cat.description}</span>
                 )}
 
-                {/* ✅ / ✏️ Botón */}
+
                 <button
                   onClick={() =>
                     editingId === cat.id

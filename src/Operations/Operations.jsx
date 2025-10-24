@@ -5,7 +5,6 @@ export default function Operations({ user }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // detalle por operación: { [opId]: { loading, error, items, open } }
   const [details, setDetails] = useState({});
 
   const getToken = () => {
@@ -65,7 +64,6 @@ export default function Operations({ user }) {
     };
 
     fetchOperations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleDetails = async (operationId) => {
@@ -78,19 +76,16 @@ export default function Operations({ user }) {
       return;
     }
 
-    // Si ya está abierto, sólo colapsá
     if (details[operationId]?.open && !details[operationId]?.loading) {
       setDetails((prev) => ({ ...prev, [operationId]: { ...prev[operationId], open: false } }));
       return;
     }
 
-    // Si ya tenemos items cargados, solo abrir
     if (details[operationId]?.items && details[operationId].items.length) {
       setDetails((prev) => ({ ...prev, [operationId]: { ...prev[operationId], open: true } }));
       return;
     }
 
-    // Cargar del backend
     setDetails((prev) => ({
       ...prev,
       [operationId]: { ...(prev[operationId] || {}), loading: true, error: "", open: true },
@@ -109,7 +104,7 @@ export default function Operations({ user }) {
         throw new Error(text || "Error al obtener el detalle");
       }
 
-      const items = await res.json(); // lista de OperationDetail
+      const items = await res.json();
       setDetails((prev) => ({
         ...prev,
         [operationId]: { loading: false, error: "", items: Array.isArray(items) ? items : [], open: true },
@@ -173,7 +168,6 @@ export default function Operations({ user }) {
   );
 }
 
-// ————— fila + detalle como subcomponente para mantener prolijo —————
 function FragmentRow({ op, detail, onToggle, fmtCurrency }) {
   return (
     <>
@@ -216,7 +210,6 @@ function FragmentRow({ op, detail, onToggle, fmtCurrency }) {
         </td>
       </tr>
 
-      {/* Fila de detalle colapsable */}
       {detail?.open && (
         <tr className="bg-gray-50">
           <td colSpan={7} className="px-4 py-3">
@@ -240,7 +233,6 @@ function FragmentRow({ op, detail, onToggle, fmtCurrency }) {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {detail.items.map((it) => {
-                      // Campos defensivos: depende de cómo venga tu OperationDetail
                       const productId =
                         it.productId ?? it.product?.id ?? it.product?.productId ?? "-";
                       const productName =

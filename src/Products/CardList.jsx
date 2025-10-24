@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // 🧭 agregado
+import { useNavigate } from "react-router-dom";
 import Card from "./Card";
 
 export default function CardList({ products = [], layoutView = "grid" }) {
   const [imagesMap, setImagesMap] = useState({});
-  const navigate = useNavigate(); // 🧭 inicialización
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -58,10 +58,9 @@ export default function CardList({ products = [], layoutView = "grid" }) {
           return (
             <div
               key={product.id}
-              onClick={() => navigate(`/products/${product.id}`)} // 🧭 click lleva al detalle
+              onClick={() => navigate(`/products/${product.id}`)}
               className="flex items-center bg-white border border-gray-200 hover:border-red-500 hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer"
             >
-              {/* 🖼 Imagen */}
               <div className="w-48 h-48 flex-shrink-0 bg-gray-50 flex items-center justify-center border-r border-gray-200 overflow-hidden">
                 <img
                   src={imageUrl}
@@ -70,8 +69,6 @@ export default function CardList({ products = [], layoutView = "grid" }) {
                   loading="lazy"
                 />
               </div>
-
-              {/* 📋 Info */}
               <div className="flex flex-col justify-between p-5 flex-1">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-1 hover:text-red-600 transition-colors">
@@ -92,7 +89,6 @@ export default function CardList({ products = [], layoutView = "grid" }) {
                     ${formattedPrice}
                   </span>
 
-                  {/* 🚫 Evita que el botón dispare el navigate */}
                   <button
                     onClick={(e) => e.stopPropagation()}
                     className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-sm font-semibold text-sm transition-colors"
@@ -108,11 +104,10 @@ export default function CardList({ products = [], layoutView = "grid" }) {
           );
         }
 
-        // ✅ Vista grilla
         return (
           <div
             key={product.id}
-            onClick={() => navigate(`/products/${product.id}`)} // 🧭 click lleva al detalle
+            onClick={() => navigate(`/products/${product.id}`)}
             className="cursor-pointer"
           >
             <Card

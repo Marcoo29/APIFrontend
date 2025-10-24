@@ -11,9 +11,8 @@ export default function ProductDetail() {
   const [searchTerm, setSearchTerm] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
   const [cantidad, setCantidad] = useState(1);
-  const [mensaje, setMensaje] = useState(""); // ✅ mensaje de confirmación
+  const [mensaje, setMensaje] = useState("");
 
-  // 🔹 Obtener usuario del localStorage
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userRole = user?.role || null;
@@ -35,7 +34,6 @@ export default function ProductDetail() {
           })
           .catch((err) => console.error("Error cargando imagen:", err));
 
-        // Productos relacionados
         fetch(`http://localhost:4002/products?page=0&size=100`)
           .then((res) => res.json())
           .then(async (all) => {
@@ -78,7 +76,6 @@ export default function ProductDetail() {
     }
   };
 
-  // 🛒 Agregar al carrito
   const agregarAlCarrito = () => {
     if (userRole === "ADMIN" || !product) return;
 
@@ -100,10 +97,8 @@ export default function ProductDetail() {
 
     localStorage.setItem("cart", JSON.stringify(currentCart));
 
-    // 🔁 actualiza el contador del carrito
     window.dispatchEvent(new Event("storage"));
 
-    // ✅ mensaje visual
     setMensaje("✅ Producto agregado al carrito");
     setTimeout(() => setMensaje(""), 2000);
   };
@@ -119,7 +114,6 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f6f6f6] font-display text-gray-900 relative">
       <main className="flex-grow container mx-auto px-4 lg:px-8 py-12 mt-10 max-w-6xl relative">
-        {/* 🔍 Buscador */}
         <div className="absolute top-[-25px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
           <div className="relative">
             <input
@@ -136,16 +130,13 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* 🔙 Volver atrás */}
         <button
           onClick={() => {
-            const previousPath = document.referrer; // ← Ruta desde donde venía el usuario
+            const previousPath = document.referrer;
 
-            // Si venís de la misma app (ej. /products, /cart, etc.)
             if (previousPath && previousPath.includes(window.location.origin)) {
               navigate(-1);
             } else {
-              // Si entraste directo (sin historial o desde otro dominio)
               navigate("/products");
             }
           }}
@@ -156,7 +147,6 @@ export default function ProductDetail() {
         </button>
 
 
-        {/* 🧭 Breadcrumb */}
         <nav className="text-sm text-gray-500 mb-4">
           <Link to="/" className="hover:text-red-600 transition-colors">
             Inicio
@@ -174,10 +164,8 @@ export default function ProductDetail() {
           </span>
         </nav>
 
-        {/* 📦 Ficha principal */}
         <div className="bg-white shadow-sm border border-gray-200 overflow-hidden mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
-            {/* 🖼 Imagen */}
             <div className="flex items-center justify-center bg-gray-100 border-r border-gray-200 aspect-square">
               {imageBase64 ? (
                 <img
@@ -193,7 +181,6 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {/* 📋 Info */}
             <div className="flex flex-col p-8 justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase text-red-600">
@@ -220,9 +207,7 @@ export default function ProductDetail() {
                 </p>
               </div>
 
-              {/* 🔴 Controles cantidad y botón agregar */}
               <div className="pt-6 border-t border-gray-200 mt-6 flex items-center justify-center gap-3 w-full">
-                {/* Selector cantidad */}
                 <div className="flex items-center border border-gray-300 rounded-none px-2 py-3 text-sm text-gray-800">
                   <button
                     onClick={disminuir}
@@ -244,7 +229,6 @@ export default function ProductDetail() {
                   </button>
                 </div>
 
-                {/* Botón agregar */}
                 <button
                   onClick={agregarAlCarrito}
                   disabled={userRole === "ADMIN"}
@@ -266,7 +250,6 @@ export default function ProductDetail() {
                 </button>
               </div>
 
-              {/* ✅ Mensaje de confirmación */}
               {mensaje && (
                 <p className="text-green-600 text-sm text-center mt-4 font-medium animate-fadeIn">
                   {mensaje}
@@ -276,7 +259,6 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* 🧲 Productos relacionados */}
         {relatedProducts.length > 0 && (
           <section className="mt-10 relative">
             <div className="text-center mb-6">
@@ -287,7 +269,6 @@ export default function ProductDetail() {
             </div>
 
             <div className="relative flex items-center">
-              {/* Flecha izquierda (afuera del carrusel) */}
               <button
                 onClick={() => {
                   document.getElementById("relatedScroll").scrollBy({
@@ -302,7 +283,6 @@ export default function ProductDetail() {
                 </span>
               </button>
 
-              {/* Lista de productos relacionados */}
               <div
                 id="relatedScroll"
                 className="flex gap-5 overflow-x-hidden scroll-smooth pb-6 px-10 mx-auto"
@@ -348,7 +328,6 @@ export default function ProductDetail() {
                 ))}
               </div>
 
-              {/* Flecha derecha (afuera del carrusel) */}
               <button
                 onClick={() => {
                   document.getElementById("relatedScroll").scrollBy({

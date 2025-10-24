@@ -12,7 +12,6 @@ const UserPanel = () => {
   const email = parsedUser?.email || null;
   const token = parsedUser?.token || null;
 
-  // Campos editables
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [address, setAddress] = useState("");
@@ -72,7 +71,6 @@ const UserPanel = () => {
       const updatedUser = await res.json();
       setUser(updatedUser);
 
-      // 🔹 Actualizar localStorage para que Navbar vea el cambio al refrescar
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -124,13 +122,11 @@ const UserPanel = () => {
         </h2>
 
         <div className="max-w-lg mx-auto bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-left">
-          {/* Username no editable */}
           <div className="mb-4">
             <label className="font-semibold block mb-1">Email:</label>
             <p className="text-gray-700">{user.email}</p>
           </div>
 
-          {/* Nombre editable */}
           <div className="mb-4">
             <label className="font-semibold block mb-1">Nombre:</label>
             <input
@@ -141,7 +137,6 @@ const UserPanel = () => {
             />
           </div>
 
-          {/* Apellido editable */}
           <div className="mb-4">
             <label className="font-semibold block mb-1">Apellido:</label>
             <input
@@ -152,7 +147,6 @@ const UserPanel = () => {
             />
           </div>
 
-          {/* Dirección editable */}
           <div className="mb-4">
             <label className="font-semibold block mb-1">Dirección:</label>
             <input
@@ -164,7 +158,6 @@ const UserPanel = () => {
             />
           </div>
 
-          {/* Botón de guardar */}
           <div className="mt-6 text-center">
             <button
               onClick={handleSave}

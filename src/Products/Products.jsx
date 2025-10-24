@@ -26,19 +26,16 @@ const Products = () => {
 
   const sizeParam = itemsPerPage === "all" ? totalItems || 1000 : itemsPerPage;
 
-  // 🔹 Actualizar búsqueda si cambia el parámetro en la URL
   useEffect(() => {
     const paramSearch =
       new URLSearchParams(location.search).get("search") || "";
     setSearchTerm(paramSearch);
   }, [location.search]);
 
-  // 🔹 Resetear página cuando cambian filtros
   useEffect(() => {
     setPage(0);
   }, [searchTerm, sortOption, itemsPerPage, selectedCategory]);
 
-  // 🔹 Fetch de productos (acepta categoría por nombre o ID) con búsqueda
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -47,7 +44,6 @@ const Products = () => {
         if (selectedCategory) {
           let categoryId = selectedCategory;
 
-          // Si la categoría es texto (no número), buscar su ID real
           if (isNaN(Number(selectedCategory))) {
             const catRes = await fetch(
               `http://localhost:4002/categories?page=0&size=100`
@@ -68,11 +64,10 @@ const Products = () => {
             );
 
             if (match) categoryId = match.id;
-            else categoryId = null; // No existe → mostrar todos
+            else categoryId = null;
           }
 
           if (categoryId) {
-            // 🔹 Aquí agregamos searchTerm al URL de by-category
             url = `http://localhost:4002/products/by-category/${categoryId}?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(searchTerm || "")}`;
           } else {
             url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
@@ -80,7 +75,6 @@ const Products = () => {
             )}`;
           }
         } else {
-          // Sin categoría seleccionada → todos los productos
           url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
             searchTerm || ""
           )}`;
@@ -118,7 +112,6 @@ const Products = () => {
     <section className="relative flex min-h-screen w-full flex-col bg-[#f6f6f6]">
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8 mt-16">
 
-      {/* 🔍 Buscador */}
       <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
         <div className="relative">
           <input
@@ -132,7 +125,6 @@ const Products = () => {
             search
           </span>
 
-          {/* ❌ Botón para limpiar búsqueda */}
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
@@ -146,10 +138,8 @@ const Products = () => {
       </div>
 
         <div className="grid grid-cols-[1fr_3fr] gap-8">
-          {/* 🗂 Categorías */}
           <Categories onCategorySelect={setSelectedCategory} />
 
-          {/* 🛒 Productos */}
           <div className="flex flex-col">
             <Pagination
               type="top"

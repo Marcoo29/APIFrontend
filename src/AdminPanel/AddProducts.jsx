@@ -37,7 +37,6 @@ const AddProducts = ({ categories, user, products, setProducts }) => {
     setError("");
 
     try {
-      // 1️⃣ Crear el producto sin imagen
       const productPayload = {
         name: productName.trim(),
         price: Number(price),
@@ -67,7 +66,6 @@ const AddProducts = ({ categories, user, products, setProducts }) => {
       const productId = created?.id ?? created?.productId;
       if (!productId) throw new Error("No se recibió el ID del producto creado.");
 
-      // 2️⃣ Subir la imagen
       const fd = new FormData();
       fd.append("productId", String(productId));
       fd.append("name", productName);
@@ -86,11 +84,8 @@ const AddProducts = ({ categories, user, products, setProducts }) => {
         throw new Error(txt || "El producto se creó, pero falló la subida de la imagen.");
       }
 
-      // ✅ 3️⃣ Actualizar la lista de productos en el front
-      // (esto es lo que faltaba)
       setProducts((prev) => [...prev, created]);
 
-      // 4️⃣ Limpiar formulario
       setProductName("");
       setPrice("");
       setManufacturer("");
@@ -185,7 +180,6 @@ const AddProducts = ({ categories, user, products, setProducts }) => {
           ))}
         </select>
 
-        {/* 🎨 Imagen del producto */}
         <div className="flex flex-col">
           <label className="text-sm text-[#555] mb-2 font-medium">
             Imagen del producto

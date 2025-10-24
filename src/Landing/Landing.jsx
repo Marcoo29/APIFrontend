@@ -21,7 +21,6 @@ export default function Landing() {
 
   return (
     <div className="relative flex flex-col font-display text-white overflow-hidden bg-[#3b3b3b]">
-      {/* 🎥 Video de fondo */}
       <video
         autoPlay
         loop
@@ -34,10 +33,8 @@ export default function Landing() {
         Tu navegador no soporta la reproducción de video.
       </video>
 
-      {/* Overlay oscuro con blur */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-[6px] z-[1]" />
 
-      {/* Líneas verticales */}
       <div className="absolute inset-0 grid grid-cols-7 z-[2] pointer-events-none">
         {Array.from({ length: 7 }).map((_, i) => (
           <div
@@ -51,14 +48,10 @@ export default function Landing() {
 
       <main className="relative z-[3] flex-1">
         <section className="relative min-h-screen grid grid-cols-7 pb-20">
-          {/* Columna 1 → guía roja */}
           <div className="col-span-1" />
 
-          {/* Contenido principal */}
           <div className="col-span-6 flex flex-col justify-start pt-20 pl-8 pr-8 max-w-[1100px]">
-            {/* Texto + métricas */}
             <div>
-              {/* Logo y título */}
               <div className="flex items-center mb-4">
                 <svg
                   className="h-14 w-14 md:h-16 md:w-16 mr-4"
@@ -108,7 +101,6 @@ export default function Landing() {
                 </h1>
               </div>
 
-              {/* Texto institucional */}
               <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed text-justify text-left mb-10">
                 <span className="font-semibold text-white">FleetParts</span> es una
                 empresa argentina con más de dos décadas de trayectoria en la
@@ -118,7 +110,6 @@ export default function Landing() {
                 ofreciendo calidad, disponibilidad y respaldo técnico en cada entrega.
               </p>
 
-              {/* Métricas */}
               <div className="grid grid-cols-4 gap-6 mt-4 mb-10 pr-8 text-white text-left justify-items-start">
                 {[
                   { value: "20+", label: "AÑOS DE EXPERIENCIA" },
@@ -136,10 +127,8 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* 🔍 Buscador principal rectangular */}
-            <div className="relative w-full max-w-3xl mt-[120px]"> {/* 🔼 sube fuerte hacia arriba */}
+            <div className="relative w-full max-w-3xl mt-[120px]">
               <div className="flex items-stretch w-full">
-                {/* Campo de texto + lupa */}
                 <div
                   className="
                     flex items-center flex-grow
@@ -169,7 +158,6 @@ export default function Landing() {
                   </button>
                 </div>
 
-                {/* 🟥 Botón "Ver todos los productos" más compacto */}
                 <button
                   onClick={() => navigate('/products')}
                   className="
@@ -190,7 +178,6 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Productos destacados y marcas */}
         <ProductGrid />
         <BrandSection />
       </main>

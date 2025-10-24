@@ -5,17 +5,15 @@ import ModifyProducts from "./ModifyProducts";
 
 const AdminPanel = () => {
   const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]); // ✅ nuevo estado compartido
+  const [products, setProducts] = useState([]); 
   const [user, setUser] = useState(null);
 
-  // 🔄 Cargar productos una sola vez aquí
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
 
-      // 🔄 Cargar productos al inicio
       const url =
         parsedUser.role === "ADMIN"
           ? "http://localhost:4002/products/all"
@@ -65,7 +63,6 @@ const AdminPanel = () => {
             user={user}
           />
 
-          {/* 🔧 Ahora AddProducts actualiza el estado global */}
           <AddProducts
             categories={categories}
             user={user}
@@ -75,7 +72,6 @@ const AdminPanel = () => {
         </div>
 
         <div className="mt-10">
-          {/* 🔧 ModifyProducts usa el mismo estado */}
           <ModifyProducts user={user} products={products} setProducts={setProducts} />
         </div>
       </div>
