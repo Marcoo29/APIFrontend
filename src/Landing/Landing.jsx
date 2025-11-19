@@ -1,7 +1,7 @@
-import BrandSection from "./BrandSection";
 import ProductGrid from "./ProductGrid";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import BrandSection from "./BrandSection/BrandSection";
 
 export default function Landing() {
   const navigate = useNavigate();

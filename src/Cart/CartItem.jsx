@@ -1,0 +1,73 @@
+import ProductThumb from "./ProductThumb";
+import { formatPrice, parseArCurrency } from "../utils/CartUtils";
+
+export default function CartItem({
+  item,
+  navigate,
+  increaseQty,
+  decreaseQty,
+  removeItem,
+}) {
+  return (
+    <div
+      className="flex flex-col sm:flex-row items-center justify-between bg-gray-50 p-4 rounded-md border border-gray-200 hover:border-red-400 transition-all duration-200 cursor-pointer"
+      onClick={() => navigate(`/product/${item.id}`)}
+    >
+      <div className="flex items-center gap-4 w/full sm:w-auto relative z-10">
+        <ProductThumb
+          id={item.id}
+          name={item.name}
+          fallbackImage={item.image}
+        />
+        <div>
+          <p className="font-semibold text-lg">{item.name}</p>
+          <p className="text-gray-500">
+            {formatPrice(parseArCurrency(item.price))}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 mt-3 sm:mt-0 relative z-10">
+        <div className="flex items-center border border-gray-300 rounded-md overflow-hidden shadow-sm">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              decreaseQty(item.id);
+            }}
+            className="px-3 py-1 text-gray-600 hover:text-red-600 transition"
+          >
+            –
+          </button>
+
+          <div className="px-4 text-gray-800 text-center select-none">
+            {item.qty}
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              increaseQty(item.id);
+            }}
+            className="px-3 py-1 text-gray-600 hover:text-red-600 transition"
+          >
+            +
+          </button>
+        </div>
+
+        <span className="font-semibold text-lg w-28 text-right text-gray-800">
+          {formatPrice(parseArCurrency(item.price) * item.qty)}
+        </span>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            removeItem(item.id);
+          }}
+          className="text-red-600 hover:underline text-sm font-medium"
+        >
+          Quitar
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import AddCategories from "./AddCategories";
-import AddProducts from "./AddProducts";
-import ModifyProducts from "./ModifyProducts";
+import ModifyProducts from "./modifyProducts/ModifyProducts";
+import AddCategories from "./addCategories/AddCategories";
+import AddProducts from "./addProducts/AddProducts";
 
 const AdminPanel = () => {
   const [categories, setCategories] = useState([]);

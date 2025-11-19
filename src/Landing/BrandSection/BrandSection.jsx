@@ -1,68 +1,16 @@
 import { Link } from "react-router-dom";
-
-const brandRows = [
-  [
-    "/Brands/acc.png",
-    "/Brands/armorall.png",
-    "/Brands/ausili.png",
-    "/Brands/baiml.png",
-    "/Brands/bremen.png",
-    "/Brands/clever.png",
-    "/Brands/cylgem.png",
-    "/Brands/deicas.png",
-    "/Brands/dni.png",
-  ],
-  [
-    "/Brands/driven.png",
-    "/Brands/ferrazzi.png",
-    "/Brands/fricrot.png",
-    "/Brands/gacri.png",
-    "/Brands/hescher.png",
-    "/Brands/huntchingson.png",
-    "/Brands/kobla.png",
-    "/Brands/loctite.png",
-    "/Brands/locx.png",
-  ],
-  [
-    "/Brands/mahle.png",
-    "/Brands/mateo.png",
-    "/Brands/moog.png",
-    "/Brands/ntn.png",
-    "/Brands/orlanrober.png",
-    "/Brands/pitts.png",
-    "/Brands/ralux.png",
-    "/Brands/tacsa.png",
-    "/Brands/triler.png",
-    "/Brands/valeo.png",
-    "/Brands/wagner.png",
-  ],
-];
-
-const BrandRow = ({ brands, reverse }) => (
-  <div
-    className={`flex items-center justify-around gap-12 w-max ${
-      reverse ? "animate-scrollReverse" : "animate-scroll"
-    }`}
-  >
-    {[...brands, ...brands].map((logo, i) => (
-      <img
-        key={i}
-        src={logo}
-        alt={`Marca ${i}`}
-        className="w-36 h-auto object-contain brightness-0 invert hover:invert-0 hover:brightness-0 transition-transform duration-300 hover:scale-110"
-      />
-    ))}
-  </div>
-);
+import BrandScroller from "./BrandScroller";
+import { brandRows } from "./brandRows";
 
 export default function BrandsSection() {
   return (
     <section className="bg-[#E10600] text-white py-12 overflow-hidden">
       <div className="w-screen flex flex-col items-center text-center">
+
         <div className="flex flex-col gap-8 w-screen">
           {brandRows.map((row, idx) => (
             <div key={idx} className="overflow-hidden w-screen">
-              <BrandRow brands={row} reverse={idx === 1} />
+              <BrandScroller brands={row} reverse={idx === 1} />
             </div>
           ))}
         </div>
