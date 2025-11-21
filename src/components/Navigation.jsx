@@ -5,7 +5,7 @@ const Navigation = () => {
   const username = JSON.parse(localStorage.getItem("user"))?.name || null;
   const userRole = JSON.parse(localStorage.getItem("user"))?.role || null;
   const user = JSON.parse(localStorage.getItem("user")) || null;
-  
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -13,11 +13,28 @@ const Navigation = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
 
- const handleLogout = () => {
-  localStorage.clear();
-  navigate("/home");
-};
+  const [cartCount, setCartCount] = useState(0);
 
+  const updateCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const total = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
+    setCartCount(total);
+  };
+
+  useEffect(() => {
+    updateCartCount();
+  }, []);
+
+  useEffect(() => {
+    const handler = () => updateCartCount();
+    window.addEventListener("cartUpdated", handler);
+    return () => window.removeEventListener("cartUpdated", handler);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/home");
+  };
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
@@ -29,12 +46,15 @@ const Navigation = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
       <nav className="w-full px-4 py-2 flex justify-between items-center fixed top-0 left-0 right-0 z-50">
+
+        {/* 🔥 TU MENÚ HAMBURGUESA TAL CUAL */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="p-2 border border-red-600 text-red-600 rounded-sm hover:bg-red-600 hover:text-white transition-colors"
@@ -47,13 +67,16 @@ const Navigation = () => {
 
         {!isAuthPage && (
           <div className="flex items-center gap-4 text-lg relative">
+
             {username &&
-              (location.pathname === "/home" || location.pathname === "/") && (
+              (location.pathname === "/home" ||
+                location.pathname === "/") && (
                 <span className="text-red-600 text-lg font-semibold">
                   Hola, {username}
                 </span>
               )}
 
+            {/* 🔥 ICONO USUARIO */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => {
@@ -134,11 +157,20 @@ const Navigation = () => {
               )}
             </div>
 
+            {/* 🛒 CARRITO + BADGE SIN TOCAR NADA MÁS */}
             <Link
               to="/cart"
               className="relative text-red-600 hover:text-red-800"
             >
-              <span className="material-symbols-outlined text-2xl">shopping_cart</span>
+              <span className="material-symbols-outlined text-2xl">
+                shopping_cart
+              </span>
+
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
         )}
@@ -177,6 +209,7 @@ const Navigation = () => {
           >
             Inicio
           </Link>
+
           <Link
             to="/products"
             onClick={() => setMenuOpen(false)}
@@ -184,6 +217,7 @@ const Navigation = () => {
           >
             Productos
           </Link>
+
           <Link
             to="/contact"
             onClick={() => setMenuOpen(false)}

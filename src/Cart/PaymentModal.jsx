@@ -1,7 +1,7 @@
 export default function PaymentModal({
   payMethod,
   setPayMethod,
-  handleSubmitOperation,
+  onSubmit,
   opLoading,
   setShowPayment,
 }) {
@@ -15,28 +15,50 @@ export default function PaymentModal({
             <input
               type="radio"
               name="payment"
-              value="efectivo"
-              checked={payMethod === "efectivo"}
+              value="TRANSFER"
+              checked={payMethod === "TRANSFER"}
               onChange={(e) => setPayMethod(e.target.value)}
             />
-            Efectivo
+            Transferencia
           </label>
 
           <label className="flex items-center gap-2">
             <input
               type="radio"
               name="payment"
-              value="tarjeta"
-              checked={payMethod === "tarjeta"}
+              value="MERCADO_PAGO"
+              checked={payMethod === "MERCADO_PAGO"}
               onChange={(e) => setPayMethod(e.target.value)}
             />
-            Tarjeta
+            Mercado Pago
+          </label>
+
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="payment"
+              value="CREDIT"
+              checked={payMethod === "CREDIT"}
+              onChange={(e) => setPayMethod(e.target.value)}
+            />
+            Tarjeta de crédito
+          </label>
+
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="payment"
+              value="DEBIT"
+              checked={payMethod === "DEBIT"}
+              onChange={(e) => setPayMethod(e.target.value)}
+            />
+            Tarjeta de débito
           </label>
         </div>
 
         <div className="mt-6 flex gap-4">
           <button
-            onClick={handleSubmitOperation}
+            onClick={onSubmit}
             className="flex-1 py-2 bg-blue-600 text-white rounded-lg"
             disabled={opLoading}
           >

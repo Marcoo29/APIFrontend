@@ -7,6 +7,23 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const fetchUserId = async (email, token) => {
+    try {
+      const res = await fetch(`http://localhost:4002/users/by-email/${email}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      return data.id; // 🔥 este es tu userId REAL
+    } catch {
+      return null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -32,11 +49,32 @@ const Login = () => {
       }
 
       const data = await response.json();
+      const token = data.access_token || data.token;
 
+      if (!token) {
+        setError("El servidor no devolvió un token.");
+        return;
+      }
+
+      // Guardar datos base del usuario
       localStorage.setItem(
         "user",
-        JSON.stringify({ email:data.email, name: data.name, role: data.role, token: data.access_token || data.token })
+        JSON.stringify({
+          email: data.email,
+          name: data.name,
+          role: data.role,
+          token,
+        })
       );
+
+      // 🔥 Obtener userId REAL desde backend
+      const userId = await fetchUserId(data.email, token);
+
+      if (userId) {
+        localStorage.setItem("userId", userId);
+      } else {
+        alert("No se pudo obtener el ID del usuario.");
+      }
 
       navigate("/");
     } catch (err) {
@@ -54,14 +92,6 @@ const Login = () => {
             alt="FleetParts Login"
             className="object-cover w-full h-full"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2c2c2c]/90 via-[#2c2c2c]/60 to-transparent flex flex-col justify-end items-start p-10">
-            <h2 className="text-4xl font-bold text-white mb-2">
-              Bienvenido a FleetParts
-            </h2>
-            <p className="text-gray-200">
-              Tu portal exclusivo de repuestos pesados.
-            </p>
-          </div>
         </div>
 
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-gray-50">
@@ -71,48 +101,34 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-gray-700 mb-2"
-              >
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Correo electrónico
               </label>
               <input
-                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="usuario@empresa.com"
-                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none bg-white text-gray-800 placeholder-gray-500"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-gray-700 mb-2"
-              >
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Contraseña
               </label>
               <input
-                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="*******"
-                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none bg-white text-gray-800 placeholder-gray-500"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600"
               />
             </div>
 
-            {error && (
-              <p className="text-red-600 text-sm font-semibold text-center">
-                {error}
-              </p>
-            )}
+            {error && <p className="text-red-600 text-center">{error}</p>}
 
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md transition duration-200 shadow-md"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md"
             >
               Iniciar sesión
             </button>
@@ -120,10 +136,7 @@ const Login = () => {
 
           <div className="text-center mt-6 text-gray-700">
             ¿No tenés cuenta?{" "}
-            <Link
-              to="/register"
-              className="text-red-600 font-semibold hover:underline"
-            >
+            <Link to="/register" className="text-red-600 font-semibold">
               Registrate
             </Link>
           </div>

@@ -1,79 +1,39 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-export function useCategories(user, setCategories) {
-  const [loadingCategory, setLoadingCategory] = useState(false);
-  const [error, setError] = useState("");
+import {fetchCategories, createCategory, updateCategory} from "../../redux/categorySlice";
+
+export function useCategories(user) {
+  const dispatch = useDispatch();
+  const { items, loading, error } = useSelector(state => state.categories);
+
   const [editingId, setEditingId] = useState(null);
   const [editedName, setEditedName] = useState("");
 
+  // Cargar categorías desde Redux
   useEffect(() => {
     if (!user) return;
+    dispatch(fetchCategories());
+  }, [user, dispatch]);
 
-    fetch("http://localhost:4002/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data.content || data || []))
-      .catch(() => setError("Error al cargar categorías"));
-  }, [user, setCategories]);
-
+  if(loading) return <p>Cargando categorías</p>
+  if(error) return <p>Error al cargar categorías: {error}</p>  
 
   const addCategory = async (name) => {
     if (!name.trim()) return;
-
-    setLoadingCategory(true);
-    setError("");
-
-    try {
-      const res = await fetch("http://localhost:4002/categories", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify({ description: name }),
-      });
-
-      if (!res.ok) throw new Error("Error al crear categoría");
-
-      const created = await res.json();
-      setCategories(prev => [...prev, created]);
-
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoadingCategory(false);
-    }
+    dispatch(createCategory({ name, token: user.token }));
   };
-
 
   const editCategory = async (id) => {
     if (!editedName.trim()) return;
-
-    try {
-      const res = await fetch(`http://localhost:4002/categories/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify({ description: editedName }),
-      });
-
-      if (!res.ok) throw new Error("Error al actualizar categoría");
-
-      setCategories(prev =>
-        prev.map(cat => cat.id === id ? { ...cat, description: editedName } : cat)
-      );
-
-      setEditingId(null);
-
-    } catch (e) {
-      setError(e.message);
-    }
+    dispatch(updateCategory({ id, description: editedName, token: user.token }));
+    setEditingId(null);
   };
 
   return {
+    categories: items,
+    loadingCategory: loading,
     error,
-    loadingCategory,
     editingId,
     editedName,
     setEditedName,

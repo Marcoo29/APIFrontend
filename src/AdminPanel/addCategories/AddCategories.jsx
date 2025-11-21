@@ -3,10 +3,11 @@ import { useCategories } from "./useCategories";
 import CategoryForm from "./CategoryForm";
 import CategoryList from "./CategoryList";
 
-export default function AddCategories({ categories, setCategories, user }) {
+export default function AddCategories({ user }) {
   const [newCategoryName, setNewCategoryName] = useState("");
 
   const {
+    categories,
     error,
     loadingCategory,
     editingId,
@@ -15,7 +16,7 @@ export default function AddCategories({ categories, setCategories, user }) {
     setEditingId,
     addCategory,
     editCategory,
-  } = useCategories(user, setCategories);
+  } = useCategories(user);
 
   return (
     <div className="w-full bg-white border p-8 shadow-sm">

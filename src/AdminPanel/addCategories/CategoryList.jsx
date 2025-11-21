@@ -8,14 +8,14 @@ export default function CategoryList({
   onEditClick,
   onSave,
 }) {
+  const safeCategories = Array.isArray(categories) ? categories : [];
+
   return (
     <ul className="border divide-y">
-      {categories.length === 0 ? (
-        <li className="p-3 text-gray-500 italic">
-          No hay categorías.
-        </li>
+      {safeCategories.length === 0 ? (
+        <li className="p-3 text-gray-500 italic">No hay categorías.</li>
       ) : (
-        categories.map((cat) => (
+        safeCategories.map((cat) => (
           <CategoryListItem
             key={cat.id}
             cat={cat}

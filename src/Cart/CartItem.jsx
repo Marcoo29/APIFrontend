@@ -1,33 +1,34 @@
+import React from "react";
 import ProductThumb from "./ProductThumb";
-import { formatPrice, parseArCurrency } from "../utils/CartUtils";
+import { parseArCurrency } from "../utils/CartUtils";
 
 export default function CartItem({
   item,
-  navigate,
+  formatPrice,
   increaseQty,
   decreaseQty,
   removeItem,
+  onNavigate
 }) {
   return (
     <div
+      onClick={() => onNavigate(`/products/${item.id}`)}
       className="flex flex-col sm:flex-row items-center justify-between bg-gray-50 p-4 rounded-md border border-gray-200 hover:border-red-400 transition-all duration-200 cursor-pointer"
-      onClick={() => navigate(`/product/${item.id}`)}
     >
-      <div className="flex items-center gap-4 w/full sm:w-auto relative z-10">
-        <ProductThumb
-          id={item.id}
-          name={item.name}
-          fallbackImage={item.image}
-        />
+      <div className="flex items-center gap-4 w-full sm:w-auto">
+        <ProductThumb id={item.id} name={item.name} fallbackImage={item.image} />
+
         <div>
           <p className="font-semibold text-lg">{item.name}</p>
+
+          {/* PRECIO UNITARIO CORRECTO */}
           <p className="text-gray-500">
-            {formatPrice(parseArCurrency(item.price))}
+            {formatPrice(item.price)}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mt-3 sm:mt-0 relative z-10">
+      <div className="flex items-center gap-4 mt-3 sm:mt-0">
         <div className="flex items-center border border-gray-300 rounded-md overflow-hidden shadow-sm">
           <button
             onClick={(e) => {
@@ -39,9 +40,7 @@ export default function CartItem({
             –
           </button>
 
-          <div className="px-4 text-gray-800 text-center select-none">
-            {item.qty}
-          </div>
+          <div className="px-4 text-gray-800 text-center">{item.qty}</div>
 
           <button
             onClick={(e) => {
@@ -54,7 +53,8 @@ export default function CartItem({
           </button>
         </div>
 
-        <span className="font-semibold text-lg w-28 text-right text-gray-800">
+        {/* SUBTOTAL CORRECTO: precio parseado * qty */}
+        <span className="font-semibold text-lg w-28 text-right">
           {formatPrice(parseArCurrency(item.price) * item.qty)}
         </span>
 

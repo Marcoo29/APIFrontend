@@ -1,3 +1,4 @@
+import React from "react";
 import CartItem from "./CartItem";
 
 export default function CartList({
@@ -6,10 +7,10 @@ export default function CartList({
   increaseQty,
   decreaseQty,
   removeItem,
-  navigate,
+  onNavigate
 }) {
   return (
-    <section className="space-y-6 lg:col-span-2">
+    <>
       {cart.map((item) => (
         <CartItem
           key={item.id}
@@ -18,9 +19,9 @@ export default function CartList({
           increaseQty={increaseQty}
           decreaseQty={decreaseQty}
           removeItem={removeItem}
-          navigate={navigate}
+          onNavigate={onNavigate}
         />
       ))}
-    </section>
+    </>
   );
 }

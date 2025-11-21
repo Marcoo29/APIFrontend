@@ -1,13 +1,24 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-import CartItem from "./CartItem";
+import CartList from "./CartList";
 import CartSummary from "./CartSummary";
-import PaymentModal from "./PaymentModal";
 
-import { parseArCurrency, formatPrice } from "../utils/CartUtils";
+// Función para parsear moneda AR
+function parseArCurrency(value) {
+  if (typeof value === "number") return value;
+  if (!value) return 0;
+  let s = String(value).trim();
+  s = s.replace(/[^\d.,-]/g, "");
+  const hasComma = s.includes(",");
+  const hasDot = s.includes(".");
+  if (hasComma && hasDot) s = s.replace(/\./g, "").replace(",", ".");
+  else if (hasComma && !hasDot) s = s.replace(",", ".");
+  else if (!hasComma && hasDot) s = s.replace(/\./g, "");
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
 
-export default function Cart({ user }) {
+export default function Cart({ onCartChange }) {
   const [cart, setCart] = useState([]);
   const [error, setError] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
@@ -17,48 +28,58 @@ export default function Cart({ user }) {
   const navigate = useNavigate();
   const userId = Number(localStorage.getItem("userId")) || 1;
 
-  // Load cart
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(stored);
+
+    if (onCartChange) onCartChange(stored.length);
   }, []);
 
-  // Helpers
-  const updateCart = (fn) => {
-    const updated = fn(cart);
+  const formatPrice = (value) =>
+    parseArCurrency(value).toLocaleString("es-AR", {
+      style: "currency",
+      currency: "ARS",
+    });
+
+  const updateCart = (updated) => {
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
+    if (onCartChange) onCartChange(updated.length);
   };
 
-  const increaseQty = (id) =>
-    updateCart((c) =>
-      c.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i))
-    );
-
-  const decreaseQty = (id) =>
-    updateCart((c) =>
-      c.map((i) =>
-        i.id === id ? { ...i, qty: Math.max(1, i.qty - 1) } : i
-      )
-    );
-
-  const removeItem = (id) =>
-    updateCart((c) => c.filter((i) => i.id !== id));
-
   const total = cart.reduce(
-    (acc, item) => acc + parseArCurrency(item.price) * item.qty,
+    (acc, item) => acc + parseArCurrency(item.price) * (item.qty || 1),
     0
   );
 
-  const getToken = () => {
-    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-    return user?.token || storedUser?.token || localStorage.getItem("token");
+  const increaseQty = (id) => {
+    const updated = cart.map((item) =>
+      item.id === id ? { ...item, qty: (item.qty || 1) + 1 } : item
+    );
+    updateCart(updated);
+  };
+
+  const decreaseQty = (id) => {
+    const updated = cart.map((item) =>
+      item.id === id ? { ...item, qty: Math.max(1, (item.qty || 1) - 1) } : item
+    );
+    updateCart(updated);
+  };
+
+  const removeItem = (id) => {
+    const updated = cart.filter((i) => i.id !== id);
+    updateCart(updated);
   };
 
   const handleConfirm = () => {
     if (!cart.length) return;
-    setError(null);
-    setShowPayment(true);
+    navigate("/checkout");
+  };
+
+  const getToken = () => {
+    let t = JSON.parse(localStorage.getItem("user") || "{}")?.token;
+    if (!t) t = localStorage.getItem("token");
+    return t || null;
   };
 
   const handleSubmitOperation = async () => {
@@ -76,11 +97,12 @@ export default function Cart({ user }) {
     try {
       const body = {
         userId,
+        payMethod,
+        date: new Date().toISOString(),
         operationDetails: cart.map((i) => ({
           productId: i.id,
           quantity: i.qty,
         })),
-        payMethod,
       };
 
       const res = await fetch("http://localhost:4002/operations", {
@@ -92,16 +114,11 @@ export default function Cart({ user }) {
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) {
-        if (res.status === 401) throw new Error("Sesión inválida o vencida.");
-        if (res.status === 403)
-          throw new Error("No tenés permisos para comprar.");
-        throw new Error("Error al confirmar la compra.");
-      }
+      if (!res.ok) throw new Error("Error al confirmar la compra.");
 
       alert("Compra confirmada correctamente");
       localStorage.removeItem("cart");
-      setCart([]);
+      updateCart([]);
       setShowPayment(false);
       navigate("/home");
     } catch (err) {
@@ -128,39 +145,29 @@ export default function Cart({ user }) {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-          <section className="lg:col-span-2 bg-white rounded-md shadow-md p-6 space-y-4 border border-gray-200">
-            {cart.map((item) => (
-              <CartItem
-                key={item.id}
-                item={item}
-                navigate={navigate}
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <section className="lg:col-span-2 bg-white rounded-md shadow-md p-6 space-y-4 border border-gray-200">
+              <CartList
+                cart={cart}
+                formatPrice={formatPrice}
                 increaseQty={increaseQty}
                 decreaseQty={decreaseQty}
                 removeItem={removeItem}
+                onNavigate={(path) => navigate(path)}
               />
-            ))}
-          </section>
+            </section>
 
-          <CartSummary
-            cart={cart}
-            total={total}
-            error={error}
-            navigate={navigate}
-            onConfirm={handleConfirm}
-          />
-        </div>
-      )}
-
-      {showPayment && (
-        <PaymentModal
-          payMethod={payMethod}
-          setPayMethod={setPayMethod}
-          opLoading={opLoading}
-          setShowPayment={setShowPayment}
-          onSubmit={handleSubmitOperation}
-        />
+            <CartSummary
+              cart={cart}
+              formatPrice={formatPrice}
+              total={total}
+              error={error}
+              handleConfirm={handleConfirm}
+              onNavigate={(path) => navigate(path)}
+            />
+          </div>
+        </>
       )}
     </main>
   );

@@ -13,6 +13,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import AdminPanel from "./AdminPanel/AdminPanel";
 import Cart from "./Cart/Cart";
 import Operations from "./Operations/Operations";
+import OrderSuccess from "./Cart/OrderSuccess";
+import Checkout from "./Cart/Checkout";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/adminpanel" element={<AdminPanel />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/operations" element={<Operations />} />
 
         </Routes>
