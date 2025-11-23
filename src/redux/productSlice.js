@@ -92,6 +92,18 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      .addCase(createProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items.push(action.payload);
+      })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(updateProduct.pending, (state) => {
         state.loading = true;
         state.error = null;

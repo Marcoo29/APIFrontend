@@ -1,6 +1,6 @@
 import React from "react";
 import ProductThumb from "./ProductThumb";
-import { parseArCurrency } from "../utils/CartUtils";
+import { formatPrice } from "../utils/ParseCurrency";
 
 export default function CartItem({
   item,
@@ -55,7 +55,7 @@ export default function CartItem({
 
         {/* SUBTOTAL CORRECTO: precio parseado * qty */}
         <span className="font-semibold text-lg w-28 text-right">
-          {formatPrice(parseArCurrency(item.price) * item.qty)}
+          {formatPrice((item.price) * item.qty)}
         </span>
 
         <button

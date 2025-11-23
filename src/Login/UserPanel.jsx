@@ -1,93 +1,44 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserByEmail, updateUser } from "../redux/userSlice";
 
 const UserPanel = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(null);
+  const dispatch = useDispatch();
+  const { user, loading, error } = useSelector((state) => state.user);
 
   const storedUser = localStorage.getItem("user");
   const parsedUser = storedUser ? JSON.parse(storedUser) : null;
   const email = parsedUser?.email || null;
   const token = parsedUser?.token || null;
 
+  // Estados locales para el formulario
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!email || !token) {
-        setError("No se encontró email o token en localStorage");
-        setLoading(false);
-        return;
-      }
-      try {
-        const res = await fetch(
-          `http://localhost:4002/users/by-email/${encodeURIComponent(email)}`,
-          {
-            headers: {
-              "Authorization": `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!res.ok) {
-          throw new Error(`Error al obtener usuario: ${res.status}`);
-        }
-        const data = await res.json();
-        setUser(data);
-        setName(data.name || "");
-        setLastname(data.lastname || "");
-        setAddress(data.address || "");
-      } catch (err) {
-        console.error(err);
-        setError("No se pudo cargar la información del usuario");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, [email, token]);
-
-  const handleSave = async () => {
-    if (!user?.id) return;
-    setSaving(true);
-    setSuccess(null);
-    try {
-      const res = await fetch(
-        `http://localhost:4002/users/${user.id}/update`,
-        {
-          method: "PUT",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name, lastname, address }),
-        }
-      );
-      if (!res.ok) throw new Error(`Error al actualizar usuario: ${res.status}`);
-      const updatedUser = await res.json();
-      setUser(updatedUser);
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          ...parsedUser,
-          name: updatedUser.name,
-          lastname: updatedUser.lastname,
-          address: updatedUser.address,
-        })
-      );
-
-      setSuccess("Datos actualizados correctamente ✅");
-    } catch (err) {
-      console.error(err);
-      setError("No se pudo actualizar la información del usuario");
-    } finally {
-      setSaving(false);
+    if (email && token) {
+      dispatch(fetchUserByEmail({ email, token }));
     }
+  }, [email, token, dispatch]);
+
+  // Cuando cambia el usuario en Redux, actualizamos los estados locales
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setLastname(user.lastname || "");
+      setAddress(user.address || "");
+    }
+  }, [user]);
+
+  const handleSave = () => {
+    if (!user) return;
+    const payload = {
+      name,
+      lastname,
+      address,
+    };
+    dispatch(updateUser({ userId: user.id, payload, token }));
   };
 
   if (loading) {
@@ -101,7 +52,7 @@ const UserPanel = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#F5F5F5]">
-        <p className="text-[#D32F2F] text-lg font-semibold">{error}</p>
+        <p className="text-red-600 text-lg font-semibold">{error}</p>
       </div>
     );
   }
@@ -161,12 +112,11 @@ const UserPanel = () => {
           <div className="mt-6 text-center">
             <button
               onClick={handleSave}
-              disabled={saving}
+              disabled={loading}
               className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded shadow transition"
             >
-              {saving ? "Guardando..." : "Guardar cambios"}
+              {loading ? "Guardando..." : "Guardar cambios"}
             </button>
-            {success && <p className="mt-3 text-green-600">{success}</p>}
           </div>
         </div>
       </div>

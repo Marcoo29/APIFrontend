@@ -1,5 +1,5 @@
 import React from "react";
-import { parseArCurrency } from "../utils/CartUtils";
+import { formatPrice } from "../utils/ParseCurrency";
 
 export default function CartSummary({ cart, formatPrice, total, error, handleConfirm, onNavigate }) {
   return (
@@ -11,7 +11,7 @@ export default function CartSummary({ cart, formatPrice, total, error, handleCon
       {cart.map((item) => (
         <div key={item.id} className="flex justify-between border-b border-gray-200 pb-1 text-gray-700">
           <span>{item.name} × {item.qty}</span>
-          {formatPrice(parseArCurrency(item.price) * item.qty)}
+          {formatPrice(item.price) * item.qty}
 
 
         </div>

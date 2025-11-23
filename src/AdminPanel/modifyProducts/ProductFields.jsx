@@ -1,8 +1,10 @@
+import { formatPrice } from "../../utils/ParseCurrency";
+
 export default function ProductFields({
   prod,
   isEditing,
   editedProduct,
-  handleChange
+  handleChange,
 }) {
   const fields = [
     "name",
@@ -48,6 +50,8 @@ export default function ProductFields({
             ? prod.productStatus?.toUpperCase() === "AVAILABLE"
               ? "Disponible"
               : "No disponible"
+            : field === "price"
+            ? formatPrice(prod.price)
             : prod[field] ?? "-"}
         </span>
       )}

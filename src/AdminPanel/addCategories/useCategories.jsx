@@ -16,8 +16,7 @@ export function useCategories(user) {
     dispatch(fetchCategories());
   }, [user, dispatch]);
 
-  if(loading) return <p>Cargando categorías</p>
-  if(error) return <p>Error al cargar categorías: {error}</p>  
+  
 
   const addCategory = async (name) => {
     if (!name.trim()) return;

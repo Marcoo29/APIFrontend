@@ -4,11 +4,12 @@ import ModifyProductsPagination from "./ModifyProductsPagination";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchProducts, updateProduct } from "../../redux/productSlice";
+import { parseArCurrency, formatPrice } from "../../utils/ParseCurrency";
 
 const ModifyProducts = ({ user }) => {
   const [editingId, setEditingId] = useState(null);
   const [editedProduct, setEditedProduct] = useState({});
-  //const [error, setError] = useState("");
+
   const dispatch = useDispatch();
 
   const { items, loading, error } = useSelector((state) => state.products);
@@ -41,7 +42,7 @@ const ModifyProducts = ({ user }) => {
         updateProduct({
           id: prodId,
           name: editedProduct.name,
-          price: Number(editedProduct.price),
+          price: parseArCurrency(editedProduct.price),
           manufacturer: editedProduct.manufacturer,
           stock: Number(editedProduct.stock),
           description: editedProduct.description,

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { parseArCurrency, formatPrice } from "../utils/CartUtils";
+import { parseArCurrency, formatPrice } from "../utils/ParseCurrency";
+
 
 export default function Checkout() {
   const [cart, setCart] = useState([]);
