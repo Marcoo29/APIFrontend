@@ -102,10 +102,11 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Correo electrónico
+                Correo Electrónico
               </label>
               <input
                 type="email"
+                placeholder="Correo Electrónico"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600"
@@ -118,6 +119,7 @@ const Login = () => {
               </label>
               <input
                 type="password"
+                placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-red-600"

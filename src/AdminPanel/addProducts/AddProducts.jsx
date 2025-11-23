@@ -2,10 +2,13 @@ import { useState } from "react";
 import ProductInputs from "./ProductInputs";
 import ImageUploader from "./ImageUploader";
 import SubmitButton from "./SubmitButton";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchCategories } from "../../redux/categorySlice";
+import { createProduct } from "../../redux/productSlice";
 
-const API_BASE = "http://localhost:4002";
 
-export default function AddProducts({ categories, user, products, setProducts }) {
+export default function AddProducts({ user, products, setProducts }) {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [manufacturer, setManufacturer] = useState("");
@@ -19,16 +22,32 @@ export default function AddProducts({ categories, user, products, setProducts })
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [error, setError] = useState("");
 
+  const dispatch = useDispatch();
+
+  //vienen por redux, no por props
+  const categories = useSelector((state) => state.categories.items);
+  const loadingCategories = useSelector((state) => state.categories.loading);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    if (!productName || !price || !manufacturer || !stock || !description || !fitFor || !categoryId || !image) {
+    if (
+      !productName ||
+      !price ||
+      !manufacturer ||
+      !stock ||
+      !description ||
+      !fitFor ||
+      !categoryId ||
+      !image
+    ) {
       setError("Completa todos los campos del producto, incluida la imagen.");
       return;
     }
-
-    setLoadingProduct(true);
-    setError("");
 
     try {
       const productPayload = {
@@ -42,34 +61,16 @@ export default function AddProducts({ categories, user, products, setProducts })
         categoryId,
       };
 
-      const createRes = await fetch(`${API_BASE}/products`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify(productPayload),
-      });
-
-      if (!createRes.ok) throw new Error(await createRes.text());
-
-      const created = await createRes.json();
-      const productId = created?.id ?? created?.productId;
-      if (!productId) throw new Error("No se recibió el ID del producto creado.");
-
-      const fd = new FormData();
-      fd.append("productId", productId.toString());
-      fd.append("name", productName);
-      fd.append("file", image);
-
-      const uploadRes = await fetch(`${API_BASE}/images`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${user.token}` },
-        body: fd,
-      });
-
-      if (!uploadRes.ok) throw new Error("Error al subir la imagen.");
-
+      dispatch(
+    createProduct({
+      product: productPayload,
+      image,
+      token: user.token,
+    })
+  )
+    .unwrap()
+    .then((created) => {
+      // Si querés agregarlo al estado local también
       setProducts((prev) => [...prev, created]);
 
       // Reset
@@ -83,13 +84,14 @@ export default function AddProducts({ categories, user, products, setProducts })
       setCategoryId("");
       setImage(null);
       setPreview(null);
-
-    } catch (err) {
+    }) 
+    .catch ((err) => {
       setError(err.message);
-    } finally {
-      setLoadingProduct(false);
-    }
-  };
+    });
+    } catch (err) {
+    setError(err.message);
+  }
+}
 
   return (
     <div className="w-full bg-white border border-[#dcdcdc] shadow-sm p-8">
@@ -98,7 +100,6 @@ export default function AddProducts({ categories, user, products, setProducts })
       </h3>
 
       <form onSubmit={handleAddProduct} className="flex flex-col gap-4">
-
         <ProductInputs
           productName={productName}
           setProductName={setProductName}
@@ -133,3 +134,4 @@ export default function AddProducts({ categories, user, products, setProducts })
     </div>
   );
 }
+  

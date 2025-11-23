@@ -1,27 +1,34 @@
 import { useState, useMemo } from "react";
 import ProductsTable from "./ProductsTable";
 import ModifyProductsPagination from "./ModifyProductsPagination";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchProducts, updateProduct } from "../../redux/productSlice";
 
-const ModifyProducts = ({ user, products, setProducts }) => {
+const ModifyProducts = ({ user }) => {
   const [editingId, setEditingId] = useState(null);
   const [editedProduct, setEditedProduct] = useState({});
-  const [error, setError] = useState("");
+  //const [error, setError] = useState("");
+  const dispatch = useDispatch();
+
+  const { items, loading, error } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-
   const currentProducts = useMemo(() => {
     const indexLast = currentPage * itemsPerPage;
     const indexFirst = indexLast - itemsPerPage;
-    return products.slice(indexFirst, indexLast);
-  }, [products, currentPage]);
+    return items.slice(indexFirst, indexLast);
+  }, [items, currentPage]);
 
   const handleEditClick = (prod) => {
     setEditingId(prod.id);
     setEditedProduct({ ...prod });
-    setError("");
   };
 
   const handleChange = (field, value) => {
@@ -29,42 +36,28 @@ const ModifyProducts = ({ user, products, setProducts }) => {
   };
 
   const handleEditSubmit = async (prodId) => {
-    setError("");
     try {
-      const response = await fetch(
-        `http://localhost:4002/products/${prodId}/update`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify({
-            name: editedProduct.name,
-            price: Number(editedProduct.price),
-            manufacturer: editedProduct.manufacturer,
-            stock: Number(editedProduct.stock),
-            description: editedProduct.description,
-            fitFor: editedProduct.fitFor,
-            productStatus: editedProduct.productStatus,
-            categoryId: editedProduct.categoryId,
-          }),
-        }
-      );
-
-      if (!response.ok) throw new Error("Error al actualizar el producto");
-
-      const updated = await response.json();
-
-      setProducts((prev) =>
-        prev.map((p) => (p.id === prodId ? updated : p))
-      );
+      await dispatch(
+        updateProduct({
+          id: prodId,
+          name: editedProduct.name,
+          price: Number(editedProduct.price),
+          manufacturer: editedProduct.manufacturer,
+          stock: Number(editedProduct.stock),
+          description: editedProduct.description,
+          fitFor: editedProduct.fitFor, // OJO: en camelCase correcto
+          productStatus: editedProduct.productStatus,
+          token: user.token,
+        })
+      ).unwrap(); // para capturar errores reales
 
       setEditingId(null);
     } catch (err) {
-      setError(err.message);
+      console.error("Error en update:", err);
     }
   };
+
+  const totalPages = Math.ceil(items.length / itemsPerPage);
 
   return (
     <div className="w-full bg-white border border-[#dcdcdc] shadow-sm p-8 mt-10">
@@ -83,7 +76,7 @@ const ModifyProducts = ({ user, products, setProducts }) => {
         handleEditSubmit={handleEditSubmit}
       />
 
-      {products.length > itemsPerPage && (
+      {items.length > itemsPerPage && (
         <ModifyProductsPagination
           currentPage={currentPage}
           totalPages={totalPages}

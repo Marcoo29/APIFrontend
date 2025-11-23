@@ -89,6 +89,7 @@ const categorySlice = createSlice({
         state.error = null;
       })
       .addCase(updateCategory.fulfilled, (state, action) => {
+        state.loading = false;
         const index = state.items.findIndex(category => category.id === action.payload.id);
         if (index !== -1) {
           state.items[index] = action.payload;
