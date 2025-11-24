@@ -6,6 +6,8 @@ const UserPanel = () => {
   const dispatch = useDispatch();
   const { user, loading, error } = useSelector((state) => state.user);
 
+  const [successMsg, setSuccessMsg] = useState("");
+
   const storedUser = localStorage.getItem("user");
   const parsedUser = storedUser ? JSON.parse(storedUser) : null;
   const email = parsedUser?.email || null;
@@ -38,7 +40,13 @@ const UserPanel = () => {
       lastname,
       address,
     };
-    dispatch(updateUser({ userId: user.id, payload, token }));
+    dispatch(updateUser({ userId: user.id, payload, token }))
+      .unwrap()
+      .then(() => {
+        setSuccessMsg("Datos actualizados correctamente");
+        setTimeout(() => setSuccessMsg(""), 3000);
+      })
+      .catch(() => {});
   };
 
   if (loading) {
@@ -71,6 +79,12 @@ const UserPanel = () => {
         <h2 className="text-2xl font-bold text-[#333] border-b border-[#ddd] pb-3 mb-6">
           MIS DATOS
         </h2>
+        
+        {successMsg && (
+          <div className="max-w-lg mx-auto mb-5 bg-green-100 border border-green-300 text-green-700 py-3 px-4 rounded-lg">
+            {successMsg}
+          </div>
+        )}
 
         <div className="max-w-lg mx-auto bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-left">
           <div className="mb-4">

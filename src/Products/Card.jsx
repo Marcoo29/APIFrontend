@@ -3,22 +3,12 @@ import { useNavigate } from "react-router-dom";
 
 const Card = ({ id, title, price, image, manufacturer }) => {
   const [cantidad, setCantidad] = useState(1);
-  const [imageBase64, setImageBase64] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const navigate = useNavigate();
 
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userRole = user?.role || null;
-
-  useEffect(() => {
-    fetch(`http://localhost:4002/images?id=${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.file) setImageBase64(data.file);
-      })
-      .catch((err) => console.error("Error cargando imagen:", err));
-  }, [id]);
 
   const aumentar = (e) => {
     e.stopPropagation();
@@ -51,7 +41,7 @@ const Card = ({ id, title, price, image, manufacturer }) => {
         name: title,
         price,
         manufacturer,
-        image: imageBase64 || image,
+        image,
         qty: cantidad,
       });
     }
@@ -73,21 +63,12 @@ const Card = ({ id, title, price, image, manufacturer }) => {
       onClick={abrirDetalle}
     >
       <div className="bg-gray-50 flex justify-center items-center border-b border-gray-200 aspect-square">
-        {imageBase64 ? (
-          <img
-            src={`data:image/jpeg;base64,${imageBase64}`}
-            alt={title || "Producto"}
-            className="w-full h-full object-contain rounded-none"
-            loading="lazy"
-          />
-        ) : (
-          <img
-            src={image || "https://via.placeholder.com/300x220?text=Producto"}
-            alt={title || "Producto"}
-            className="w-full h-full object-contain rounded-none"
-            loading="lazy"
-          />
-        )}
+        <img
+          src={image || "https://via.placeholder.com/300x220?text=Producto"}
+          alt={title || "Producto"}
+          className="w-full h-full object-contain rounded-none"
+          loading="lazy"
+        />
       </div>
 
       <div className="px-5 py-4 flex flex-col items-center">

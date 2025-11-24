@@ -1,33 +1,16 @@
-import { useState, useEffect } from "react";
-import ModifyProducts from "./modifyProducts/ModifyProducts";
 import AddCategories from "./addCategories/AddCategories";
 import AddProducts from "./addProducts/AddProducts";
+import ModifyProducts from "./modifyProducts/ModifyProducts";
+
+import { useEffect, useState } from "react";
 
 const AdminPanel = () => {
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]); 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-
-      const url =
-        parsedUser.role === "ADMIN"
-          ? "http://localhost:4002/products/all"
-          : "http://localhost:4002/products";
-
-      fetch(url, {
-        headers: { Authorization: `Bearer ${parsedUser.token}` },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          const productsArray = Array.isArray(data) ? data : data.content || [];
-          setProducts(productsArray);
-        })
-        .catch((err) => console.error("Error al cargar productos:", err));
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
@@ -57,22 +40,12 @@ const AdminPanel = () => {
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-          <AddCategories
-            categories={categories}
-            setCategories={setCategories}
-            user={user}
-          />
-
-          <AddProducts
-            categories={categories}
-            user={user}
-            products={products}
-            setProducts={setProducts}
-          />
+          <AddCategories user={user} />
+          <AddProducts user={user} />
         </div>
 
         <div className="mt-10">
-          <ModifyProducts user={user} products={products} setProducts={setProducts} />
+          <ModifyProducts user={user} />
         </div>
       </div>
     </div>

@@ -1,54 +1,45 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../redux/categorySlice";
 
-export default function Categories({
-  backendUrl = "http://localhost:4002/categories?page=0&size=100",
-  onCategorySelect,
-}) {
-  const [categories, setCategories] = useState([]);
+export default function Categories({ onCategorySelect }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const categories = useSelector((state) => state.categories.items);
+
   const [activeCategory, setActiveCategory] = useState(null);
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  // Cargar categorías si no existen
+  useEffect(() => {
+    if (categories.length === 0) {
+      dispatch(fetchCategories());
+    }
+  }, []);
 
+  // Detectar categoría desde la URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const categoryFromUrl = params.get("category");
     setActiveCategory(categoryFromUrl ? categoryFromUrl.toLowerCase() : null);
   }, [location.search]);
 
-  useEffect(() => {
-    fetch(backendUrl)
-      .then((res) => res.json())
-      .then((data) => {
-        const fetched =
-          data?.content && Array.isArray(data.content)
-            ? data.content
-            : Array.isArray(data)
-            ? data
-            : [];
-
-        const mapped = fetched.map((c) => ({
-          id: c.id,
-          name: c.description,
-        }));
-
-        setCategories(mapped);
-      })
-      .catch((err) => console.error("Error cargando categorías:", err));
-  }, [backendUrl]);
-
   const handleSelect = (category) => {
-    if (category === null) {
+    // Sin filtro
+    if (!category) {
       setActiveCategory(null);
-      onCategorySelect?.(null);
+      onCategorySelect(null);
       navigate(`/products`);
-    } else {
-      const lowerName = category.name.toLowerCase();
-      setActiveCategory(lowerName);
-      onCategorySelect?.(category.name);
-      navigate(`/products?category=${encodeURIComponent(lowerName)}`);
+      return;
     }
+
+    const name = category.description.toLowerCase();
+
+    setActiveCategory(name);
+    onCategorySelect(category.description); // <-- Esto sí coincide con Products
+    navigate(`/products?category=${encodeURIComponent(name)}`);
   };
 
   return (
@@ -73,8 +64,7 @@ export default function Categories({
 
         {categories.map((c) => {
           const isActive =
-            activeCategory === c.name.toLowerCase().trim() ||
-            activeCategory === String(c.id);
+            activeCategory === c.description.toLowerCase().trim();
 
           return (
             <li key={c.id}>
@@ -86,7 +76,7 @@ export default function Categories({
                     : "text-gray-700 hover:text-red-600"
                 }`}
               >
-                {c.name}
+                {c.description}
               </button>
             </li>
           );

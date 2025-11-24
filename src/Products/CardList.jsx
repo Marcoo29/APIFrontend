@@ -1,32 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchImageById } from "../redux/productSlice";
 import Card from "./Card";
 
 export default function CardList({ products = [], layoutView = "grid" }) {
-  const [imagesMap, setImagesMap] = useState({});
+  const dispatch = useDispatch();
+  const imagesMap = useSelector((state) => state.products.images);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchImages = async () => {
-      const map = {};
-      for (const p of products) {
-        try {
-          const res = await fetch(`http://localhost:4002/images?id=${p.id}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data.file) {
-              map[p.id] = `data:image/jpeg;base64,${data.file}`;
-            }
-          }
-        } catch (err) {
-          console.error("Error cargando imagen para producto", p.id, err);
-        }
-      }
-      setImagesMap(map);
-    };
+    if (!products.length) return;
 
-    if (products.length > 0) fetchImages();
-  }, [products]);
+    const idsToLoad = products.map((p) => p.id).filter((id) => !imagesMap[id]); //productos que aún no tienen imagen
+
+    if (idsToLoad.length > 0) {
+      idsToLoad.forEach((id) => dispatch(fetchImageById(id))); //si sigue con elementos, se agregan
+    }
+  }, [products, dispatch]);
 
   if (products.length === 0) {
     return (

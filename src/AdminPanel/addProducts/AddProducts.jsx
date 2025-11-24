@@ -2,13 +2,10 @@ import { useState } from "react";
 import ProductInputs from "./ProductInputs";
 import ImageUploader from "./ImageUploader";
 import SubmitButton from "./SubmitButton";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchCategories } from "../../redux/categorySlice";
-import { createProduct } from "../../redux/productSlice";
+import { useProducts } from "./useProducts";
+import { useSelector } from "react-redux";
 
-
-export default function AddProducts({ user, products, setProducts }) {
+export default function AddProducts({ user }) {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [manufacturer, setManufacturer] = useState("");
@@ -19,79 +16,41 @@ export default function AddProducts({ user, products, setProducts }) {
   const [categoryId, setCategoryId] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [loadingProduct, setLoadingProduct] = useState(false);
   const [error, setError] = useState("");
 
-  const dispatch = useDispatch();
+  const {
+    products,
+    loadingProducts,
+    addProduct,
+  } = useProducts(user);
 
-  //vienen por redux, no por props
-  const categories = useSelector((state) => state.categories.items);
-  const loadingCategories = useSelector((state) => state.categories.loading);
+  const categories = useSelector(state => state.categories.items);
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
-
-  const handleAddProduct = async (e) => {
+  const handleAddProduct = (e) => {
     e.preventDefault();
 
-    if (
-      !productName ||
-      !price ||
-      !manufacturer ||
-      !stock ||
-      !description ||
-      !fitFor ||
-      !categoryId ||
-      !image
-    ) {
+    if (!productName || !price || !manufacturer || !stock || !description || !fitFor || !categoryId || !image) {
       setError("Completa todos los campos del producto, incluida la imagen.");
       return;
     }
 
-    try {
-      const productPayload = {
-        name: productName.trim(),
-        price: Number(price),
-        manufacturer: manufacturer.trim(),
-        stock: Number(stock),
-        description: description.trim(),
-        fitFor: fitFor.trim(),
-        productStatus: status,
-        categoryId,
-      };
+    const productPayload = {
+      name: productName.trim(),
+      price: Number(price),
+      manufacturer: manufacturer.trim(),
+      stock: Number(stock),
+      description: description.trim(),
+      fitFor: fitFor.trim(),
+      productStatus: status,
+      categoryId,
+    };
 
-      dispatch(
-    createProduct({
-      product: productPayload,
-      image,
-      token: user.token,
-    })
-  )
-    .unwrap()
-    .then((created) => {
-      // Si querés agregarlo al estado local también
-      setProducts((prev) => [...prev, created]);
+    addProduct(productPayload, image);
 
-      // Reset
-      setProductName("");
-      setPrice("");
-      setManufacturer("");
-      setStock("");
-      setDescription("");
-      setFitFor("");
-      setStatus("AVAILABLE");
-      setCategoryId("");
-      setImage(null);
-      setPreview(null);
-    }) 
-    .catch ((err) => {
-      setError(err.message);
-    });
-    } catch (err) {
-    setError(err.message);
-  }
-}
+    setProductName(""); setPrice(""); setManufacturer(""); setStock("");
+    setDescription(""); setFitFor(""); setStatus("AVAILABLE"); setCategoryId("");
+    setImage(null); setPreview(null); setError("");
+  };
 
   return (
     <div className="w-full bg-white border border-[#dcdcdc] shadow-sm p-8">
@@ -101,37 +60,26 @@ export default function AddProducts({ user, products, setProducts }) {
 
       <form onSubmit={handleAddProduct} className="flex flex-col gap-4">
         <ProductInputs
-          productName={productName}
-          setProductName={setProductName}
-          price={price}
-          setPrice={setPrice}
-          manufacturer={manufacturer}
-          setManufacturer={setManufacturer}
-          stock={stock}
-          setStock={setStock}
-          description={description}
-          setDescription={setDescription}
-          fitFor={fitFor}
-          setFitFor={setFitFor}
-          status={status}
-          setStatus={setStatus}
-          categoryId={categoryId}
-          setCategoryId={setCategoryId}
+          productName={productName} setProductName={setProductName}
+          price={price} setPrice={setPrice}
+          manufacturer={manufacturer} setManufacturer={setManufacturer}
+          stock={stock} setStock={setStock}
+          description={description} setDescription={setDescription}
+          fitFor={fitFor} setFitFor={setFitFor}
+          status={status} setStatus={setStatus}
+          categoryId={categoryId} setCategoryId={setCategoryId}
           categories={categories}
         />
 
         <ImageUploader
-          image={image}
-          preview={preview}
-          setImage={setImage}
-          setPreview={setPreview}
+          image={image} preview={preview}
+          setImage={setImage} setPreview={setPreview}
         />
 
         {error && <p className="text-[#D32F2F] text-sm">{error}</p>}
 
-        <SubmitButton loading={loadingProduct} />
+        <SubmitButton loading={loadingProducts} />
       </form>
     </div>
   );
 }
-  

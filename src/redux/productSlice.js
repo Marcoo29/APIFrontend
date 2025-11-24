@@ -12,6 +12,27 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductsFiltered = createAsyncThunk(
+  "products/fetchProductsFiltered",
+  async ({ page, size, sort, searchTerm, categoryId }) => {
+    let url;
+
+    // si viene categoria
+    if (categoryId) {
+      url = `${URL_PRODUCTS}/by-category/${categoryId}?page=${page}&size=${size}&sort=${sort}&searchTerm=${encodeURIComponent(
+        searchTerm || ""
+      )}`;
+    } else {
+      url = `${URL_PRODUCTS}?page=${page}&size=${size}&sort=${sort}&searchTerm=${encodeURIComponent(
+        searchTerm || ""
+      )}`;
+    }
+
+    const { data } = await axios.get(url);
+    return data;
+  }
+);
+
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
   async ({
@@ -67,10 +88,22 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+export const fetchImageById = createAsyncThunk(
+  "products/fetchImageById",
+  async (id) => {
+    const { data } = await axios.get(`http://localhost:4002/images?id=${id}`);
+    if (data.file) {
+      return { id, file: `data:image/jpeg;base64,${data.file}` };
+    }
+    return { id, file: null };
+  }
+);
+
 const productSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
+    images: {},
     loading: false,
     error: null, //en principio se supone que sale todo bien
     itemsId: {},
@@ -121,6 +154,32 @@ const productSlice = createSlice({
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchProductsFiltered.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductsFiltered.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.items = action.payload.content || [];
+        state.totalItems = action.payload.totalElements || 0;
+        state.totalPages = action.payload.totalPages || 1;
+      })
+      .addCase(fetchProductsFiltered.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchImageById.fulfilled, (state, action) => {
+        const { id, file } = action.payload;
+        state.images[id] = file; 
+      })
+
+      .addCase(fetchImageById.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(fetchImageById.pending, (state) => {
+        state.error = null;
       });
   },
 });

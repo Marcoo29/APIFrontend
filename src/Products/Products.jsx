@@ -3,21 +3,30 @@ import { useParams, useLocation } from "react-router-dom";
 import CardList from "./CardList";
 import Categories from "./Categories";
 import Pagination from "./Pagination";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProductsFiltered } from "../redux/productSlice";
 
 const Products = () => {
   const { categoryName } = useParams();
+
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
   const initialSearch = searchParams.get("search") || "";
   const queryCategory = searchParams.get("category") || null;
 
+  const categories = useSelector((state) => state.categories.items);
+
   const [selectedCategory, setSelectedCategory] = useState(
     categoryName || queryCategory || null
   );
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
+  const {
+    items: products,
+    totalItems,
+    totalPages,
+    loading,
+  } = useSelector((state) => state.products);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [sortOption, setSortOption] = useState("name-asc");
@@ -37,105 +46,63 @@ const Products = () => {
   }, [searchTerm, sortOption, itemsPerPage, selectedCategory]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let url;
+    let categoryId = selectedCategory;
 
-        if (selectedCategory) {
-          let categoryId = selectedCategory;
+    const load = async () => {
+      // si la categoría está en texto (no ID)
+      if (selectedCategory && isNaN(Number(selectedCategory))) {
+        const found = categories.find(
+          (c) =>
+            c.description.toLowerCase().trim() ===
+            selectedCategory.toLowerCase().trim()
+        );
 
-          if (isNaN(Number(selectedCategory))) {
-            const catRes = await fetch(
-              `http://localhost:4002/categories?page=0&size=100`
-            );
-            const catData = await catRes.json();
-
-            const fetched =
-              catData?.content && Array.isArray(catData.content)
-                ? catData.content
-                : Array.isArray(catData)
-                ? catData
-                : [];
-
-            const match = fetched.find(
-              (c) =>
-                c.description.toLowerCase().trim() ===
-                selectedCategory.toLowerCase().trim()
-            );
-
-            if (match) categoryId = match.id;
-            else categoryId = null;
-          }
-
-          if (categoryId) {
-            url = `http://localhost:4002/products/by-category/${categoryId}?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(searchTerm || "")}`;
-          } else {
-            url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
-              searchTerm || ""
-            )}`;
-          }
-        } else {
-          url = `http://localhost:4002/products?page=${page}&size=${sizeParam}&sort=${sortOption}&searchTerm=${encodeURIComponent(
-            searchTerm || ""
-          )}`;
-        }
-
-        const res = await fetch(url);
-        const data = await res.json();
-
-        let fetchedProducts = [];
-        let total = 0;
-        let pages = 1;
-
-        if (Array.isArray(data)) {
-          fetchedProducts = data;
-          total = data.length;
-          pages = 1;
-        } else {
-          fetchedProducts = data.content || [];
-          total = data.totalElements || fetchedProducts.length;
-          pages = data.totalPages || 1;
-        }
-
-        setProducts(fetchedProducts);
-        setTotalItems(total);
-        setTotalPages(pages);
-      } catch (err) {
-        console.error("Error cargando productos:", err);
+        categoryId = found ? found.id : null;
       }
+
+      dispatch(
+        fetchProductsFiltered({
+          page,
+          size: sizeParam,
+          sort: sortOption,
+          searchTerm,
+          categoryId,
+        })
+      );
     };
 
-    fetchProducts();
+    load();
   }, [selectedCategory, page, sizeParam, sortOption, searchTerm]);
 
   return (
     <section className="relative flex min-h-screen w-full flex-col bg-[#f6f6f6]">
       <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8 mt-16">
+        <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar productos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full border border-gray-300 rounded-none py-2.5 pl-10 pr-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent shadow-sm bg-white"
+            />
+            <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">
+              search
+            </span>
 
-      <div className="absolute top-[15px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-gray-300 rounded-none py-2.5 pl-10 pr-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent shadow-sm bg-white"
-          />
-          <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">
-            search
-          </span>
-
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm("")}
-              className="absolute right-3 top-2.5 text-gray-400 hover:text-red-600 transition-colors"
-              aria-label="Borrar búsqueda"
-            >
-              <span className="material-symbols-outlined text-[20px]">close</span>
-            </button>
-          )}
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-2.5 text-gray-400 hover:text-red-600 transition-colors"
+                aria-label="Borrar búsqueda"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  close
+                </span>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
         <div className="grid grid-cols-[1fr_3fr] gap-8">
           <Categories onCategorySelect={setSelectedCategory} />
