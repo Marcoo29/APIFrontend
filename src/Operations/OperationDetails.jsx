@@ -22,26 +22,19 @@ export default function OperationDetails({ detail, fmtCurrency }) {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {detail.items.map((it, idx) => {
-                  const productId =
-                    it.productId ?? it.product?.id ?? it.product?.productId ?? "-";
-                  const productName =
-                    it.productName ?? it.product?.name ?? it.product?.productName ?? "-";
+                  const productId = it.productId ?? it.product?.id ?? "-";
+                  const productName = it.productName ?? it.product?.name ?? "-";
                   const qty = it.quantity ?? it.qty ?? 0;
                   const unitPrice = it.price ?? it.unitPrice ?? it.product?.price;
-                  const subtotal =
-                    unitPrice != null ? Number(unitPrice) * Number(qty) : null;
+                  const subtotal = unitPrice != null ? Number(unitPrice) * Number(qty) : null;
 
                   return (
                     <tr key={idx} className="text-sm">
                       <td className="px-3 py-2">{productId}</td>
                       <td className="px-3 py-2">{productName}</td>
                       <td className="px-3 py-2">{qty}</td>
-                      <td className="px-3 py-2">
-                        {unitPrice != null ? fmtCurrency(unitPrice) : "—"}
-                      </td>
-                      <td className="px-3 py-2">
-                        {subtotal != null ? fmtCurrency(subtotal) : "—"}
-                      </td>
+                      <td className="px-3 py-2">{unitPrice != null ? fmtCurrency(unitPrice) : "—"}</td>
+                      <td className="px-3 py-2">{subtotal != null ? fmtCurrency(subtotal) : "—"}</td>
                     </tr>
                   );
                 })}

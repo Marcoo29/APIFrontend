@@ -1,7 +1,14 @@
 import React from "react";
 import { formatPrice } from "../utils/ParseCurrency";
 
-export default function CartSummary({ cart, formatPrice, total, error, handleConfirm, onNavigate }) {
+export default function CartSummary({
+  cart,
+  formatPrice,
+  total,
+  error,
+  handleConfirm,
+  onNavigate,
+}) {
   return (
     <aside className="bg-white rounded-md shadow-md p-6 border border-gray-200 h-fit">
       <h2 className="text-2xl font-semibold mb-6 text-center text-red-600">
@@ -9,11 +16,14 @@ export default function CartSummary({ cart, formatPrice, total, error, handleCon
       </h2>
 
       {cart.map((item) => (
-        <div key={item.id} className="flex justify-between border-b border-gray-200 pb-1 text-gray-700">
-          <span>{item.name} × {item.qty}</span>
-          {formatPrice(item.price) * item.qty}
-
-
+        <div
+          key={item.id}
+          className="flex justify-between border-b border-gray-200 pb-1 text-gray-700"
+        >
+          <span>
+            {item.name} × {item.qty}
+          </span>
+          <span>{formatPrice(item.price * item.qty)}</span>
         </div>
       ))}
 
@@ -22,7 +32,9 @@ export default function CartSummary({ cart, formatPrice, total, error, handleCon
         <span className="text-red-600">{formatPrice(total)}</span>
       </div>
 
-      {error && <p className="mt-3 text-sm text-red-600 text-center">{error}</p>}
+      {error && (
+        <p className="mt-3 text-sm text-red-600 text-center">{error}</p>
+      )}
 
       <button
         onClick={handleConfirm}

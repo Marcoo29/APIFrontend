@@ -1,14 +1,28 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Card = ({ id, title, price, image, manufacturer }) => {
+const Card = ({ id, title, price, manufacturer }) => {
   const [cantidad, setCantidad] = useState(1);
   const [mensaje, setMensaje] = useState("");
+  const [image, setImage] = useState(null);
   const navigate = useNavigate();
 
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userRole = user?.role || null;
+
+  // ====== TRAER IMAGEN POR PRODUCTO ID ======
+  useEffect(() => {
+    fetch(`http://localhost:4002/images?id=${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Error al cargar la imagen");
+        return res.json();
+      })
+      .then(data => {
+        setImage(`data:image/jpeg;base64,${data.file}`);
+      })
+      .catch(err => console.error(err));
+  }, [id]);
 
   const aumentar = (e) => {
     e.stopPropagation();
@@ -30,7 +44,6 @@ const Card = ({ id, title, price, image, manufacturer }) => {
     if (userRole === "ADMIN") return;
 
     const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
     const existingIndex = currentCart.findIndex((item) => item.id === id);
 
     if (existingIndex !== -1) {

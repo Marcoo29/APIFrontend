@@ -1,7 +1,7 @@
 import OperationRow from "./OperationRow";
 
 export default function OperationsTable({ operations, details, toggleDetails, fmtCurrency }) {
-  if (operations.length === 0)
+  if (!operations.length)
     return <p className="text-center text-gray-500">No hay operaciones registradas.</p>;
 
   return (

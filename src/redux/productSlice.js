@@ -17,7 +17,6 @@ export const fetchProductsFiltered = createAsyncThunk(
   async ({ page, size, sort, searchTerm, categoryId }) => {
     let url;
 
-    // si viene categoria
     if (categoryId) {
       url = `${URL_PRODUCTS}/by-category/${categoryId}?page=${page}&size=${size}&sort=${sort}&searchTerm=${encodeURIComponent(
         searchTerm || ""
@@ -63,7 +62,7 @@ export const updateProduct = createAsyncThunk(
 export const createProduct = createAsyncThunk(
   "products/createProduct",
   async ({ product, image, token }) => {
-    //crear producto
+    // 1) Crear producto
     const { data } = await axios.post(URL_PRODUCTS, product, {
       headers: {
         "Content-Type": "application/json",
@@ -73,29 +72,21 @@ export const createProduct = createAsyncThunk(
 
     const productId = data.id;
 
-    // 2) Subir la imagen
-    const fd = new FormData();
-    fd.append("productId", productId);
-    fd.append("name", product.name);
-    fd.append("file", image);
+    // 2) Subir imagen si existe
+    if (image) {
+      const fd = new FormData();
+      fd.append("productId", productId);
+      fd.append("name", product.name);
+      fd.append("file", image);
 
-    await axios.post(`${URL_IMAGES}`, fd, {
-      headers: { Authorization: `Bearer ${token}` },
-      "Content-Type": "multipart/form-data",
-    });
+      await axios.post(`${URL_IMAGES}`, fd, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
 
     return data;
-  }
-);
-
-export const fetchImageById = createAsyncThunk(
-  "products/fetchImageById",
-  async (id) => {
-    const { data } = await axios.get(`http://localhost:4002/images?id=${id}`);
-    if (data.file) {
-      return { id, file: `data:image/jpeg;base64,${data.file}` };
-    }
-    return { id, file: null };
   }
 );
 
@@ -103,15 +94,15 @@ const productSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
-    images: {},
     loading: false,
-    error: null, //en principio se supone que sale todo bien
+    error: null,
     itemsId: {},
     itemsFilter: {},
+    totalItems: 0,
+    totalPages: 1,
   },
   reducers: {},
   extraReducers: (builder) => {
-    //acá se le pega al backend
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
@@ -121,7 +112,36 @@ const productSlice = createSlice({
         state.loading = false;
         state.items = action.payload;
       })
-      .addCase(fetchProducts.rejected, (state) => {
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchProductsFiltered.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductsFiltered.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload.content || [];
+        state.totalItems = action.payload.totalElements || 0;
+        state.totalPages = action.payload.totalPages || 1;
+      })
+      .addCase(fetchProductsFiltered.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(updateProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.items.findIndex(
+          (product) => product.id === action.payload.id
+        );
+        if (index !== -1) state.items[index] = action.payload;
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
@@ -136,52 +156,8 @@ const productSlice = createSlice({
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-      })
-      .addCase(updateProduct.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateProduct.fulfilled, (state, action) => {
-        console.log("PAYLOAD UPDATE:", action.payload);
-        state.loading = false;
-        const index = state.items.findIndex(
-          (product) => product.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.items[index] = action.payload;
-        }
-      })
-      .addCase(updateProduct.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-      .addCase(fetchProductsFiltered.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchProductsFiltered.fulfilled, (state, action) => {
-        state.loading = false;
-
-        state.items = action.payload.content || [];
-        state.totalItems = action.payload.totalElements || 0;
-        state.totalPages = action.payload.totalPages || 1;
-      })
-      .addCase(fetchProductsFiltered.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-      .addCase(fetchImageById.fulfilled, (state, action) => {
-        const { id, file } = action.payload;
-        state.images[id] = file; 
-      })
-
-      .addCase(fetchImageById.rejected, (state, action) => {
-        state.error = action.error.message;
-      })
-      .addCase(fetchImageById.pending, (state) => {
-        state.error = null;
       });
   },
 });
 
-export default productSlice.reducer; //exporto las funciones que modifican el estado
+export default productSlice.reducer;

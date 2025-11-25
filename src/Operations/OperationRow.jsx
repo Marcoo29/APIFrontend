@@ -25,10 +25,7 @@ export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
           </span>
         </td>
         <td className="px-4 py-3 text-sm text-gray-600">
-          {new Date(op.date).toLocaleString("es-AR", {
-            dateStyle: "short",
-            timeStyle: "short",
-          })}
+          {new Date(op.date).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}
         </td>
         <td className="px-4 py-3">
           <button
@@ -40,9 +37,7 @@ export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
         </td>
       </tr>
 
-      {detail?.open && (
-        <OperationDetails detail={detail} fmtCurrency={fmtCurrency} />
-      )}
+      {detail?.open && <OperationDetails detail={detail} fmtCurrency={fmtCurrency} />}
     </>
   );
 }
