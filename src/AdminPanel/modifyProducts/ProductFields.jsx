@@ -1,4 +1,7 @@
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { formatPrice } from "../../utils/ParseCurrency";
+import { fetchCategories } from "../../redux/categorySlice";
 
 export default function ProductFields({
   prod,
@@ -6,18 +9,26 @@ export default function ProductFields({
   editedProduct,
   handleChange,
 }) {
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.items);
+
+  useEffect(() => {
+    if (categories.length === 0) dispatch(fetchCategories());
+  }, [dispatch, categories.length]);
+
   const fields = [
     "name",
     "price",
     "manufacturer",
     "stock",
+    "category",
     "description",
     "fitFor",
     "productStatus",
   ];
 
   return fields.map((field) => (
-    <td key={field} className="px-3 py-2">
+    <td key={field} className="px-3 py-2 max-w-[200px]">
       {isEditing ? (
         field === "productStatus" ? (
           <select
@@ -27,6 +38,24 @@ export default function ProductFields({
           >
             <option value="AVAILABLE">Disponible</option>
             <option value="NOT_AVAILABLE">No disponible</option>
+          </select>
+        ) : field === "category" ? (
+          <select
+            value={editedProduct.category?.id || ""}
+            onChange={(e) =>
+              handleChange(
+                "category",
+                e.target.value ? { id: Number(e.target.value) } : null
+              )
+            }
+            className="border border-[#ccc] px-2 py-1 text-sm w-full focus:outline-none focus:border-[#D32F2F]"
+          >
+            <option value="">Sin categoría</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.description}
+              </option>
+            ))}
           </select>
         ) : (
           <input
@@ -52,7 +81,15 @@ export default function ProductFields({
               : "No disponible"
             : field === "price"
             ? formatPrice(prod.price)
-            : prod[field] ?? "-"}
+            : field === "category"
+            ? prod.category?.description || "Sin categoría"
+            : field === "description" ? (
+                <span className="truncate max-w-[200px] block">
+                  {prod.description || "-"}
+                </span>
+              ) : (
+                prod[field] ?? "-"
+              )}
         </span>
       )}
     </td>

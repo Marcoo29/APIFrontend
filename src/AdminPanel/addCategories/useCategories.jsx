@@ -17,6 +17,7 @@ export function useCategories(user) {
   }, [user, dispatch]);
 
   
+  
 
   const addCategory = async (name) => {
     if (!name.trim()) return;

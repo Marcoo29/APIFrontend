@@ -46,8 +46,9 @@ const ModifyProducts = ({ user }) => {
           manufacturer: editedProduct.manufacturer,
           stock: Number(editedProduct.stock),
           description: editedProduct.description,
-          fitFor: editedProduct.fitFor, // OJO: en camelCase correcto
+          fitFor: editedProduct.fitFor, 
           productStatus: editedProduct.productStatus,
+          categoryId: editedProduct.category?.id,
           token: user.token,
         })
       ).unwrap(); // para capturar errores reales

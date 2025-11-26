@@ -19,6 +19,7 @@ export default function ProductsTable({
             <th className="px-3 py-2">Precio</th>
             <th className="px-3 py-2">Fabricante</th>
             <th className="px-3 py-2">Stock</th>
+            <th className="px-3 py-2">Categoría</th>
             <th className="px-3 py-2">Descripción</th>
             <th className="px-3 py-2">Vehículo</th>
             <th className="px-3 py-2">Estado</th>
