@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import OperationsTable from "./OperationsTable";
-import { fetchOperationDetail, fetchOperations, openDetail, closeDetail } from "../redux/operationSlice";
+import { fetchOperationDetail, fetchOperations, openDetail, closeDetail, updateOperationStatus } from "../redux/operationSlice";
 
 export default function Operations() {
   const dispatch = useDispatch();
@@ -36,6 +36,11 @@ export default function Operations() {
     }
   };
 
+  const editOperationStatus = (opId, newStatus) => {
+    const token = getToken();
+    dispatch(updateOperationStatus({ id: opId, newStatus, token }));
+  };
+
   return (
     <main className="min-h-screen bg-white pt-24 px-6 md:px-16 lg:px-32">
       <h1 className="text-3xl font-bold text-red-600 mb-8 text-center">
@@ -52,8 +57,10 @@ export default function Operations() {
           details={details}
           toggleDetails={toggleDetails}
           fmtCurrency={fmtCurrency}
+          editOperationStatus={editOperationStatus} // PASAMOS LA FUNCIÓN
         />
       )}
     </main>
   );
 }
+

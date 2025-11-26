@@ -1,6 +1,28 @@
+import { useState } from "react";
 import OperationDetails from "./OperationDetails";
+import { useDispatch } from "react-redux";
+import { updateOperationStatus } from "../redux/operationSlice";
 
 export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
+  const [updating, setUpdating] = useState(false);
+  const dispatch = useDispatch();
+
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const token = storedUser?.token;
+
+  const handleStatusChange = async (e) => {
+    const newStatus = e.target.value;
+    if (!token) return;
+
+    setUpdating(true);
+    try {
+      await dispatch(updateOperationStatus({ id: op.id, newStatus, token })).unwrap();
+    } catch (err) {
+      console.error("Error actualizando estado:", err);
+    }
+    setUpdating(false);
+  };
+
   return (
     <>
       <tr className="hover:bg-gray-50 transition-colors">
@@ -12,17 +34,22 @@ export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
         <td className="px-4 py-3 font-semibold">{fmtCurrency(op.total)}</td>
         <td className="px-4 py-3">{op.payMethod}</td>
         <td className="px-4 py-3">
-          <span
-            className={`px-2 py-1 rounded-md text-xs font-semibold ${
+          <select
+            value={op.operationStatus}
+            onChange={handleStatusChange}
+            disabled={updating}
+            className={`px-2 py-1 rounded-md text-sm font-semibold ${
               op.operationStatus === "IN_PROCESS"
                 ? "bg-yellow-100 text-yellow-700"
-                : op.operationStatus === "COMPLETED"
+                : op.operationStatus === "SHIPPED"
                 ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-700"
+                : "bg-red-100 text-red-700"
             }`}
           >
-            {op.operationStatus}
-          </span>
+            <option value="IN_PROCESS">IN PROCESS</option>
+            <option value="SHIPPED">SHIPPED</option>
+            <option value="CANCELLED">CANCELLED</option>
+          </select>
         </td>
         <td className="px-4 py-3 text-sm text-gray-600">
           {new Date(op.date).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}
