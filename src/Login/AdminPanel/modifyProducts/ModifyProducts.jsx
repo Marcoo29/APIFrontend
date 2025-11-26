@@ -3,8 +3,8 @@ import ProductsTable from "./ProductsTable";
 import ModifyProductsPagination from "./ModifyProductsPagination";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchProducts, updateProduct } from "../../redux/productSlice";
-import { parseArCurrency, formatPrice } from "../../utils/ParseCurrency";
+import { fetchProducts, updateProduct } from "../../../redux/productSlice";
+import { parseArCurrency, formatPrice } from "../../../utils/ParseCurrency";
 
 const ModifyProducts = ({ user }) => {
   const [editingId, setEditingId] = useState(null);

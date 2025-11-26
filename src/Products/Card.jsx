@@ -39,6 +39,9 @@ const Card = ({ id, title, price, manufacturer }) => {
       ? price.toLocaleString("es-AR")
       : price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
+  // ============================================================
+  // 🚀 AGREGAR AL CARRITO — FIX COMPLETO
+  // ============================================================
   const agregarAlCarrito = (e) => {
     e.stopPropagation();
     if (userRole === "ADMIN") return;
@@ -60,7 +63,9 @@ const Card = ({ id, title, price, manufacturer }) => {
     }
 
     localStorage.setItem("cart", JSON.stringify(currentCart));
-    window.dispatchEvent(new Event("storage"));
+
+    // 🔥 Evento correcto para actualizar navbar y otros componentes
+    window.dispatchEvent(new Event("cartUpdated"));
 
     setMensaje("✅ Producto agregado al carrito");
     setTimeout(() => setMensaje(""), 2000);

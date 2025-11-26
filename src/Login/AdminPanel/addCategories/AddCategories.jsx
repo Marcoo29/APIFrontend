@@ -19,7 +19,7 @@ export default function AddCategories({ user }) {
   } = useCategories(user);
 
   return (
-    <div className="w-full bg-white border p-8 shadow-sm">
+    <div className="w-full bg-white border p-8 shadow-sm mt-10">
       <h3 className="text-xl font-semibold mb-6 border-b pb-3">
         Gestión de Categorías
       </h3>
