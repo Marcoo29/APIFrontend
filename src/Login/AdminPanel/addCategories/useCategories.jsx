@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import {fetchCategories, createCategory, updateCategory} from "../../redux/categorySlice";
+import {fetchCategories, createCategory, updateCategory} from "../../../redux/categorySlice";
 
 export function useCategories(user) {
   const dispatch = useDispatch();

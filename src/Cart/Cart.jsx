@@ -31,7 +31,6 @@ export default function Cart({ onCartChange }) {
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(stored);
-
     if (onCartChange) onCartChange(stored.length);
   }, []);
 
@@ -44,6 +43,10 @@ export default function Cart({ onCartChange }) {
   const updateCart = (updated) => {
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
+
+    // 🔥 NECESARIO PARA ACTUALIZAR EL BADGE DEL CARRITO
+    window.dispatchEvent(new Event("cartUpdated"));
+
     if (onCartChange) onCartChange(updated.length);
   };
 

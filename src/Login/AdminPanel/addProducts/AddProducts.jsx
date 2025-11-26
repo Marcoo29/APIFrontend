@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createProduct } from "../../redux/productSlice";
+import { createProduct } from "../../../redux/productSlice";
 
 export default function AddProducts({ user }) {
   const dispatch = useDispatch();
@@ -53,12 +53,11 @@ export default function AddProducts({ user }) {
             productStatus: status,
             category: { id: Number(categoryId) },
           },
-          image, // Redux ya se encarga de esto
+          image,
           token: user.token,
         })
       ).unwrap();
 
-      // Reset de campos
       setProductName("");
       setPrice("");
       setManufacturer("");
@@ -88,53 +87,68 @@ export default function AddProducts({ user }) {
   };
 
   return (
-    <div className="w-full bg-white border border-[#dcdcdc] shadow-sm p-8">
+    <div className="w-full bg-white border border-[#dcdcdc] shadow-sm p-8 mt-10">
       <h3 className="text-xl font-semibold text-[#333] mb-6 border-b pb-3">
         Gestión de Productos
       </h3>
 
-      <form onSubmit={handleAddProduct} className="flex flex-col gap-4">
+      <form onSubmit={handleAddProduct} className="flex flex-col gap-1.5">
+
+        {/* Nombre */}
+        <label className="text-sm font-medium text-[#444]">Nombre del producto</label>
         <input
           type="text"
-          placeholder="Nombre"
           value={productName}
           onChange={(e) => setProductName(e.target.value)}
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
+
+        {/* Precio */}
+        <label className="text-sm font-medium text-[#444]">Precio</label>
         <input
           type="number"
-          placeholder="Precio"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
+
+        {/* Fabricante */}
+        <label className="text-sm font-medium text-[#444]">Fabricante</label>
         <input
           type="text"
-          placeholder="Fabricante"
           value={manufacturer}
           onChange={(e) => setManufacturer(e.target.value)}
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
+
+        {/* Stock */}
+        <label className="text-sm font-medium text-[#444]">Stock disponible</label>
         <input
           type="number"
-          placeholder="Stock"
           value={stock}
           onChange={(e) => setStock(e.target.value)}
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
+
+        {/* Descripción */}
+        <label className="text-sm font-medium text-[#444]">Descripción</label>
         <textarea
-          placeholder="Descripción"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="border border-[#ccc] px-3 py-2 text-sm min-h-[80px]"
         />
+
+        {/* FitFor */}
+        <label className="text-sm font-medium text-[#444]">Vehículo al que aplica</label>
         <input
           type="text"
-          placeholder="Vehículo al que aplica"
           value={fitFor}
           onChange={(e) => setFitFor(e.target.value)}
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
+
+        {/* Estado */}
+        <label className="text-sm font-medium text-[#444]">Estado del producto</label>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -143,6 +157,9 @@ export default function AddProducts({ user }) {
           <option value="AVAILABLE">Disponible</option>
           <option value="UNAVAILABLE">No disponible</option>
         </select>
+
+        {/* Categoría */}
+        <label className="text-sm font-medium text-[#444]">Categoría</label>
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
@@ -156,19 +173,17 @@ export default function AddProducts({ user }) {
           ))}
         </select>
 
-        <div className="flex flex-col">
-          <label className="text-sm text-[#555] mb-2 font-medium">
-            Imagen del producto
-          </label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          {preview && (
-            <img
-              src={preview}
-              alt="Vista previa"
-              className="w-24 h-24 object-cover border border-[#ddd] rounded mt-2"
-            />
-          )}
-        </div>
+        {/* Imagen */}
+        <label className="text-sm font-medium text-[#444]">Imagen del producto</label>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+
+        {preview && (
+          <img
+            src={preview}
+            alt="Vista previa"
+            className="w-24 h-24 object-cover border border-[#ddd] rounded mt-2"
+          />
+        )}
 
         {error && <p className="text-[#D32F2F] text-sm">{error}</p>}
 
