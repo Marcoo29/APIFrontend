@@ -29,7 +29,7 @@ export default function CartItem({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              decreaseQty(item.id);      // 🔥 Redux
+              decreaseQty(item.id);
             }}
             className="px-3 py-1 text-gray-600 hover:text-red-600 transition"
           >
@@ -41,7 +41,7 @@ export default function CartItem({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              increaseQty(item.id);      // 🔥 Redux
+              increaseQty(item.id);
             }}
             className="px-3 py-1 text-gray-600 hover:text-red-600 transition"
           >
@@ -56,7 +56,7 @@ export default function CartItem({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            removeItem(item.id);        // 🔥 Redux
+            removeItem(item.id);
           }}
           className="text-red-600 hover:underline text-sm font-medium"
         >

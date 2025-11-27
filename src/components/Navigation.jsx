@@ -6,11 +6,9 @@ import { logout } from "../redux/authSlice";
 const Navigation = () => {
   const dispatch = useDispatch();
 
-  // Redux auth
   const { id, name, role, token } = useSelector((state) => state.auth);
   const isLogged = !!token;
 
-  // Redux cart
   const cart = useSelector((state) => state.cart.items);
 
   const location = useLocation();
@@ -22,7 +20,6 @@ const Navigation = () => {
 
   const [cartCount, setCartCount] = useState(0);
 
-  // 🔥 Carrito desde Redux, no desde localStorage
   useEffect(() => {
     const total = cart.reduce((acc, item) => acc + item.qty, 0);
     setCartCount(total);
@@ -36,7 +33,6 @@ const Navigation = () => {
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
-  // Cerrar menú usuario al click fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -52,7 +48,6 @@ const Navigation = () => {
     <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
       <nav className="w-full px-4 py-2 flex justify-between items-center fixed top-0 left-0 right-0 z-50">
 
-        {/* Menú Hamburguesa */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="p-2 border border-red-600 text-red-600 rounded-sm hover:bg-red-600 hover:text-white transition-colors"
@@ -65,7 +60,6 @@ const Navigation = () => {
         {!isAuthPage && (
           <div className="flex items-center gap-4 text-lg relative">
 
-            {/* Hola usuario */}
             {name &&
               (location.pathname === "/home" || location.pathname === "/") && (
                 <span className="text-red-600 text-lg font-semibold">
@@ -73,7 +67,6 @@ const Navigation = () => {
                 </span>
               )}
 
-            {/* ICONO USUARIO */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => {
@@ -92,7 +85,6 @@ const Navigation = () => {
                 </span>
               </button>
 
-              {/* MENÚ DEL USUARIO */}
               {isLogged && userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border shadow-md text-gray-800 text-base">
                   <ul className="flex flex-col divide-y divide-gray-100">
@@ -155,7 +147,6 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* CARRITO */}
             <Link
               to="/cart"
               className="relative text-red-600 hover:text-red-800"
@@ -174,7 +165,6 @@ const Navigation = () => {
         )}
       </nav>
 
-      {/* Overlay */}
       <div
         onClick={() => setMenuOpen(false)}
         className={`fixed inset-0 bg-black/40 transition-opacity duration-200 z-[45] ${
@@ -184,7 +174,6 @@ const Navigation = () => {
         }`}
       />
 
-      {/* Aside */}
       <aside
         className={`fixed top-0 left-0 h-full w-72 bg-white dark:bg-[#1f1f1f] border-r border-gray-200 dark:border-gray-700 z-[50] transform transition-transform duration-300 ${
           menuOpen ? "translate-x-0" : "-translate-x-full"

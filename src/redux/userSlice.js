@@ -3,18 +3,16 @@ import axios from "axios";
 
 const URL = "http://localhost:4002/users";
 
-// Fetch user por email
 export const fetchUserByEmail = createAsyncThunk(
   "users/fetchByEmail",
   async ({ email, token }) => {
     const { data } = await axios.get(`${URL}/by-email/${email}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return data; // data completo del usuario
+    return data;
   }
 );
 
-// Update user
 export const updateUser = createAsyncThunk(
   "users/updateUser",
   async ({ userId, payload, token }) => {
@@ -35,7 +33,6 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // FETCH
       .addCase(fetchUserByEmail.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -49,7 +46,6 @@ const userSlice = createSlice({
         state.error = action.error.message;
       })
 
-      // UPDATE
       .addCase(updateUser.pending, (state) => {
         state.loading = true;
         state.error = null;

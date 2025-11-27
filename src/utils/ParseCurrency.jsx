@@ -5,19 +5,19 @@ export function parseArCurrency(value) {
 
   let s = String(value).trim();
 
-  // Quita símbolos no numéricos
+  // Saca símbolos no numéricos
   s = s.replace(/[^\d.,-]/g, "");
 
   const hasComma = s.includes(",");
   const hasDot = s.includes(".");
 
-  // Si tiene ambos, el punto es separador de miles
+  // Si tiene punto y coma, el punto es separador de miles
   if (hasComma && hasDot) {
     s = s.replace(/\./g, "").replace(",", ".");
   } else if (hasComma) {
     s = s.replace(",", ".");
   } else if (hasDot) {
-    // Caso "137.000" → miles → quitar
+    // Caso "137.000" → miles → saca
     const parts = s.split(".");
     if (parts.length === 2 && parts[1].length === 3) {
       s = parts.join("");

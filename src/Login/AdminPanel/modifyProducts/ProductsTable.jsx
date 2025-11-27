@@ -9,7 +9,6 @@ export default function ProductsTable({
   handleEditSubmit
 }) {
 
-  // 👉 Crea filas vacías hasta llegar a 10
   const emptyRows = Math.max(0, 10 - products.length);
 
   return (
@@ -50,7 +49,6 @@ export default function ProductsTable({
             ))
           )}
 
-          {/* 👉 Relleno de filas vacías para completar 10 */}
           {Array.from({ length: emptyRows }).map((_, i) => (
             <tr key={`empty-${i}`} className="h-[60px]">
               <td colSpan="9" className="border-t"></td>

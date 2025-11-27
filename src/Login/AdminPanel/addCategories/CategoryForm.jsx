@@ -15,7 +15,7 @@ export default function CategoryForm({
         placeholder="Nombre de la nueva categoría"
         className="flex-1 border border-gray-300 px-3 py-2 text-sm"
         value={value}
-        onChange={(e) => setValue(e.target.value)} //captura el valor que ingresa el usuario
+        onChange={(e) => setValue(e.target.value)}
         required
       />
 

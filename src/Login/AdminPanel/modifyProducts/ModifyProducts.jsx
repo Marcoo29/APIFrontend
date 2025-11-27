@@ -46,11 +46,11 @@ const ModifyProducts = ({ user }) => {
           manufacturer: editedProduct.manufacturer,
           stock: Number(editedProduct.stock),
           description: editedProduct.description,
-          fitFor: editedProduct.fitFor, // OJO: en camelCase correcto
+          fitFor: editedProduct.fitFor,
           productStatus: editedProduct.productStatus,
           token: user.token,
         })
-      ).unwrap(); // para capturar errores reales
+      ).unwrap();
 
       setEditingId(null);
     } catch (err) {

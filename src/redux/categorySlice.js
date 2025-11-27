@@ -6,7 +6,7 @@ const URL = "http://localhost:4002/categories";
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
   async () => {
-    const { data } = await axios.get(URL); //petición asíncrona, espera respuesta de la API
+    const { data } = await axios.get(URL);
     return data.content || [];
   }
 );
@@ -50,13 +50,12 @@ const categorySlice = createSlice({
   initialState: {
     items: [],
     loading: false,
-    error: null, //en principio se supone que sale todo bien
+    error: null,
     itemsId: {},
     itemsFilter: {},
   },
   reducers: {},
   extraReducers: (builder) => {
-    //acá se le pega al backend
     builder
       .addCase(fetchCategories.pending, (state) => {
         state.loading = true;
@@ -104,4 +103,4 @@ const categorySlice = createSlice({
   },
 });
 
-export default categorySlice.reducer; //exporto las funciones que modifican el estado
+export default categorySlice.reducer;

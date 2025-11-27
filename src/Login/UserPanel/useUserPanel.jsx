@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUserByEmail, updateUser } from "../../redux/userSlice";
-import { toast } from "../../utils/toast"; // ← IMPORTANTE
+import { toast } from "../../utils/toast";
 
 const useUserPanel = () => {
   const dispatch = useDispatch();

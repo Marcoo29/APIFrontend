@@ -63,7 +63,6 @@ export const updateProduct = createAsyncThunk(
 export const createProduct = createAsyncThunk(
   "products/createProduct",
   async ({ product, image, token }) => {
-    // 1) Crear producto
     const { data } = await axios.post(URL_PRODUCTS, product, {
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +72,6 @@ export const createProduct = createAsyncThunk(
 
     const productId = data.id;
 
-    // 2) Subir imagen si existe
     if (image) {
       const fd = new FormData();
       fd.append("productId", productId);
@@ -139,7 +137,6 @@ export const setProductDiscount = createAsyncThunk(
   "products/setProductDiscount",
   async ({ id, discountPrice }, thunkAPI) => {
     try {
-      // Obtener token desde Redux (auth.token)
       const token = thunkAPI.getState().auth.token;
 
       const { data } = await axios.put(
@@ -199,7 +196,6 @@ const productSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      /* --------- fetchProducts --------- */
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -213,7 +209,6 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
 
-      /* --------- fetchProductsFiltered --------- */
       .addCase(fetchProductsFiltered.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -229,7 +224,6 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
 
-      /* --------- updateProduct --------- */
       .addCase(updateProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -246,7 +240,6 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
 
-      /* --------- createProduct --------- */
       .addCase(createProduct.pending, (state) => {
         state.loading = true;
         state.error = null;

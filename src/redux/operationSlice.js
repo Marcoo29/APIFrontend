@@ -8,7 +8,7 @@ export const fetchOperations = createAsyncThunk(
   "operations/fetchOperations",
   async (token) => {
     const { data } = await axios.get(URL_OP, {
-      headers: { Authorization: `Bearer ${token}` }, // <-- header agregado
+      headers: { Authorization: `Bearer ${token}` },
     });
     return data.content || [];
   }
@@ -18,7 +18,7 @@ export const fetchOperationDetail = createAsyncThunk(
   "operations/fetchOperationDetail",
   async ({ opId, token }) => {
     const { data } = await axios.get(`${URL_OPDETAIL}/${opId}/details`, {
-      headers: { Authorization: `Bearer ${token}` }, // <-- header agregado
+      headers: { Authorization: `Bearer ${token}` },
     });
     return { opId, items: data };
   }
@@ -31,7 +31,7 @@ export const fetchOperationsByEmail = createAsyncThunk(
       const { data } = await axios.get(`${URL_OP}/by-email/${email}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return data.content; // viene paginado, content trae las ops
+      return data.content;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -50,7 +50,7 @@ export const updateOperationStatus = createAsyncThunk(
         },
       }
     );
-    return data; // devuelve la operación actualizada
+    return data;
   }
 );
 
@@ -80,7 +80,7 @@ const operationSlice = createSlice({
   initialState: {
     items: [],
     loading: false,
-    error: null, //en principio se supone que sale todo bien
+    error: null,
     itemsId: {},
     itemsFilter: {},
   },
@@ -97,7 +97,6 @@ const operationSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    //acá se le pega al backend
     builder
       .addCase(fetchOperations.pending, (state) => {
         state.loading = true;
@@ -182,4 +181,4 @@ const operationSlice = createSlice({
 });
 
 export const { openDetail, closeDetail } = operationSlice.actions;
-export default operationSlice.reducer; //exporto las funciones que modifican el estado
+export default operationSlice.reducer;

@@ -1,5 +1,3 @@
-// src/components/UserOrders.jsx
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOperationsByEmail } from "../redux/operationSlice";
@@ -7,24 +5,18 @@ import { fetchOperationsByEmail } from "../redux/operationSlice";
 export default function UserOrders() {
   const dispatch = useDispatch();
 
-  // 🔥 Datos del authSlice (NO más localStorage)
   const { email, token, name } = useSelector((state) => state.auth);
 
-  // 🔥 Datos de operaciones desde Redux
   const { operations, loading, error } = useSelector(
     (state) => state.operations
   );
 
-  // 🔥 Cargar operaciones del usuario cuando tenga token + email
   useEffect(() => {
     if (email && token) {
       dispatch(fetchOperationsByEmail({ email, token }));
     }
   }, [email, token, dispatch]);
 
-  // =====================================================
-  // RENDERIZADO
-  // =====================================================
 
   if (!token)
     return (
@@ -53,10 +45,6 @@ export default function UserOrders() {
         No tenés órdenes registradas.
       </p>
     );
-
-  // =====================================================
-  // LISTADO DE ORDENES
-  // =====================================================
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createProduct } from "../../../redux/productSlice";
-import { toast } from "../../../utils/toast"; // ← AGREGADO
+import { toast } from "../../../utils/toast";
 
 export default function AddProducts({ user }) {
   const dispatch = useDispatch();
@@ -70,7 +70,6 @@ export default function AddProducts({ user }) {
       setImage(null);
       setPreview(null);
 
-      // ✅ TOAST en vez del alert feo
       toast.fire({
         icon: "success",
         title: "Producto creado",
@@ -80,7 +79,6 @@ export default function AddProducts({ user }) {
       console.error(err);
       setError(err.message);
 
-      // ❗ TOAST de error también
       toast.fire({
         icon: "error",
         title: "No se pudo crear el producto",
@@ -107,7 +105,6 @@ export default function AddProducts({ user }) {
 
       <form onSubmit={handleAddProduct} className="flex flex-col gap-1.5">
 
-        {/* Nombre */}
         <label className="text-sm font-medium text-[#444]">Nombre del producto</label>
         <input
           type="text"
@@ -116,7 +113,6 @@ export default function AddProducts({ user }) {
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
 
-        {/* Precio */}
         <label className="text-sm font-medium text-[#444]">Precio</label>
         <input
           type="number"
@@ -125,7 +121,6 @@ export default function AddProducts({ user }) {
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
 
-        {/* Fabricante */}
         <label className="text-sm font-medium text-[#444]">Fabricante</label>
         <input
           type="text"
@@ -134,7 +129,6 @@ export default function AddProducts({ user }) {
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
 
-        {/* Stock */}
         <label className="text-sm font-medium text-[#444]">Stock disponible</label>
         <input
           type="number"
@@ -143,7 +137,6 @@ export default function AddProducts({ user }) {
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
 
-        {/* Descripción */}
         <label className="text-sm font-medium text-[#444]">Descripción</label>
         <textarea
           value={description}
@@ -151,7 +144,6 @@ export default function AddProducts({ user }) {
           className="border border-[#ccc] px-3 py-2 text-sm min-h-[80px]"
         />
 
-        {/* FitFor */}
         <label className="text-sm font-medium text-[#444]">Vehículo al que aplica</label>
         <input
           type="text"
@@ -160,7 +152,6 @@ export default function AddProducts({ user }) {
           className="border border-[#ccc] px-3 py-2 text-sm"
         />
 
-        {/* Estado */}
         <label className="text-sm font-medium text-[#444]">Estado del producto</label>
         <select
           value={status}
@@ -171,7 +162,6 @@ export default function AddProducts({ user }) {
           <option value="UNAVAILABLE">No disponible</option>
         </select>
 
-        {/* Categoría */}
         <label className="text-sm font-medium text-[#444]">Categoría</label>
         <select
           value={categoryId}
@@ -186,7 +176,6 @@ export default function AddProducts({ user }) {
           ))}
         </select>
 
-        {/* Imagen */}
         <label className="text-sm font-medium text-[#444]">Imagen del producto</label>
         <input type="file" accept="image/*" onChange={handleImageChange} />
 

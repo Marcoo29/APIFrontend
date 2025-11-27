@@ -49,7 +49,6 @@ const Products = () => {
     let categoryId = selectedCategory;
 
     const load = async () => {
-      // si la categoría está en texto (no ID)
       if (selectedCategory && isNaN(Number(selectedCategory))) {
         const found = categories.find(
           (c) =>

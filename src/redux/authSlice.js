@@ -4,14 +4,10 @@ import axios from "axios";
 const API_AUTH = "http://localhost:4002/api/v1/auth";
 const API_USERS = "http://localhost:4002/users";
 
-// ------------------------------------
-// LOGIN USER (AXIOS VERSION)
-// ------------------------------------
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
     try {
-      // 1️⃣ Login
       const res = await axios.post(`${API_AUTH}/authenticate`, {
         email,
         password,
@@ -27,7 +23,6 @@ export const loginUser = createAsyncThunk(
         });
       }
 
-      // 2️⃣ Obtener ID por email
       const idRes = await axios.get(`${API_USERS}/by-email/${email}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -43,13 +38,11 @@ export const loginUser = createAsyncThunk(
       };
 
     } catch (err) {
-      // Error HTTP del backend
       if (err.response) {
         const status = err.response.status;
         let errorMessage =
           err.response.data?.message || "Error al iniciar sesión";
 
-        // Caso específico: error de auth
         if (status === 401 || status === 403) {
           errorMessage = "Correo o contraseña incorrecta";
         }
@@ -60,7 +53,6 @@ export const loginUser = createAsyncThunk(
         });
       }
 
-      // Error de red
       return thunkAPI.rejectWithValue({
         message: "Error de conexión con el servidor.",
         status: 500,
@@ -69,9 +61,6 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// ------------------------------------
-// REGISTER USER (AXIOS VERSION)
-// ------------------------------------
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async ({ name, lastname, username, email, password }, thunkAPI) => {
@@ -134,7 +123,6 @@ const authSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      // LOGIN -----------------
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -148,7 +136,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // REGISTER --------------
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;

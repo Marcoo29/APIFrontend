@@ -7,7 +7,6 @@ export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
   const [updating, setUpdating] = useState(false);
   const dispatch = useDispatch();
 
-  // 🔥 Token desde Redux, no desde localStorage
   const token = useSelector((state) => state.auth.token);
 
   const handleStatusChange = async (e) => {

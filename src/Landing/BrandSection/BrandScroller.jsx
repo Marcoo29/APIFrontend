@@ -1,7 +1,7 @@
 import BrandRow from "./BrandRow";
 
 export default function BrandScroller({ brands, reverse }) {
-  const fullList = [...brands, ...brands]; // igual que antes
+  const fullList = [...brands, ...brands];
 
   return (
     <div

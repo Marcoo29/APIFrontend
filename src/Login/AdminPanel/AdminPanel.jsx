@@ -34,14 +34,12 @@ const AdminPanel = () => {
   return (
     <div className="min-h-screen flex bg-[#F5F5F5] p-6">
 
-      {/* 🟥 MENÚ LATERAL COMO TARJETA */}
       <aside className="w-72 bg-white border border-gray-200 shadow-sm rounded-lg p-6 h-fit flex flex-col gap-6 mt-10">
 
         <h2 className="text-xl font-bold text-gray-700 text-center border-b pb-2">
           Panel de Administrador
         </h2>
 
-        {/* Botones del Menú */}
         <div className="flex flex-col gap-3">
 
           <button
@@ -83,7 +81,6 @@ const AdminPanel = () => {
             Modificar Productos
           </button>
 
-          {/* ⭐️ NUEVA SECCIÓN DE DESCUENTOS */}
           <button
             onClick={() => setSection("discounts")}
             className={`
@@ -100,7 +97,6 @@ const AdminPanel = () => {
         </div>
       </aside>
 
-      {/* 🔥 CONTENIDO PRINCIPAL */}
       <main className="flex-1 ml-6">
         {section === "categories" && <AddCategories user={user} />}
         {section === "products" && <AddProducts user={user} />}

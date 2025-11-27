@@ -12,7 +12,6 @@ import {
 export default function Operations() {
   const dispatch = useDispatch();
 
-  // 🔥 Traemos todo desde Redux
   const { items: operations, itemsId: details, loading, error } = useSelector(
     (state) => state.operations
   );
@@ -24,7 +23,6 @@ export default function Operations() {
       currency: "ARS",
     });
 
-  // 🔥 Cargar operaciones al montar (si hay token)
   useEffect(() => {
     if (token) {
       dispatch(fetchOperations(token));
@@ -37,8 +35,7 @@ export default function Operations() {
     if (d?.open) {
       dispatch(closeDetail(opId));
     } else if (!d?.items?.length) {
-      // si no hay detalles cargados, los pedimos
-      if (!token) return; // opcional: evitar pegarle sin token
+      if (!token) return;
       dispatch(fetchOperationDetail({ opId, token }));
     } else {
       dispatch(openDetail(opId));
@@ -46,7 +43,7 @@ export default function Operations() {
   };
 
   const editOperationStatus = (opId, newStatus) => {
-    if (!token) return; // opcional: evitar si no hay sesión
+    if (!token) return;
     dispatch(updateOperationStatus({ id: opId, newStatus, token }));
   };
 

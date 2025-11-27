@@ -16,7 +16,6 @@ export default function ProductMainInfo({
     <div className="bg-white shadow-sm border border-gray-200 overflow-hidden mb-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
 
-        {/* Imagen ocupando TODO el contenedor */}
         <div className="bg-white border-r border-gray-200 w-full h-full flex items-center justify-center">
           {product.imageBase64 ? (
             <img
@@ -31,7 +30,6 @@ export default function ProductMainInfo({
           )}
         </div>
 
-        {/* Información */}
         <div className="flex flex-col p-8 justify-between">
           <div>
             <p className="text-sm font-semibold uppercase text-red-600">
@@ -51,12 +49,10 @@ export default function ProductMainInfo({
 
             <hr className="border-red-500 w-full my-4" />
 
-            {/* Precio */}
             <span className="text-4xl font-bold text-gray-900 block mb-4">
               ${price.toLocaleString("es-AR")}
             </span>
 
-            {/* Cuotas */}
             <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
               <p className="text-sm font-semibold text-red-700 mb-1">
                 Posibilidad de pago en cuotas:
@@ -82,7 +78,6 @@ export default function ProductMainInfo({
             </p>
           </div>
 
-          {/* Cantidad y carrito */}
           <div className="pt-6 border-t border-gray-200 mt-6 flex items-center justify-center gap-3 w-full">
             <div className="flex items-center border border-gray-300 px-2 py-3">
               <button onClick={disminuir} className="px-2">–</button>

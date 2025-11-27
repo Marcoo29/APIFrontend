@@ -10,7 +10,6 @@ export function useCategories(user) {
   const [editingId, setEditingId] = useState(null);
   const [editedName, setEditedName] = useState("");
 
-  // Cargar categorías desde Redux
   useEffect(() => {
     if (!user) return;
     dispatch(fetchCategories());

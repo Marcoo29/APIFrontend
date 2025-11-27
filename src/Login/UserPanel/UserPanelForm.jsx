@@ -8,9 +8,8 @@ const UserPanelForm = ({
   setAddress,
   handleSave,
   successMsg,
-  disabled   // ⬅ VIENE DESDE UserPanel
+  disabled
 }) => {
-  // Clase para inputs bloqueados (gris + no clickable)
   const disabledClass = disabled ? "bg-gray-100 cursor-not-allowed text-gray-500" : "";
 
   return (
@@ -18,7 +17,6 @@ const UserPanelForm = ({
 
       <div className="grid grid-cols-1 gap-4">
         
-        {/* Nombre */}
         <div>
           <label className="font-semibold mb-1 block">Nombre:</label>
           <input
@@ -30,7 +28,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Apellido */}
         <div>
           <label className="font-semibold mb-1 block">Apellido:</label>
           <input
@@ -42,7 +39,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Dirección */}
         <div>
           <label className="font-semibold mb-1 block">Dirección fiscal:</label>
           <input
@@ -55,7 +51,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Tipo persona */}
         <div>
           <label className="font-semibold mb-1 block">Tipo de persona:</label>
           <select
@@ -67,7 +62,6 @@ const UserPanelForm = ({
           </select>
         </div>
 
-        {/* IVA */}
         <div>
           <label className="font-semibold mb-1 block">Condición de IVA:</label>
           <select
@@ -82,7 +76,6 @@ const UserPanelForm = ({
           </select>
         </div>
 
-        {/* Tipo Documento */}
         <div>
           <label className="font-semibold mb-1 block">Tipo Documento:</label>
           <select
@@ -94,7 +87,6 @@ const UserPanelForm = ({
           </select>
         </div>
 
-        {/* Número documento */}
         <div>
           <label className="font-semibold mb-1 block">N° Documento:</label>
           <input
@@ -104,7 +96,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Localidad */}
         <div>
           <label className="font-semibold mb-1 block">Localidad:</label>
           <input
@@ -114,7 +105,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Domicilio */}
         <div>
           <label className="font-semibold mb-1 block">Domicilio:</label>
           <input
@@ -124,7 +114,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Whatsapp */}
         <div>
           <label className="font-semibold mb-1 block">Whatsapp:</label>
           <input
@@ -134,7 +123,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Transporte */}
         <div>
           <label className="font-semibold mb-1 block">Transporte de preferencia:</label>
           <input
@@ -144,7 +132,6 @@ const UserPanelForm = ({
           />
         </div>
 
-        {/* Observaciones */}
         <div>
           <label className="font-semibold mb-1 block">Observaciones:</label>
           <textarea

@@ -12,14 +12,12 @@ export default function Categories({ onCategorySelect }) {
 
   const [activeCategory, setActiveCategory] = useState(null);
 
-  // Cargar categorías si no existen
   useEffect(() => {
     if (categories.length === 0) {
       dispatch(fetchCategories());
     }
   }, []);
 
-  // Detectar categoría desde la URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const categoryFromUrl = params.get("category");
@@ -27,7 +25,6 @@ export default function Categories({ onCategorySelect }) {
   }, [location.search]);
 
   const handleSelect = (category) => {
-    // Sin filtro
     if (!category) {
       setActiveCategory(null);
       onCategorySelect(null);

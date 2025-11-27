@@ -11,7 +11,6 @@ import {
   removeItem,
 } from "../redux/cartSlice";
 
-// ===== Helpers =====
 function parseArCurrency(value) {
   if (typeof value === "number") return value;
   if (!value) return 0;
@@ -33,15 +32,12 @@ function formatPrice(value) {
   });
 }
 
-// ===========================================
-
 export default function Cart({ onCartChange }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const cart = useSelector((state) => state.cart.items);
 
-  // Para badge del carrito
   useEffect(() => {
     if (onCartChange) onCartChange(cart.length);
   }, [cart.length]);
@@ -51,9 +47,6 @@ export default function Cart({ onCartChange }) {
     0
   );
 
-  // ===========================================
-  // 🔥 Vuelve al flujo original → navegar al Checkout
-  // ===========================================
   const handleConfirm = () => {
     if (!cart.length) return;
     navigate("/checkout");

@@ -19,7 +19,6 @@ const UserPanel = () => {
 
   const isAdmin = user?.role === "ADMIN";
 
-  // Loading
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#F5F5F5]">
@@ -28,7 +27,6 @@ const UserPanel = () => {
     );
   }
 
-  // Error
   if (error) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#F5F5F5]">
@@ -37,7 +35,6 @@ const UserPanel = () => {
     );
   }
 
-  // Sin datos
   if (!user) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#F5F5F5]">
@@ -48,13 +45,10 @@ const UserPanel = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] w-full flex flex-col pt-24 px-4 md:px-10 pb-24 font-display">
-      {/* pb-24 ➜ agrega espacio antes del footer */}
 
       <div className="max-w-5xl mx-auto w-full">
 
-        {/* ======= HEADER PERFIL ======= */}
         <div className="flex flex-col items-center mb-8">
-          {/* GAP REDUCIDO (antes era mb-10) */}
 
           <div className="w-28 h-28 rounded-full overflow-hidden shadow-md border border-gray-300">
             <img
@@ -77,16 +71,11 @@ const UserPanel = () => {
           )}
         </div>
 
-        {/* ======= CONTENEDOR PRINCIPAL ======= */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* gap-6 → antes 8, más compacto */}
 
-          {/* ========= CARD 1: INFORMACIÓN PERSONAL ========= */}
           <div className="md:col-span-2 bg-white shadow-md rounded-lg p-5 border border-gray-200">
-            {/* p-5 → antes p-6 */}
 
             <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
-              {/* mb-3 → antes mb-4 */}
               <span className="material-symbols-outlined text-red-600">badge</span>
               Información Personal
             </h2>
@@ -105,9 +94,7 @@ const UserPanel = () => {
             />
           </div>
 
-          {/* ========= CARD 2: INFORMACIÓN DE CUENTA ========= */}
           <div className="bg-white shadow-md rounded-lg p-5 border border-gray-200 h-fit">
-            {/* p-5 → antes p-6, h-fit evita que se estire */}
 
             <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-red-600">info</span>
@@ -115,7 +102,6 @@ const UserPanel = () => {
             </h2>
 
             <div className="space-y-3 text-sm">
-              {/* space-y-3 → antes 4, separaciones más chicas */}
 
               <div className="flex justify-between border-b pb-2">
                 <span className="text-gray-600">Nro de Cliente:</span>

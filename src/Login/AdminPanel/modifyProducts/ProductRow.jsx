@@ -12,10 +12,8 @@ export default function ProductRow({
 
   return (
     <tr className="border-t hover:bg-[#fafafa] transition h-[60px] align-top">
-      {/* ID */}
       <td className="px-3 py-2 text-gray-600">{prod.id}</td>
 
-      {/* CAMPOS DEL PRODUCTO */}
       <ProductFields
         prod={prod}
         isEditing={isEditing}
@@ -23,7 +21,6 @@ export default function ProductRow({
         handleChange={handleChange}
       />
 
-      {/* ACCIÓN */}
       <td className="px-3 py-2 text-center">
         <button
           onClick={() =>

@@ -86,7 +86,6 @@ export default function AdminDiscounts() {
         Gestión de Descuentos
       </h3>
 
-      {/* 🔍 BUSCADOR */}
       <div className="mb-4">
         <input
           type="text"
@@ -100,7 +99,6 @@ export default function AdminDiscounts() {
         />
       </div>
 
-      {/* TABLA */}
       <table className="w-full border-collapse text-sm table-fixed">
         <thead>
           <tr className="bg-gray-100 text-left">
@@ -114,7 +112,6 @@ export default function AdminDiscounts() {
         </thead>
 
         <tbody>
-          {/* FILAS REALES */}
           {currentProducts.map((p) => {
             const currentDiscount =
               draftDiscount[p.id] !== undefined
@@ -123,7 +120,6 @@ export default function AdminDiscounts() {
 
             const finalPrice = p.price - (p.discountPrice || 0);
 
-            // 🔥 Nombre truncado para que no rompa la altura (aprox 2 líneas)
             const rawName = p.name || "";
             const truncatedName =
               rawName.length > 90 ? rawName.slice(0, 90) + "..." : rawName;
@@ -184,7 +180,6 @@ export default function AdminDiscounts() {
             );
           })}
 
-          {/* 🔥 FILAS VACÍAS PARA COMPLETAR HASTA 10 (MISMA ALTURA) */}
           {Array.from({
             length: Math.max(ITEMS_PER_PAGE - currentProducts.length, 0),
           }).map((_, i) => (

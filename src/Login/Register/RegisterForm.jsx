@@ -19,7 +19,6 @@ const RegisterForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
 
-      {/* Nombre + Apellido */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-semibold mb-2">Nombre</label>
@@ -44,7 +43,6 @@ const RegisterForm = ({
         </div>
       </div>
 
-      {/* Username */}
       <div>
         <label className="block text-sm font-semibold mb-2">Usuario</label>
         <input
@@ -56,7 +54,6 @@ const RegisterForm = ({
         />
       </div>
 
-      {/* Email */}
       <div>
         <label className="block text-sm font-semibold mb-2">Correo electrónico</label>
         <input
@@ -68,7 +65,6 @@ const RegisterForm = ({
         />
       </div>
 
-      {/* Password */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-semibold mb-2">Contraseña</label>
@@ -95,12 +91,10 @@ const RegisterForm = ({
 
       {error && <p className="text-red-600 text-center">{error}</p>}
 
-      {/* Submit */}
       <button className="w-full bg-red-600 text-white py-3 rounded-md font-semibold">
         Crear cuenta
       </button>
 
-      {/* Link login */}
       <div className="text-center mt-6">
         ¿Ya tenés cuenta?{" "}
         <Link to="/login" className="text-red-600 font-bold">

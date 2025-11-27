@@ -33,7 +33,6 @@ export default function RelatedProducts({ related, navigate }) {
               onClick={() => navigate(`/products/${p.id}`)}
               className="min-w-[230px] max-w-[230px] bg-white border flex flex-col items-center shadow-sm hover:shadow-md cursor-pointer rounded-md"
             >
-              {/* Imagen */}
               <div className="bg-gray-50 w-full border-b flex items-center justify-center h-[230px] rounded-t-md">
                 <img
                   src={
@@ -46,13 +45,11 @@ export default function RelatedProducts({ related, navigate }) {
                 />
               </div>
 
-              {/* Contenido */}
               <div className="p-4 flex flex-col flex-1 w-full">
                 <p className="font-semibold text-sm mb-3 text-center leading-tight">
                   {p.name.length > 25 ? p.name.slice(0, 25) + "..." : p.name}
                 </p>
 
-                {/* Botón centrado */}
                 <div className="flex justify-center w-full mt-auto">
                   <button
                     onClick={(e) => {

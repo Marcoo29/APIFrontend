@@ -102,7 +102,6 @@ export default function Checkout() {
         <div className="max-w-3xl mx-auto bg-white shadow-md border border-gray-200 p-6 rounded-md">
           <h2 className="text-xl font-semibold mb-4">Productos</h2>
 
-          {/* Resumen del Carrito */}
           {cart.map((item) => (
             <div key={item.id} className="flex justify-between py-2 border-b">
               <span>
