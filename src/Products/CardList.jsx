@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "./Card";
 
@@ -22,18 +21,14 @@ export default function CardList({ products = [], layoutView = "grid" }) {
       }
     >
       {products.map((product) => (
-        <div
+        <Card
           key={product.id}
-          onClick={() => navigate(`/products/${product.id}`)}
-          className="cursor-pointer"
-        >
-          <Card
-            id={product.id}
-            title={product.name}
-            price={product.price}
-            manufacturer={product.manufacturer}
-          />
-        </div>
+          id={product.id}
+          title={product.name}
+          price={product.price}
+          manufacturer={product.manufacturer}
+          layoutView={layoutView}   // 🔥 le pasamos la vista
+        />
       ))}
     </div>
   );
