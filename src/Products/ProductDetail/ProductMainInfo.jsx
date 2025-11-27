@@ -17,7 +17,7 @@ export default function ProductMainInfo({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
 
         {/* Imagen ocupando TODO el contenedor */}
-        <div className="bg-gray-100 border-r border-gray-200 w-full h-full flex items-center justify-center">
+        <div className="bg-white border-r border-gray-200 w-full h-full flex items-center justify-center">
           {product.imageBase64 ? (
             <img
               src={`data:image/jpeg;base64,${product.imageBase64}`}

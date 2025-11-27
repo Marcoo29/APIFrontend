@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-
+import { toast } from "../utils/toast";
 import { addItem } from "../redux/cartSlice";
 
 const Card = ({ id, title, price, manufacturer, layoutView = "grid" }) => {
@@ -65,17 +64,9 @@ const Card = ({ id, title, price, manufacturer, layoutView = "grid" }) => {
     );
 
     // Toast
-    Swal.fire({
-      toast: true,
-      position: "bottom-end",
+    toast.fire({
       icon: "success",
       title: "Producto agregado al carrito",
-      showConfirmButton: false,
-      timer: 2500,
-      timerProgressBar: true,
-      background: "#333",
-      color: "#fff",
-      iconColor: "#4ade80",
     });
   };
 
