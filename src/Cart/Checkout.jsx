@@ -1,95 +1,96 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { parseArCurrency, formatPrice } from "../utils/ParseCurrency";
+
+import { createOperation } from "../redux/operationSlice";
+import { clearCart } from "../redux/cartSlice";
+
+
+// ======================================================
+// 🔥 Función para parsear moneda AR — EXACTA como la tuya
+// ======================================================
+function parseArCurrency(value) {
+  if (typeof value === "number") return value;
+  if (!value) return 0;
+  let s = String(value).trim();
+  s = s.replace(/[^\d.,-]/g, "");
+  const hasComma = s.includes(",");
+  const hasDot = s.includes(".");
+  if (hasComma && hasDot) s = s.replace(/\./g, "").replace(",", ".");
+  else if (hasComma && !hasDot) s = s.replace(",", ".");
+  else if (!hasComma && hasDot) s = s.replace(/\./g, "");
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function formatPrice(value) {
+  return parseArCurrency(value).toLocaleString("es-AR", {
+    style: "currency",
+    currency: "ARS",
+  });
+}
+// ======================================================
 
 
 export default function Checkout() {
-  const [cart, setCart] = useState([]);
-  const [payMethod, setPayMethod] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // 🔹 CARRITO desde Redux
+  const cart = useSelector((state) => state.cart.items);
+
+  // 🔹 Estado global del POST
+  const loading = useSelector((state) => state.operations.loading);
+  const errorApi = useSelector((state) => state.operations.error);
+
+  // 🔹 Estado interno del componente
+  const [payMethod, setPayMethod] = useState("");
+  const [localError, setLocalError] = useState(null);
+
+  // 🔹 User ID (SÍ se puede seguir sacando del localStorage)
   const userId = Number(localStorage.getItem("userId")) || null;
 
-  const getToken = () => {
-    let token = null;
-    const rawUser = localStorage.getItem("user");
-    if (rawUser) {
-      try {
-        const u = JSON.parse(rawUser);
-        token = u?.token;
-      } catch {}
-    }
-    if (!token) token = localStorage.getItem("token");
-    if (typeof token === "string") token = token.replace(/^"(.*)"$/, "$1").trim();
-    return token || null;
-  };
+  const token = (() => {
+    let t = JSON.parse(localStorage.getItem("user") || "{}")?.token;
+    if (!t) t = localStorage.getItem("token");
+    return t || null;
+  })();
 
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCart(stored);
-  }, []);
-
+  // 🔹 Total calculado desde Redux
   const total = cart.reduce(
-    (acc, i) => acc + parseArCurrency(i.price) * (i.qty || 0),
+    (acc, i) => acc + parseArCurrency(i.price) * (i.qty || 1),
     0
   );
 
+  // ======================================================
+  // 🔥 Confirmar compra usando Redux
+  // ======================================================
   const handleSubmit = async () => {
-    if (!payMethod) {
-      setError("Elegí un método de pago.");
-      return;
-    }
+    if (!payMethod) return setLocalError("Elegí un método de pago.");
+    if (!userId) return setLocalError("Tenés que iniciar sesión.");
+    if (!token) return setLocalError("Sesión inválida.");
 
-    if (!userId) {
-      setError("Tenés que iniciar sesión.");
-      return;
-    }
-
-    const token = getToken();
-    if (!token) {
-      setError("Sesión inválida. Volvé a iniciar sesión.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
+    setLocalError(null);
 
     try {
-      const body = {
-        userId,
-        payMethod,
-        date: new Date().toISOString(),
-        operationDetails: cart.map((i) => ({
-          productId: i.id,
-          quantity: i.qty,
-        })),
-      };
+      await dispatch(
+        createOperation({
+          userId,
+          payMethod,
+          cart,
+          token,
+        })
+      ).unwrap();
 
-      const res = await fetch("http://localhost:4002/operations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        const txt = await res.text();
-        console.error("POST /operations ERROR:", res.status, txt);
-        throw new Error("No se pudo registrar la compra.");
-      }
-
-      localStorage.removeItem("cart");
+      dispatch(clearCart());
       navigate("/order-success");
     } catch (err) {
-      setError(err.message || "Error al procesar la compra.");
-    } finally {
-      setLoading(false);
+      setLocalError(err.message);
     }
   };
+
+  // ======================================================
+
 
   return (
     <main className="min-h-screen bg-white pt-24 px-6 md:px-16 lg:px-32">
@@ -101,24 +102,20 @@ export default function Checkout() {
         <div className="max-w-3xl mx-auto bg-white shadow-md border border-gray-200 p-6 rounded-md">
           <h2 className="text-xl font-semibold mb-4">Productos</h2>
 
-          {cart.map((item) => {
-            const priceNumber = parseArCurrency(item.price);
-            const subtotal = priceNumber * item.qty;
-
-            return (
-              <div key={item.id} className="flex justify-between py-2 border-b">
-                <span>
-                  {item.name} × {item.qty}
-                </span>
-                <span>{formatPrice(subtotal)}</span>
-              </div>
-            );
-          })}
+          {cart.map((item) => (
+            <div key={item.id} className="flex justify-between py-2 border-b">
+              <span>
+                {item.name} × {item.qty}
+              </span>
+              <span>{formatPrice(item.price * item.qty)}</span>
+            </div>
+          ))}
 
           <div className="text-right mt-4 text-2xl font-bold text-red-600">
             Total: {formatPrice(total)}
           </div>
 
+          {/* Método de pago */}
           <h2 className="text-xl font-semibold mt-8">Método de pago</h2>
           <div className="mt-3 space-y-2">
             {["TRANSFER", "MERCADO_PAGO", "CREDIT", "DEBIT"].map((m) => (
@@ -135,7 +132,12 @@ export default function Checkout() {
             ))}
           </div>
 
-          {error && <p className="text-red-600 text-center mt-4">{error}</p>}
+          {localError && (
+            <p className="mt-4 text-red-600 text-center">{localError}</p>
+          )}
+          {errorApi && (
+            <p className="mt-2 text-red-600 text-center">{errorApi}</p>
+          )}
 
           <button
             onClick={handleSubmit}
