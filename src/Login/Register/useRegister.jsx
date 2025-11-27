@@ -1,50 +1,41 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { registerUser } from "../../redux/authSlice";
 
 export const useRegister = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { loading, error } = useSelector((state) => state.auth);
+
+  // estado local SOLO para los campos, no para el fetch
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-
-  const navigate = useNavigate();
+  const [localError, setLocalError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!name || !lastname || !username || !email || !password || !confirmPassword) {
-      return setError("Completá todos los campos.");
+      return setLocalError("Completá todos los campos.");
     }
 
     if (password !== confirmPassword) {
-      return setError("Las contraseñas no coinciden.");
+      return setLocalError("Las contraseñas no coinciden.");
     }
 
-    try {
-      const res = await fetch("http://localhost:4002/api/v1/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          lastname,
-          username,
-          email,
-          password,
-          role: "USER",
-        }),
-      });
+    const result = await dispatch(
+      registerUser({ name, lastname, username, email, password })
+    );
 
-      const data = await res.json();
-
-      if (!res.ok) return setError(data.message || "Error al registrarse");
-
+    if (result.meta.requestStatus === "fulfilled") {
       alert("Registro exitoso");
       navigate("/login");
-    } catch {
-      setError("Error de conexión");
     }
   };
 
@@ -55,7 +46,8 @@ export const useRegister = () => {
     email,
     password,
     confirmPassword,
-    error,
+    error: localError || error,
+    loading,
     setName,
     setLastname,
     setUsername,

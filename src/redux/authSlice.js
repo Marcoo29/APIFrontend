@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const API_AUTH = "http://localhost:4002/api/v1/auth";
 const API_USERS = "http://localhost:4002/users";
 
-// Login con thunk (opcional si usás useLogin).
+// Login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
@@ -15,23 +15,32 @@ export const loginUser = createAsyncThunk(
       });
 
       if (!res.ok) {
-        return thunkAPI.rejectWithValue("Correo o contraseña incorrecta");
+        return thunkAPI.rejectWithValue({
+          message: "Correo o contraseña incorrecta",
+          status: res.status,
+        });
       }
 
       const data = await res.json();
       const token = data.access_token || data.token;
 
       if (!token) {
-        return thunkAPI.rejectWithValue("No se devolvió un token válido.");
+        return thunkAPI.rejectWithValue({
+          message: "No se devolvió un token válido.",
+          status: 500,
+        });
       }
 
-      // Obtener userId
+      // Obtener ID por email
       const idRes = await fetch(`${API_USERS}/by-email/${email}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!idRes.ok) {
-        return thunkAPI.rejectWithValue("No se pudo obtener el ID del usuario.");
+        return thunkAPI.rejectWithValue({
+          message: "No se pudo obtener el ID del usuario.",
+          status: idRes.status,
+        });
       }
 
       const userData = await idRes.json();
@@ -44,7 +53,47 @@ export const loginUser = createAsyncThunk(
         token,
       };
     } catch (err) {
-      return thunkAPI.rejectWithValue("Error de conexión con el servidor.");
+      return thunkAPI.rejectWithValue({
+        message: "Error de conexión con el servidor.",
+        status: 500,
+      });
+    }
+  }
+);
+
+// Register
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async ({ name, lastname, username, email, password }, thunkAPI) => {
+    try {
+      const res = await fetch(`${API_AUTH}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          lastname,
+          username,
+          email,
+          password,
+          role: "USER",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return thunkAPI.rejectWithValue({
+          message: data.message || "Error al registrarse",
+          status: res.status,
+        });
+      }
+
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        message: "Error de conexión",
+        status: 500,
+      });
     }
   }
 );
@@ -91,13 +140,23 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload; // { message, status }
+      })
+
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-// Exportar acciones
 export const { logout, loginSuccess } = authSlice.actions;
-
-// Exportar reducer
 export default authSlice.reducer;
