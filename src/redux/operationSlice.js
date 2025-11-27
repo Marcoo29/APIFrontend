@@ -159,6 +159,9 @@ const operationSlice = createSlice({
         if (index !== -1) state.items[index] = action.payload;
       })
       .addCase(updateOperationStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(createOperation.pending, (state) => {
         state.loading = true;
         state.error = null;
