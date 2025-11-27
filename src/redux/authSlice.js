@@ -41,12 +41,22 @@ export const loginUser = createAsyncThunk(
         role: data.role,
         token,
       };
+
     } catch (err) {
       // Error HTTP del backend
       if (err.response) {
+        const status = err.response.status;
+        let errorMessage =
+          err.response.data?.message || "Error al iniciar sesión";
+
+        // Caso específico: error de auth
+        if (status === 401 || status === 403) {
+          errorMessage = "Correo o contraseña incorrecta";
+        }
+
         return thunkAPI.rejectWithValue({
-          message: err.response.data?.message || "Correo o contraseña incorrecta",
-          status: err.response.status,
+          message: errorMessage,
+          status,
         });
       }
 
@@ -76,6 +86,7 @@ export const registerUser = createAsyncThunk(
       });
 
       return res.data;
+
     } catch (err) {
       if (err.response) {
         return thunkAPI.rejectWithValue({
