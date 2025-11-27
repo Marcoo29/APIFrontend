@@ -2,6 +2,7 @@ import { useState } from "react";
 import AddCategories from "./addCategories/AddCategories";
 import AddProducts from "./addProducts/AddProducts";
 import ModifyProducts from "./modifyProducts/ModifyProducts";
+import AdminDiscounts from "./discounts/AdminDiscounts"; // ⬅️ NUEVO
 
 import { useSelector } from "react-redux";
 
@@ -13,7 +14,9 @@ const AdminPanel = () => {
   if (!user || !user.id) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#F5F5F5]">
-        <p className="text-gray-700 text-lg">Debés iniciar sesión para acceder.</p>
+        <p className="text-gray-700 text-lg">
+          Debés iniciar sesión para acceder.
+        </p>
       </div>
     );
   }
@@ -41,53 +44,60 @@ const AdminPanel = () => {
         {/* Botones del Menú */}
         <div className="flex flex-col gap-3">
 
-          {/* Crear Categoría */}
           <button
             onClick={() => setSection("categories")}
             className={`
               flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm border transition
               ${section === "categories"
                 ? "bg-[#D32F2F] text-white border-[#D32F2F]"
-                : "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]"
-              }
+                : "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]"}
             `}
           >
             <span className="material-symbols-outlined">category</span>
             Crear Categoría
           </button>
 
-          {/* Crear Producto */}
           <button
             onClick={() => setSection("products")}
             className={`
               flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm border transition
               ${section === "products"
                 ? "bg-[#D32F2F] text-white border-[#D32F2F]"
-                : "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]"
-              }
+                : "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]"}
             `}
           >
             <span className="material-symbols-outlined">add</span>
             Crear Producto
           </button>
 
-          {/* Modificar Productos */}
           <button
             onClick={() => setSection("modify")}
             className={`
               flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm border transition
               ${section === "modify"
                 ? "bg-[#D32F2F] text-white border-[#D32F2F]"
-                : "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]"
-              }
+                : "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]"}
             `}
           >
             <span className="material-symbols-outlined">edit</span>
             Modificar Productos
           </button>
 
-        </div>
+          {/* ⭐️ NUEVA SECCIÓN DE DESCUENTOS */}
+          <button
+            onClick={() => setSection("discounts")}
+            className={`
+              flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm border transition
+              ${section === "discounts"
+                ? "bg-[#D32F2F] text-white border-[#D32F2F]"
+                : "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]"}
+            `}
+          >
+            <span className="material-symbols-outlined">sell</span>
+            Descuentos
+          </button>
 
+        </div>
       </aside>
 
       {/* 🔥 CONTENIDO PRINCIPAL */}
@@ -95,6 +105,7 @@ const AdminPanel = () => {
         {section === "categories" && <AddCategories user={user} />}
         {section === "products" && <AddProducts user={user} />}
         {section === "modify" && <ModifyProducts user={user} />}
+        {section === "discounts" && <AdminDiscounts user={user} />} {/* ⬅️ NUEVO */}
       </main>
 
     </div>

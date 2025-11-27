@@ -135,6 +135,42 @@ export const fetchRelatedProducts = createAsyncThunk(
   }
 );
 
+export const setProductDiscount = createAsyncThunk(
+  "products/setProductDiscount",
+  async ({ id, discountPrice, token }, thunkAPI) => {
+    try {
+      const { data } = await axios.put(
+        `${URL_PRODUCTS}/${id}/discount?discountPrice=${discountPrice}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const removeProductDiscount = createAsyncThunk(
+  "products/removeProductDiscount",
+  async ({ id, token }) => {
+    const { data } = await axios.put(
+      `${URL_PRODUCTS}/${id}/discount?discount=0`,
+      {}, // body vacío
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data; // producto sin descuento
+  }
+);
+
 
 const productSlice = createSlice({
   name: "products",
