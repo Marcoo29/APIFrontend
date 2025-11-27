@@ -7,7 +7,7 @@ export default function CartItem({
   increaseQty,
   decreaseQty,
   removeItem,
-  onNavigate
+  onNavigate,
 }) {
   return (
     <div
@@ -20,9 +20,7 @@ export default function CartItem({
         <div>
           <p className="font-semibold text-lg">{item.name}</p>
 
-          <p className="text-gray-500">
-            {formatPrice(item.price)}
-          </p>
+          <p className="text-gray-500">{formatPrice(item.price)}</p>
         </div>
       </div>
 
@@ -31,8 +29,7 @@ export default function CartItem({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              decreaseQty(item.id);
-              window.dispatchEvent(new Event("cartUpdated")); // 🔥
+              decreaseQty(item.id);      // 🔥 Redux
             }}
             className="px-3 py-1 text-gray-600 hover:text-red-600 transition"
           >
@@ -44,8 +41,7 @@ export default function CartItem({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              increaseQty(item.id);
-              window.dispatchEvent(new Event("cartUpdated")); // 🔥
+              increaseQty(item.id);      // 🔥 Redux
             }}
             className="px-3 py-1 text-gray-600 hover:text-red-600 transition"
           >
@@ -60,8 +56,7 @@ export default function CartItem({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            removeItem(item.id);
-            window.dispatchEvent(new Event("cartUpdated")); // 🔥
+            removeItem(item.id);        // 🔥 Redux
           }}
           className="text-red-600 hover:underline text-sm font-medium"
         >

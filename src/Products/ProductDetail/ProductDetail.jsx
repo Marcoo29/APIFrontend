@@ -8,6 +8,8 @@ import {
   fetchRelatedProducts,
 } from "../../redux/productSlice";
 
+import { addItem } from "../../redux/cartSlice";
+
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,13 +19,12 @@ export default function ProductDetail() {
     (state) => state.products
   );
 
+  // 🔥 Rol desde Redux (ya no usamos localStorage)
+  const userRole = useSelector((state) => state.auth.role);
+
   const [cantidad, setCantidad] = useState(1);
   const [mensaje, setMensaje] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
-  const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
-  const userRole = user?.role || null;
 
   const aumentar = () => setCantidad((prev) => Math.min(prev + 1, 99));
   const disminuir = () => setCantidad((prev) => Math.max(prev - 1, 1));
@@ -49,27 +50,20 @@ export default function ProductDetail() {
     }
   };
 
+  // 🔥 Agregar al carrito usando Redux
   const agregarAlCarrito = () => {
     if (!product || userRole === "ADMIN") return;
 
-    const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingIndex = currentCart.findIndex((item) => item.id === product.id);
-
-    if (existingIndex !== -1) {
-      currentCart[existingIndex].qty += cantidad;
-    } else {
-      currentCart.push({
+    dispatch(
+      addItem({
         id: product.id,
         name: product.name,
         price: product.price,
         manufacturer: product.manufacturer,
         image: product.imageBase64 || null,
         qty: cantidad,
-      });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(currentCart));
-    window.dispatchEvent(new Event("storage"));
+      })
+    );
 
     setMensaje("✅ Producto agregado al carrito");
     setTimeout(() => setMensaje(""), 2000);
@@ -182,14 +176,18 @@ export default function ProductDetail() {
 
               <div className="pt-6 border-t border-gray-200 mt-6 flex items-center justify-center gap-3 w-full">
                 <div className="flex items-center border border-gray-300 px-2 py-3">
-                  <button onClick={disminuir} className="px-2">–</button>
+                  <button onClick={disminuir} className="px-2">
+                    –
+                  </button>
                   <input
                     type="number"
                     value={cantidad}
                     readOnly
                     className="w-8 text-center bg-transparent"
                   />
-                  <button onClick={aumentar} className="px-2">+</button>
+                  <button onClick={aumentar} className="px-2">
+                    +
+                  </button>
                 </div>
 
                 <button

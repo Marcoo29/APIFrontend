@@ -1,26 +1,32 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import OperationDetails from "./OperationDetails";
-import { useDispatch } from "react-redux";
 import { updateOperationStatus } from "../redux/operationSlice";
 
 export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
   const [updating, setUpdating] = useState(false);
   const dispatch = useDispatch();
 
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const token = storedUser?.token;
+  // 🔥 Token desde Redux, no desde localStorage
+  const token = useSelector((state) => state.auth.token);
 
   const handleStatusChange = async (e) => {
     const newStatus = e.target.value;
-    if (!token) return;
+    if (!token) {
+      console.warn("No hay token en Redux, no se puede actualizar el estado.");
+      return;
+    }
 
     setUpdating(true);
     try {
-      await dispatch(updateOperationStatus({ id: op.id, newStatus, token })).unwrap();
+      await dispatch(
+        updateOperationStatus({ id: op.id, newStatus, token })
+      ).unwrap();
     } catch (err) {
       console.error("Error actualizando estado:", err);
+    } finally {
+      setUpdating(false);
     }
-    setUpdating(false);
   };
 
   return (
@@ -31,7 +37,9 @@ export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
           {op.user?.name} {op.user?.lastname}
           <div className="text-sm text-gray-500">{op.user?.email}</div>
         </td>
-        <td className="px-4 py-3 font-semibold">{fmtCurrency(op.total)}</td>
+        <td className="px-4 py-3 font-semibold">
+          {fmtCurrency(op.total)}
+        </td>
         <td className="px-4 py-3">{op.payMethod}</td>
         <td className="px-4 py-3">
           <select
@@ -52,7 +60,10 @@ export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
           </select>
         </td>
         <td className="px-4 py-3 text-sm text-gray-600">
-          {new Date(op.date).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}
+          {new Date(op.date).toLocaleString("es-AR", {
+            dateStyle: "short",
+            timeStyle: "short",
+          })}
         </td>
         <td className="px-4 py-3">
           <button
@@ -64,7 +75,9 @@ export default function OperationRow({ op, detail, onToggle, fmtCurrency }) {
         </td>
       </tr>
 
-      {detail?.open && <OperationDetails detail={detail} fmtCurrency={fmtCurrency} />}
+      {detail?.open && (
+        <OperationDetails detail={detail} fmtCurrency={fmtCurrency} />
+      )}
     </>
   );
 }

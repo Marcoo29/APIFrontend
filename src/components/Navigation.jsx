@@ -6,12 +6,12 @@ import { logout } from "../redux/authSlice";
 const Navigation = () => {
   const dispatch = useDispatch();
 
-  // 🔥 Datos del authSlice
+  // Redux auth
   const { id, name, role, token } = useSelector((state) => state.auth);
-
   const isLogged = !!token;
-  const username = name || null;
-  const userRole = role || null;
+
+  // Redux cart
+  const cart = useSelector((state) => state.cart.items);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -22,32 +22,21 @@ const Navigation = () => {
 
   const [cartCount, setCartCount] = useState(0);
 
-  const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const total = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
+  // 🔥 Carrito desde Redux, no desde localStorage
+  useEffect(() => {
+    const total = cart.reduce((acc, item) => acc + item.qty, 0);
     setCartCount(total);
-  };
-
-  useEffect(() => {
-    updateCartCount();
-  }, []);
-
-  useEffect(() => {
-    const handler = () => updateCartCount();
-    window.addEventListener("cartUpdated", handler);
-    return () => window.removeEventListener("cartUpdated", handler);
-  }, []);
+  }, [cart]);
 
   const handleLogout = () => {
-    dispatch(logout());      // 🔥 RESETEA REDUX
-    localStorage.clear();    // limpio carrito también
+    dispatch(logout());
     navigate("/home");
   };
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
-  // Cerrar menú usuario al clickear afuera
+  // Cerrar menú usuario al click fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -59,10 +48,6 @@ const Navigation = () => {
       document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-  console.log("AUTH EN NAVIGATION:", { id, name, role, token });
-
-
   return (
     <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
       <nav className="w-full px-4 py-2 flex justify-between items-center fixed top-0 left-0 right-0 z-50">
@@ -71,7 +56,6 @@ const Navigation = () => {
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="p-2 border border-red-600 text-red-600 rounded-sm hover:bg-red-600 hover:text-white transition-colors"
-          aria-label="Abrir menú"
         >
           <span className="material-symbols-outlined text-2xl">
             {menuOpen ? "close" : "menu"}
@@ -81,11 +65,11 @@ const Navigation = () => {
         {!isAuthPage && (
           <div className="flex items-center gap-4 text-lg relative">
 
-            {/* Holaaa */}
-            {username &&
+            {/* Hola usuario */}
+            {name &&
               (location.pathname === "/home" || location.pathname === "/") && (
                 <span className="text-red-600 text-lg font-semibold">
-                  Hola, {username}
+                  Hola, {name}
                 </span>
               )}
 
@@ -100,7 +84,7 @@ const Navigation = () => {
                   setUserMenuOpen(!userMenuOpen);
                 }}
                 className={`p-1 hover:text-red-700 transition ${
-                  username ? "text-red-600" : "text-gray-400"
+                  isLogged ? "text-red-600" : "text-gray-400"
                 }`}
               >
                 <span className="material-symbols-outlined text-3xl">
@@ -108,11 +92,10 @@ const Navigation = () => {
                 </span>
               </button>
 
-              {/* MENÚ DESPLEGABLE */}
+              {/* MENÚ DEL USUARIO */}
               {isLogged && userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-md text-gray-800 z-50 text-sm">
+                <div className="absolute right-0 mt-2 w-48 bg-white border shadow-md text-gray-800">
                   <ul className="flex flex-col divide-y divide-gray-100">
-
                     <li>
                       <Link
                         to="/profile"
@@ -123,7 +106,7 @@ const Navigation = () => {
                       </Link>
                     </li>
 
-                    {userRole === "ADMIN" ? (
+                    {role === "ADMIN" ? (
                       <>
                         <li>
                           <Link
@@ -201,7 +184,7 @@ const Navigation = () => {
         }`}
       />
 
-      {/* Aside lateral */}
+      {/* Aside */}
       <aside
         className={`fixed top-0 left-0 h-full w-72 bg-white dark:bg-[#1f1f1f] border-r border-gray-200 dark:border-gray-700 z-[50] transform transition-transform duration-300 ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
@@ -217,7 +200,7 @@ const Navigation = () => {
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
-
+ 
         <nav className="p-2">
           <Link
             to="/home"
@@ -226,7 +209,7 @@ const Navigation = () => {
           >
             Inicio
           </Link>
-
+ 
           <Link
             to="/products"
             onClick={() => setMenuOpen(false)}
@@ -234,7 +217,7 @@ const Navigation = () => {
           >
             Productos
           </Link>
-
+ 
           <Link
             to="/contact"
             onClick={() => setMenuOpen(false)}
@@ -242,10 +225,10 @@ const Navigation = () => {
           >
             Contacto
           </Link>
-
+ 
           <div className="mt-2 border-t border-gray-200 dark:border-gray-700" />
-
-          {isLogged ? (
+ 
+          {name ? (
             <button
               onClick={() => {
                 handleLogout();

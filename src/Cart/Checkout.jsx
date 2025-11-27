@@ -7,7 +7,7 @@ import { clearCart } from "../redux/cartSlice";
 
 
 // ======================================================
-// 🔥 Función para parsear moneda AR — EXACTA como la tuya
+// 🔥 Funciones ARS
 // ======================================================
 function parseArCurrency(value) {
   if (typeof value === "number") return value;
@@ -17,8 +17,8 @@ function parseArCurrency(value) {
   const hasComma = s.includes(",");
   const hasDot = s.includes(".");
   if (hasComma && hasDot) s = s.replace(/\./g, "").replace(",", ".");
-  else if (hasComma && !hasDot) s = s.replace(",", ".");
-  else if (!hasComma && hasDot) s = s.replace(/\./g, "");
+  else if (hasComma) s = s.replace(",", ".");
+  else if (hasDot) s = s.replace(/\./g, "");
   const n = Number(s);
   return Number.isFinite(n) ? n : 0;
 }
@@ -36,34 +36,30 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // 🔹 CARRITO desde Redux
+  // 🔥 CARRITO desde Redux
   const cart = useSelector((state) => state.cart.items);
 
-  // 🔹 Estado global del POST
+  // 🔥 TOKEN y USER desde Redux
+  const token = useSelector((state) => state.auth.token);
+  const userId = useSelector((state) => state.auth.id);
+  console.log("UserID en Checkout:", userId);
+
+  // 🔥 Estado global del POST
   const loading = useSelector((state) => state.operations.loading);
   const errorApi = useSelector((state) => state.operations.error);
 
-  // 🔹 Estado interno del componente
+  // 🔥 Estado interno
   const [payMethod, setPayMethod] = useState("");
   const [localError, setLocalError] = useState(null);
 
-  // 🔹 User ID (SÍ se puede seguir sacando del localStorage)
-  const userId = Number(localStorage.getItem("userId")) || null;
-
-  const token = (() => {
-    let t = JSON.parse(localStorage.getItem("user") || "{}")?.token;
-    if (!t) t = localStorage.getItem("token");
-    return t || null;
-  })();
-
-  // 🔹 Total calculado desde Redux
+  // 🔥 Total
   const total = cart.reduce(
     (acc, i) => acc + parseArCurrency(i.price) * (i.qty || 1),
     0
   );
 
   // ======================================================
-  // 🔥 Confirmar compra usando Redux
+  // 🔥 Enviar la operación
   // ======================================================
   const handleSubmit = async () => {
     if (!payMethod) return setLocalError("Elegí un método de pago.");
@@ -94,7 +90,9 @@ export default function Checkout() {
 
   return (
     <main className="min-h-screen bg-white pt-24 px-6 md:px-16 lg:px-32">
-      <h1 className="text-3xl font-bold text-center mb-6">Confirmar compra</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Confirmar compra
+      </h1>
 
       {!cart.length ? (
         <p className="text-center text-gray-600">Tu carrito está vacío.</p>

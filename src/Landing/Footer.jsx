@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <footer className="bg-[#1a1a1a] text-gray-300 font-display border-t-2 border-red-600">
       <div className="container mx-auto px-6 py-10">
@@ -19,25 +21,25 @@ const Footer = () => {
             </h3>
             <nav className="mt-3 flex flex-col space-y-2">
               <a
-                href="/home"
+                onClick={() => navigate("/home")}
                 className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Inicio
               </a>
               <a
-                href="/products"
+                onClick={() => navigate("/products")}
                 className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Productos
               </a>
               <a
-                href="/contact"
+                onClick={() => navigate("/contact")}
                 className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Contacto
               </a>
               <a
-                href="/about"
+                onClick={() => navigate("/about")}
                 className="hover:bg-red-600 hover:text-white px-3 py-1 transition-colors duration-200"
               >
                 Acerca de nosotros

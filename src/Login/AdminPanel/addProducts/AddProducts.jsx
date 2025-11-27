@@ -51,7 +51,7 @@ export default function AddProducts({ user }) {
             description: description.trim(),
             fitFor: fitFor.trim(),
             productStatus: status,
-            category: { id: Number(categoryId) },
+            categoryId
           },
           image,
           token: user.token,

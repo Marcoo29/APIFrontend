@@ -1,35 +1,44 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import OperationsTable from "./OperationsTable";
-import { fetchOperationDetail, fetchOperations, openDetail, closeDetail, updateOperationStatus } from "../redux/operationSlice";
+import {
+  fetchOperationDetail,
+  fetchOperations,
+  openDetail,
+  closeDetail,
+  updateOperationStatus,
+} from "../redux/operationSlice";
 
 export default function Operations() {
   const dispatch = useDispatch();
-  const { items: operations, itemsId: details, loading, error } = useSelector((state) => state.operations);
 
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const user = storedUser;
-
-  const getToken = () => {
-    let t = user?.token || localStorage.getItem("token");
-    if (typeof t === "string") t = t.replace(/^"(.*)"$/, "$1").trim();
-    return t || null;
-  };
+  // 🔥 Traemos todo desde Redux
+  const { items: operations, itemsId: details, loading, error } = useSelector(
+    (state) => state.operations
+  );
+  const token = useSelector((state) => state.auth.token);
 
   const fmtCurrency = (n) =>
-    (n ?? 0).toLocaleString("es-AR", { style: "currency", currency: "ARS" });
+    (n ?? 0).toLocaleString("es-AR", {
+      style: "currency",
+      currency: "ARS",
+    });
 
+  // 🔥 Cargar operaciones al montar (si hay token)
   useEffect(() => {
-    const token = getToken();
-    if (token) dispatch(fetchOperations(token));
-  }, [dispatch]);
+    if (token) {
+      dispatch(fetchOperations(token));
+    }
+  }, [dispatch, token]);
 
   const toggleDetails = (opId) => {
     const d = details[opId];
-    const token = getToken();
+
     if (d?.open) {
       dispatch(closeDetail(opId));
     } else if (!d?.items?.length) {
+      // si no hay detalles cargados, los pedimos
+      if (!token) return; // opcional: evitar pegarle sin token
       dispatch(fetchOperationDetail({ opId, token }));
     } else {
       dispatch(openDetail(opId));
@@ -37,7 +46,7 @@ export default function Operations() {
   };
 
   const editOperationStatus = (opId, newStatus) => {
-    const token = getToken();
+    if (!token) return; // opcional: evitar si no hay sesión
     dispatch(updateOperationStatus({ id: opId, newStatus, token }));
   };
 
@@ -57,10 +66,9 @@ export default function Operations() {
           details={details}
           toggleDetails={toggleDetails}
           fmtCurrency={fmtCurrency}
-          editOperationStatus={editOperationStatus} // PASAMOS LA FUNCIÓN
+          editOperationStatus={editOperationStatus}
         />
       )}
     </main>
   );
 }
-

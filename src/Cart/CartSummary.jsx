@@ -1,6 +1,3 @@
-import React from "react";
-import { formatPrice } from "../utils/ParseCurrency";
-
 export default function CartSummary({
   cart,
   formatPrice,
