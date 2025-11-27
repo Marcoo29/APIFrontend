@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  fetchProductById,
+  fetchProductImage,
+  fetchRelatedProducts,
+} from "../../redux/productSlice";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [product, setProduct] = useState(null);
-  const [relatedProducts, setRelatedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [imageBase64, setImageBase64] = useState(null);
+  const { itemsId: product, related, loading } = useSelector(
+    (state) => state.products
+  );
+
   const [cantidad, setCantidad] = useState(1);
   const [mensaje, setMensaje] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
@@ -21,54 +29,19 @@ export default function ProductDetail() {
   const disminuir = () => setCantidad((prev) => Math.max(prev - 1, 1));
 
   useEffect(() => {
-    fetch(`http://localhost:4002/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProduct(data);
-        setLoading(false);
-
-        fetch(`http://localhost:4002/images?id=${id}`)
-          .then((res) => res.json())
-          .then((data) => {
-            if (data && data.file) setImageBase64(data.file);
+    // Traer producto y luego imagen y relacionados
+    dispatch(fetchProductById(id)).then((res) => {
+      if (res.payload) {
+        dispatch(fetchProductImage(id));
+        dispatch(
+          fetchRelatedProducts({
+            category: res.payload.category?.description,
+            currentId: res.payload.id,
           })
-          .catch((err) => console.error("Error cargando imagen:", err));
-
-        fetch(`http://localhost:4002/products?page=0&size=100`)
-          .then((res) => res.json())
-          .then(async (all) => {
-            const list = all.content || [];
-            const filtered = list.filter(
-              (p) =>
-                p.category?.description === data.category?.description &&
-                p.id !== data.id
-            );
-
-            const withImages = await Promise.all(
-              filtered.slice(0, 8).map(async (p) => {
-                try {
-                  const res = await fetch(
-                    `http://localhost:4002/images?id=${p.id}`
-                  );
-                  const imgData = await res.json();
-                  if (imgData && imgData.file) {
-                    return { ...p, imageBase64: imgData.file };
-                  }
-                } catch (e) {
-                  console.warn(`Error cargando imagen del producto ${p.id}`, e);
-                }
-                return p;
-              })
-            );
-
-            setRelatedProducts(withImages);
-          })
-          .catch((err) =>
-            console.error("Error cargando productos relacionados:", err)
-          );
-      })
-      .catch((err) => console.error("Error cargando producto:", err));
-  }, [id]);
+        );
+      }
+    });
+  }, [id, dispatch]);
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchTerm.trim() !== "") {
@@ -77,7 +50,7 @@ export default function ProductDetail() {
   };
 
   const agregarAlCarrito = () => {
-    if (userRole === "ADMIN" || !product) return;
+    if (!product || userRole === "ADMIN") return;
 
     const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
     const existingIndex = currentCart.findIndex((item) => item.id === product.id);
@@ -90,21 +63,20 @@ export default function ProductDetail() {
         name: product.name,
         price: product.price,
         manufacturer: product.manufacturer,
-        image: imageBase64,
+        image: product.imageBase64 || null,
         qty: cantidad,
       });
     }
 
     localStorage.setItem("cart", JSON.stringify(currentCart));
-
     window.dispatchEvent(new Event("storage"));
 
     setMensaje("✅ Producto agregado al carrito");
     setTimeout(() => setMensaje(""), 2000);
   };
 
-  if (loading) return <p className="text-center mt-10">Cargando producto...</p>;
-  if (!product) return <p className="text-center mt-10">Producto no encontrado</p>;
+  if (loading || !product)
+    return <p className="text-center mt-10">Cargando producto…</p>;
 
   const truncateName = (name) =>
     name && name.length > 25 ? name.slice(0, 25) + "..." : name;
@@ -114,6 +86,7 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f6f6f6] font-display text-gray-900 relative">
       <main className="flex-grow container mx-auto px-4 lg:px-8 py-12 mt-10 max-w-6xl relative">
+        {/* Buscador */}
         <div className="absolute top-[-25px] left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-40">
           <div className="relative">
             <input
@@ -130,10 +103,10 @@ export default function ProductDetail() {
           </div>
         </div>
 
+        {/* Volver atrás */}
         <button
           onClick={() => {
             const previousPath = document.referrer;
-
             if (previousPath && previousPath.includes(window.location.origin)) {
               navigate(-1);
             } else {
@@ -146,7 +119,7 @@ export default function ProductDetail() {
           <span className="font-medium">VOLVER ATRÁS</span>
         </button>
 
-
+        {/* Breadcrumb */}
         <nav className="text-sm text-gray-500 mb-4">
           <Link to="/" className="hover:text-red-600 transition-colors">
             Inicio
@@ -164,15 +137,15 @@ export default function ProductDetail() {
           </span>
         </nav>
 
+        {/* Detalle del producto */}
         <div className="bg-white shadow-sm border border-gray-200 overflow-hidden mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
             <div className="flex items-center justify-center bg-gray-100 border-r border-gray-200 aspect-square">
-              {imageBase64 ? (
+              {product.imageBase64 ? (
                 <img
-                  src={`data:image/jpeg;base64,${imageBase64}`}
+                  src={`data:image/jpeg;base64,${product.imageBase64}`}
                   alt={product.name}
                   className="w-full h-full object-contain rounded-md"
-                  loading="lazy"
                 />
               ) : (
                 <div className="text-gray-400 italic text-center">
@@ -208,40 +181,25 @@ export default function ProductDetail() {
               </div>
 
               <div className="pt-6 border-t border-gray-200 mt-6 flex items-center justify-center gap-3 w-full">
-                <div className="flex items-center border border-gray-300 rounded-none px-2 py-3 text-sm text-gray-800">
-                  <button
-                    onClick={disminuir}
-                    className="px-2 text-gray-500 hover:text-red-600 transition"
-                  >
-                    –
-                  </button>
+                <div className="flex items-center border border-gray-300 px-2 py-3">
+                  <button onClick={disminuir} className="px-2">–</button>
                   <input
                     type="number"
                     value={cantidad}
                     readOnly
-                    className="w-8 text-center bg-transparent text-gray-800 focus:outline-none"
+                    className="w-8 text-center bg-transparent"
                   />
-                  <button
-                    onClick={aumentar}
-                    className="px-2 text-gray-500 hover:text-red-600 transition"
-                  >
-                    +
-                  </button>
+                  <button onClick={aumentar} className="px-2">+</button>
                 </div>
 
                 <button
                   onClick={agregarAlCarrito}
                   disabled={userRole === "ADMIN"}
-                  className={`flex-1 flex items-center justify-center gap-2 font-semibold py-3 transition-colors duration-200 ${
+                  className={`flex-1 flex items-center justify-center gap-2 font-semibold py-3 ${
                     userRole === "ADMIN"
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      ? "bg-gray-300 text-gray-500"
                       : "bg-red-500 hover:bg-red-600 text-white"
                   }`}
-                  title={
-                    userRole === "ADMIN"
-                      ? "Los administradores no pueden agregar productos al carrito"
-                      : "Agregar al carrito"
-                  }
                 >
                   Agregar al carrito
                   <span className="material-symbols-outlined text-sm">
@@ -251,7 +209,7 @@ export default function ProductDetail() {
               </div>
 
               {mensaje && (
-                <p className="text-green-600 text-sm text-center mt-4 font-medium animate-fadeIn">
+                <p className="text-green-600 text-sm text-center mt-4">
                   {mensaje}
                 </p>
               )}
@@ -259,8 +217,9 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {relatedProducts.length > 0 && (
-          <section className="mt-10 relative">
+        {/* Productos relacionados */}
+        {related?.length > 0 && (
+          <section className="mt-10">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-semibold text-red-500 tracking-wide mb-2">
                 También podría interesarte
@@ -271,7 +230,7 @@ export default function ProductDetail() {
             <div className="relative flex items-center">
               <button
                 onClick={() => {
-                  document.getElementById("relatedScroll").scrollBy({
+                  document.getElementById("relatedScroll")?.scrollBy({
                     left: -250,
                     behavior: "smooth",
                   });
@@ -287,7 +246,7 @@ export default function ProductDetail() {
                 id="relatedScroll"
                 className="flex gap-5 overflow-x-hidden scroll-smooth pb-6 px-10 mx-auto"
               >
-                {relatedProducts.map((p) => (
+                {related.map((p) => (
                   <div
                     key={p.id}
                     onClick={() => navigate(`/products/${p.id}`)}
@@ -299,7 +258,6 @@ export default function ProductDetail() {
                           src={`data:image/jpeg;base64,${p.imageBase64}`}
                           alt={p.name}
                           className="w-full h-full object-cover"
-                          loading="lazy"
                         />
                       ) : (
                         <img
@@ -330,7 +288,7 @@ export default function ProductDetail() {
 
               <button
                 onClick={() => {
-                  document.getElementById("relatedScroll").scrollBy({
+                  document.getElementById("relatedScroll")?.scrollBy({
                     left: 250,
                     behavior: "smooth",
                   });
@@ -344,8 +302,6 @@ export default function ProductDetail() {
             </div>
           </section>
         )}
-
-
       </main>
     </div>
   );

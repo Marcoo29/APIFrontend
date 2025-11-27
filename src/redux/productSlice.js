@@ -7,7 +7,7 @@ const URL_IMAGES = "http://localhost:4002/images";
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async () => {
-    const { data } = await axios.get(`${URL_PRODUCTS}/all`); //petición asíncrona, espera respuesta de la API
+    const { data } = await axios.get(`${URL_PRODUCTS}/all`);
     return data;
   }
 );
@@ -43,11 +43,12 @@ export const updateProduct = createAsyncThunk(
     description,
     fitFor,
     productStatus,
+    categoryId,
     token,
   }) => {
     const { data } = await axios.put(
       `${URL_PRODUCTS}/${id}/update`,
-      { name, price, manufacturer, stock, description, fitFor, productStatus },
+      { name, price, manufacturer, stock, description, fitFor, productStatus, categoryId },
       {
         headers: {
           "Content-Type": "application/json",
@@ -90,6 +91,51 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+
+export const fetchProductById = createAsyncThunk(
+  "products/fetchProductById",
+  async (id) => {
+    const { data } = await axios.get(`${URL_PRODUCTS}/${id}`);
+    return data;
+  }
+);
+
+export const fetchProductImage = createAsyncThunk(
+  "products/fetchProductImage",
+  async (id) => {
+    const { data } = await axios.get(`${URL_IMAGES}?id=${id}`);
+    return { id, imageBase64: data.file || null };
+  }
+);
+
+export const fetchRelatedProducts = createAsyncThunk(
+  "products/fetchRelatedProducts",
+  async ({ category, currentId }) => {
+    const { data } = await axios.get(`${URL_PRODUCTS}?page=0&size=100`);
+    const list = data.content || [];
+
+    const filtered = list.filter(
+      (p) =>
+        p.category?.description === category &&
+        p.id !== currentId
+    );
+
+    const withImages = await Promise.all(
+      filtered.slice(0, 8).map(async (p) => {
+        try {
+          const r = await axios.get(`${URL_IMAGES}?id=${p.id}`);
+          return { ...p, imageBase64: r.data?.file || null };
+        } catch {
+          return { ...p, imageBase64: null };
+        }
+      })
+    );
+
+    return withImages;
+  }
+);
+
+
 const productSlice = createSlice({
   name: "products",
   initialState: {
@@ -100,10 +146,13 @@ const productSlice = createSlice({
     itemsFilter: {},
     totalItems: 0,
     totalPages: 1,
+
+    related: [],
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
+      /* --------- fetchProducts --------- */
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -116,6 +165,8 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
+      /* --------- fetchProductsFiltered --------- */
       .addCase(fetchProductsFiltered.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -130,6 +181,8 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
+      /* --------- updateProduct --------- */
       .addCase(updateProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -145,6 +198,8 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
+      /* --------- createProduct --------- */
       .addCase(createProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -156,7 +211,36 @@ const productSlice = createSlice({
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+        state.itemsId = null;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.itemsId = action.payload; 
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      .addCase(fetchProductImage.fulfilled, (state, action) => {
+        const { id, imageBase64 } = action.payload;
+
+        if (state.itemsId && (state.itemsId.id === id || state.itemsId.id == id)) {
+          state.itemsId.imageBase64 = imageBase64;
+        }
+        const idx = state.items.findIndex((p) => p.id === id);
+        if (idx !== -1) state.items[idx].imageBase64 = imageBase64;
+      })
+
+      .addCase(fetchRelatedProducts.fulfilled, (state, action) => {
+        state.related = action.payload;
       });
+
   },
 });
 

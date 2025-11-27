@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Landing from "./Landing/Landing";
 import Products from "./Products/Products";
-import ProductDetail from "./Products/ProductDetail";
 import Footer from "./Landing/Footer";
 import Login from "./Login/Login/Login";
 import Register from "./Login/Register/Register";
@@ -15,6 +14,8 @@ import Cart from "./Cart/Cart";
 import Operations from "./Operations/Operations";
 import OrderSuccess from "./Cart/OrderSuccess";
 import Checkout from "./Cart/Checkout";
+import ProductDetail from "./Products/ProductDetail/ProductDetail";
+import UserOrders from "./UserOrders/UserOrders";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/operations" element={<Operations />} />
+          <Route path="/orders" element={<UserOrders />} />
 
         </Routes>
       </main>

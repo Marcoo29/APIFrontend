@@ -1,6 +1,6 @@
 import OperationRow from "./OperationRow";
 
-export default function OperationsTable({ operations, details, toggleDetails, fmtCurrency }) {
+export default function OperationsTable({ operations, details, toggleDetails, fmtCurrency, editOperationStatus }) {
   if (!operations.length)
     return <p className="text-center text-gray-500">No hay operaciones registradas.</p>;
 
@@ -26,6 +26,7 @@ export default function OperationsTable({ operations, details, toggleDetails, fm
               detail={details[op.id]}
               onToggle={() => toggleDetails(op.id)}
               fmtCurrency={fmtCurrency}
+              editOperationStatus={editOperationStatus} // PASAMOS LA FUNCIÓN
             />
           ))}
         </tbody>
