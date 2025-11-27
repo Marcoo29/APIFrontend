@@ -1,27 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const API_AUTH = "http://localhost:4002/api/v1/auth";
 const API_USERS = "http://localhost:4002/users";
 
-// Login
+// ------------------------------------
+// LOGIN USER (AXIOS VERSION)
+// ------------------------------------
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
     try {
-      const res = await fetch(`${API_AUTH}/authenticate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      // 1️⃣ Login
+      const res = await axios.post(`${API_AUTH}/authenticate`, {
+        email,
+        password,
       });
 
-      if (!res.ok) {
-        return thunkAPI.rejectWithValue({
-          message: "Correo o contraseña incorrecta",
-          status: res.status,
-        });
-      }
-
-      const data = await res.json();
+      const data = res.data;
       const token = data.access_token || data.token;
 
       if (!token) {
@@ -31,19 +27,12 @@ export const loginUser = createAsyncThunk(
         });
       }
 
-      // Obtener ID por email
-      const idRes = await fetch(`${API_USERS}/by-email/${email}`, {
+      // 2️⃣ Obtener ID por email
+      const idRes = await axios.get(`${API_USERS}/by-email/${email}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!idRes.ok) {
-        return thunkAPI.rejectWithValue({
-          message: "No se pudo obtener el ID del usuario.",
-          status: idRes.status,
-        });
-      }
-
-      const userData = await idRes.json();
+      const userData = idRes.data;
 
       return {
         id: userData.id,
@@ -53,6 +42,15 @@ export const loginUser = createAsyncThunk(
         token,
       };
     } catch (err) {
+      // Error HTTP del backend
+      if (err.response) {
+        return thunkAPI.rejectWithValue({
+          message: err.response.data?.message || "Correo o contraseña incorrecta",
+          status: err.response.status,
+        });
+      }
+
+      // Error de red
       return thunkAPI.rejectWithValue({
         message: "Error de conexión con el servidor.",
         status: 500,
@@ -61,35 +59,31 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// Register
+// ------------------------------------
+// REGISTER USER (AXIOS VERSION)
+// ------------------------------------
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async ({ name, lastname, username, email, password }, thunkAPI) => {
     try {
-      const res = await fetch(`${API_AUTH}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          lastname,
-          username,
-          email,
-          password,
-          role: "USER",
-        }),
+      const res = await axios.post(`${API_AUTH}/register`, {
+        name,
+        lastname,
+        username,
+        email,
+        password,
+        role: "USER",
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
+      return res.data;
+    } catch (err) {
+      if (err.response) {
         return thunkAPI.rejectWithValue({
-          message: data.message || "Error al registrarse",
-          status: res.status,
+          message: err.response.data?.message || "Error al registrarse",
+          status: err.response.status,
         });
       }
 
-      return data;
-    } catch (err) {
       return thunkAPI.rejectWithValue({
         message: "Error de conexión",
         status: 500,
@@ -129,6 +123,7 @@ const authSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+      // LOGIN -----------------
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -139,9 +134,10 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; // { message, status }
+        state.error = action.payload;
       })
 
+      // REGISTER --------------
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
