@@ -1,10 +1,17 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice";
 
 const Navigation = () => {
-  const username = JSON.parse(localStorage.getItem("user"))?.name || null;
-  const userRole = JSON.parse(localStorage.getItem("user"))?.role || null;
-  const user = JSON.parse(localStorage.getItem("user")) || null;
+  const dispatch = useDispatch();
+
+  // 🔥 Datos del authSlice
+  const { id, name, role, token } = useSelector((state) => state.auth);
+
+  const isLogged = !!token;
+  const username = name || null;
+  const userRole = role || null;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,13 +39,15 @@ const Navigation = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
+    dispatch(logout());      // 🔥 RESETEA REDUX
+    localStorage.clear();    // limpio carrito también
     navigate("/home");
   };
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
+  // Cerrar menú usuario al clickear afuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -50,11 +59,15 @@ const Navigation = () => {
       document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+  console.log("AUTH EN NAVIGATION:", { id, name, role, token });
+
+
   return (
     <header className="absolute top-0 left-0 w-full z-40 bg-transparent text-white">
       <nav className="w-full px-4 py-2 flex justify-between items-center fixed top-0 left-0 right-0 z-50">
 
-        {/* 🔥 TU MENÚ HAMBURGUESA TAL CUAL */}
+        {/* Menú Hamburguesa */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="p-2 border border-red-600 text-red-600 rounded-sm hover:bg-red-600 hover:text-white transition-colors"
@@ -68,19 +81,19 @@ const Navigation = () => {
         {!isAuthPage && (
           <div className="flex items-center gap-4 text-lg relative">
 
+            {/* Holaaa */}
             {username &&
-              (location.pathname === "/home" ||
-                location.pathname === "/") && (
+              (location.pathname === "/home" || location.pathname === "/") && (
                 <span className="text-red-600 text-lg font-semibold">
                   Hola, {username}
                 </span>
               )}
 
-            {/* 🔥 ICONO USUARIO */}
+            {/* ICONO USUARIO */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => {
-                  if (!user) {
+                  if (!isLogged) {
                     navigate("/login");
                     return;
                   }
@@ -95,9 +108,11 @@ const Navigation = () => {
                 </span>
               </button>
 
-              {user && userMenuOpen && (
+              {/* MENÚ DESPLEGABLE */}
+              {isLogged && userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-md text-gray-800 z-50 text-sm">
                   <ul className="flex flex-col divide-y divide-gray-100">
+
                     <li>
                       <Link
                         to="/profile"
@@ -157,7 +172,7 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* 🛒 CARRITO + BADGE SIN TOCAR NADA MÁS */}
+            {/* CARRITO */}
             <Link
               to="/cart"
               className="relative text-red-600 hover:text-red-800"
@@ -176,6 +191,7 @@ const Navigation = () => {
         )}
       </nav>
 
+      {/* Overlay */}
       <div
         onClick={() => setMenuOpen(false)}
         className={`fixed inset-0 bg-black/40 transition-opacity duration-200 z-[45] ${
@@ -185,6 +201,7 @@ const Navigation = () => {
         }`}
       />
 
+      {/* Aside lateral */}
       <aside
         className={`fixed top-0 left-0 h-full w-72 bg-white dark:bg-[#1f1f1f] border-r border-gray-200 dark:border-gray-700 z-[50] transform transition-transform duration-300 ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
@@ -228,7 +245,7 @@ const Navigation = () => {
 
           <div className="mt-2 border-t border-gray-200 dark:border-gray-700" />
 
-          {username ? (
+          {isLogged ? (
             <button
               onClick={() => {
                 handleLogout();

@@ -54,6 +54,27 @@ export const updateOperationStatus = createAsyncThunk(
   }
 );
 
+export const createOperation = createAsyncThunk(
+  "operations",
+  async ({ userId, payMethod, cart, token }) => {
+    const body = {
+      userId,
+      payMethod,
+      date: new Date().toISOString(),
+      operationDetails: cart.map((i) => ({
+        productId: i.id,
+        quantity: i.qty,
+      })),
+    };
+
+    const { data } = await axios.post(URL_OP, body, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return data; 
+  }
+);
+
 const operationSlice = createSlice({
   name: "operations",
   initialState: {
@@ -138,6 +159,19 @@ const operationSlice = createSlice({
         if (index !== -1) state.items[index] = action.payload;
       })
       .addCase(updateOperationStatus.rejected, (state, action) => {
+      .addCase(createOperation.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createOperation.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+
+        if (action.payload) {
+          state.items.unshift(action.payload);
+        }
+      })
+      .addCase(createOperation.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

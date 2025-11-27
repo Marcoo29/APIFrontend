@@ -3,13 +3,15 @@ import categoryReducer from "./categorySlice.js";
 import productReducer from "./productSlice.js";
 import userReducer from "./userSlice.js";
 import operationReducer from "./operationSlice.js";
+import authReducer from "./authSlice.js";
 
 export const store = configureStore({ //en este slice van todos los objetos
     reducer:{
         categories: categoryReducer,
         products: productReducer,
         user: userReducer,
-        operations: operationReducer
+        operations: operationReducer,
+        auth: authReducer,
     
     } //funciones que reciben el estado actual y las modifican en consecuencia. aca van todos los estados
 })
