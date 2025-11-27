@@ -10,17 +10,43 @@ const Pagination = ({
   onItemsPerPageChange,
   onPageChange,
 }) => {
-  const prevPage = () => page > 0 && onPageChange(page - 1);
-  const nextPage = () => page < totalPages - 1 && onPageChange(page + 1);
+
+  // 🟢 FUNCIÓN SCROLL SUAVE
+  const smoothScrollToTop = () => {
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 80); // pequeño delay para que no sea brusco
+  };
+
+  // 🔻 PAGINACIÓN CON SCROLL
+  const prevPage = () => {
+    if (page > 0) {
+      onPageChange(page - 1);
+      smoothScrollToTop();
+    }
+  };
+
+  const nextPage = () => {
+    if (page < totalPages - 1) {
+      onPageChange(page + 1);
+      smoothScrollToTop();
+    }
+  };
 
   const handleSortChange = (e) => onSortChange?.(e.target.value);
+
   const handleItemsPerPageChange = (e) => {
     const value = e.target.value === "all" ? "all" : Number(e.target.value);
     onItemsPerPageChange?.(value);
+    smoothScrollToTop();
   };
 
   const startItem =
     totalItems === 0 || itemsPerPage === "all" ? 0 : page * itemsPerPage + 1;
+
   const endItem =
     totalItems === 0 || itemsPerPage === "all"
       ? totalItems
@@ -36,7 +62,10 @@ const Pagination = ({
         <div className="flex flex-wrap justify-between items-center border border-gray-200 rounded-sm bg-gray-50 px-4 py-3 text-sm shadow-sm">
           <div className="flex items-center gap-2 text-gray-500">
             <button
-              onClick={() => onLayoutChange?.("grid")}
+              onClick={() => {
+                onLayoutChange?.("grid");
+                smoothScrollToTop();
+              }}
               className={`p-1 rounded-sm ${
                 layoutView === "grid"
                   ? "text-red-600 border border-red-500"
@@ -46,8 +75,12 @@ const Pagination = ({
             >
               <span className="material-symbols-outlined">grid_view</span>
             </button>
+
             <button
-              onClick={() => onLayoutChange?.("list")}
+              onClick={() => {
+                onLayoutChange?.("list");
+                smoothScrollToTop();
+              }}
               className={`p-1 rounded-sm ${
                 layoutView === "list"
                   ? "text-red-600 border border-red-500"
@@ -67,6 +100,7 @@ const Pagination = ({
             <label htmlFor="sort" className="text-gray-600 text-sm">
               Ordenar por:
             </label>
+
             <select
               id="sort"
               onChange={handleSortChange}
