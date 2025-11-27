@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "../../utils/toast";
 
 import {
   fetchProductById,
@@ -61,8 +62,10 @@ export default function ProductDetail() {
       })
     );
 
-    setMensaje("Producto agregado al carrito");
-    setTimeout(() => setMensaje(""), 2000);
+    toast.fire({
+      icon: "success",
+      title: "Producto agregado al carrito",
+    });
   };
 
   if (loading || !product)

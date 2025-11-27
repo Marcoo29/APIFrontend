@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createProduct } from "../../../redux/productSlice";
+import { toast } from "../../../utils/toast"; // ← AGREGADO
 
 export default function AddProducts({ user }) {
   const dispatch = useDispatch();
@@ -69,10 +70,22 @@ export default function AddProducts({ user }) {
       setImage(null);
       setPreview(null);
 
-      alert("Producto creado correctamente con imagen!");
+      // ✅ TOAST en vez del alert feo
+      toast.fire({
+        icon: "success",
+        title: "Producto creado",
+      });
+
     } catch (err) {
       console.error(err);
       setError(err.message);
+
+      // ❗ TOAST de error también
+      toast.fire({
+        icon: "error",
+        title: "No se pudo crear el producto",
+      });
+
     } finally {
       setLoading(false);
     }
