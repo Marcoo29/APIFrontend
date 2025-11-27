@@ -94,7 +94,7 @@ const Navigation = () => {
 
               {/* MENÚ DEL USUARIO */}
               {isLogged && userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border shadow-md text-gray-800">
+                <div className="absolute right-0 mt-2 w-48 bg-white border shadow-md text-gray-800 text-base">
                   <ul className="flex flex-col divide-y divide-gray-100">
                     <li>
                       <Link

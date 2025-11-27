@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { registerUser } from "../../redux/authSlice";
+import { toast } from "../../utils/toast"; // ← agregado
 
 export const useRegister = () => {
   const dispatch = useDispatch();
@@ -34,7 +35,11 @@ export const useRegister = () => {
     );
 
     if (result.meta.requestStatus === "fulfilled") {
-      alert("Registro exitoso");
+      toast.fire({
+        icon: "success",
+        title: "Registro exitoso",
+      });
+
       navigate("/login");
     }
   };
