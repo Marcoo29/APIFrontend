@@ -13,12 +13,9 @@ const Card = ({ id, title, price, manufacturer, layoutView = "grid" }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // 🔥 Usuario desde Redux
   const userRole = useSelector((state) => state.auth.role);
 
-  // ===============================
-  // 🔥 Cargar imagen por ID
-  // ===============================
+  
   useEffect(() => {
     fetch(`http://localhost:4002/images?id=${id}`)
       .then((res) => {
@@ -35,9 +32,7 @@ const Card = ({ id, title, price, manufacturer, layoutView = "grid" }) => {
       .catch(() => setImage(null));
   }, [id]);
 
-  // ===============================
-  // 🔥 Cantidades
-  // ===============================
+
   const aumentar = (e) => {
     e.stopPropagation();
     setCantidad((prev) => Math.min(prev + 1, 99));
@@ -53,9 +48,7 @@ const Card = ({ id, title, price, manufacturer, layoutView = "grid" }) => {
       ? price.toLocaleString("es-AR")
       : price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-  // ===============================
-  // 🔥 AGREGAR AL CARRITO — Redux
-  // ===============================
+  
   const agregarAlCarrito = (e) => {
     e.stopPropagation();
     if (userRole === "ADMIN") return;
@@ -88,9 +81,7 @@ const Card = ({ id, title, price, manufacturer, layoutView = "grid" }) => {
 
   const abrirDetalle = () => navigate(`/products/${id}`);
 
-  // ==========================================================
-  // 🔥 Vista LISTA (horizontal)
-  // ==========================================================
+ 
   if (layoutView === "list") {
     return (
       <div
@@ -159,9 +150,7 @@ const Card = ({ id, title, price, manufacturer, layoutView = "grid" }) => {
     );
   }
 
-  // ==========================================================
-  // 🔥 Vista GRID
-  // ==========================================================
+
   return (
     <div
       className="w-full max-w-sm bg-white border border-gray-300 rounded-none shadow-sm hover:shadow-md hover:border-red-600 hover:shadow-red-200 transition-all duration-200 font-display cursor-pointer"

@@ -38,7 +38,7 @@ export default function Categories({ onCategorySelect }) {
     const name = category.description.toLowerCase();
 
     setActiveCategory(name);
-    onCategorySelect(category.description); // <-- Esto sí coincide con Products
+    onCategorySelect(category.description);
     navigate(`/products?category=${encodeURIComponent(name)}`);
   };
 

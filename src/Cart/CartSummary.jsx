@@ -37,7 +37,7 @@ export default function CartSummary({
         onClick={handleConfirm}
         className="mt-6 w-full bg-red-600 hover:bg-red-500 text-white py-3 rounded-md font-semibold"
       >
-        Confirmar pedido
+        Ir al pago
       </button>
 
       <button

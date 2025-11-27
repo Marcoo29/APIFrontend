@@ -27,7 +27,7 @@ export default function CardList({ products = [], layoutView = "grid" }) {
           title={product.name}
           price={product.price}
           manufacturer={product.manufacturer}
-          layoutView={layoutView}   // 🔥 le pasamos la vista
+          layoutView={layoutView}   
         />
       ))}
     </div>

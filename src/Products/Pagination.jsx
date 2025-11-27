@@ -11,17 +11,15 @@ const Pagination = ({
   onPageChange,
 }) => {
 
-  // 🟢 FUNCIÓN SCROLL SUAVE
   const smoothScrollToTop = () => {
     setTimeout(() => {
       window.scrollTo({
         top: 0,
         behavior: "smooth",
       });
-    }, 80); // pequeño delay para que no sea brusco
+    }, 80); 
   };
 
-  // 🔻 PAGINACIÓN CON SCROLL
   const prevPage = () => {
     if (page > 0) {
       onPageChange(page - 1);

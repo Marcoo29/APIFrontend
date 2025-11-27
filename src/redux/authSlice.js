@@ -112,7 +112,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // 🔥 Nuevo reducer usado por useLogin()
     loginSuccess(state, action) {
       state.id = action.payload.id;
       state.name = action.payload.name;

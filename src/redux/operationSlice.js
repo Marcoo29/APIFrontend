@@ -43,7 +43,7 @@ export const updateOperationStatus = createAsyncThunk(
   async ({ id, newStatus, token }) => {
     const { data } = await axios.put(
       `${URL_OP}/${id}/update-status?newStatus=${newStatus}`,
-      {}, // no body necesario
+      {}, 
       {
         headers: {
           Authorization: `Bearer ${token}`,
