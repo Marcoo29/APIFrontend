@@ -94,7 +94,7 @@ const AdminPanel = () => {
             `}
           >
             <span className="material-symbols-outlined">sell</span>
-            Descuentos
+            Gestionar Descuentos
           </button>
 
         </div>
